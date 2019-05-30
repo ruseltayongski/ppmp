@@ -11,12 +11,34 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('logout', function(){
+    Auth::logout();
+    Session::flush();
+    return Redirect::to('/');
 });
+//login
+Route::match(['GET','POST'],'/','LoginController@index');
+//admin
+Route::get('admin/home','AdminController@home');
+Route::get('admin/privileged','MaintenanceController@adminPrivilage');
+//user
+Route::get('user/home','UserController@home');
+Route::get('user/privileged','MaintenanceController@userPrivileged');
+//ppmp
+Route::get('ppmp/list','PpmpController@index');
+Route::post('ppmp/import','ExcelController@importItem');
+//charge
+Route::get('charge/default','ChargeController@chargeDefault');
+Route::post('charge/add','ChargeController@chargeAdd');
+Route::get('charge/test','ChargeController@test');
 
-Route::get('/rusel', function () {
-    return 'haha';
-});
+//expense
+Route::get('expense/list','ExpenseController@expenseList');
+Route::get('expense/test','ExpenseController@test');
+
+//excel
+Route::get('excel/import','ExcelController@excelImport');
+Route::post('expense/import','ExcelController@importExpense');
+Route::post('item/import','ExcelController@importItem');
 
 
