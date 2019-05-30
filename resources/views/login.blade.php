@@ -23,7 +23,7 @@
     <div class="login-logo">
         <img src="{{ asset('public/img/doh.png') }}" style="width: 30%" />
         <br />
-        <a href="#" style="font-weight:bolder;"><label style="font-size: 17pt;">PPMP</label></a>
+        <a href="#" style="font-weight:bolder;"><label style="font-size: 17pt;">PPMP 2.0</label></a>
     </div><!-- /.login-logo -->
     <form role="form" method="POST" action="">
         {{ csrf_field() }}
