@@ -33,3 +33,12 @@
         </section>
     </div>
 @endsection
+@section('js')
+    <script>
+        @if(session()->has('itemAdd'))
+        Lobibox.notify('info',{
+            msg:"<?php echo session()->get('itemAdd'); ?>"
+        });
+        @endif
+    </script>
+@endsection

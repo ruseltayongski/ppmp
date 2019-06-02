@@ -104,14 +104,47 @@
 
     <!-- /.content-wrapper -->
 
-    <div class="clearfix"></div>
-    <footer id="footer">
-        <div class="container">
-            <b>Version</b> 2.0
-            <strong>Copyright &copy; 2019 <a href="http://www.ro7.doh.gov.ph/">DOH-RO7</a>.</strong> All rights
-            reserved.
-        </div>
-    </footer>
+    @if(Request::segments()[0].'/'.Request::segments()[1] == 'ppmp/list')
+        <footer id="footer">
+            <div class="container">
+                <a class="btn btn-app">
+                    <i class="fa fa-edit"></i> Edit
+                </a>
+                <a class="btn btn-app">
+                    <i class="fa fa-play"></i> Play
+                </a>
+                <a class="btn btn-app">
+                    <i class="fa fa-repeat"></i> Repeat
+                </a>
+                <a class="btn btn-app">
+                    <i class="fa fa-pause"></i> Pause
+                </a>
+                <button class="btn btn-app" type="submit">
+                    <i class="fa fa-save"></i> Save
+                </button>
+                <a class="btn btn-app">
+                    <span class="badge bg-yellow">3</span>
+                    <i class="fa fa-bullhorn"></i> Notifications
+                </a>
+                <a class="btn btn-app">
+                    <span class="badge bg-green">300</span>
+                    <i class="fa fa-barcode"></i> Products
+                </a>
+                <a class="btn btn-app">
+                    <span class="badge bg-purple">891</span>
+                    <i class="fa fa-users"></i> Users
+                </a>
+            </div>
+        </footer>
+    @else
+        <footer id="footer">
+            <div class="container">
+                <b>Version</b> 2.0
+                <strong>Copyright &copy; 2019 <a href="http://www.ro7.doh.gov.ph/">DOH-RO7</a>.</strong> All rights
+                reserved.
+            </div>
+        </footer>
+    @endif
 
 
     <!-- jQuery 3 -->

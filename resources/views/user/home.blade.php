@@ -15,6 +15,7 @@
                         <h1>
                             SA # 9999999999
                             <small>DOH-99999</small>
+                            <span data-toggle="tooltip" title="{{ $test }}" data-html="true" data-content="{{ $test }}" class="badge bg-yellow">3</span>
                         </h1>
                         <ol class="breadcrumb">
                             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>

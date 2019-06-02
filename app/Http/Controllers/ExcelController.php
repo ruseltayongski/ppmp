@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Excel;
 use App\Item;
 use App\Expense;
+use Illuminate\Support\Facades\Redirect;
 
 class ExcelController extends Controller
 {
@@ -38,6 +39,7 @@ class ExcelController extends Controller
                     'expense_id' => $value->expense_id,
                     'tranche' => $value->tranche,
                     'description' => $value->description,
+                    'unit_measurement' => $value->unit_measurement,
                     'qty' => $value->qty,
                     'unit_cost' => $value->unit_cost,
                     'estimated_budget' => $value->estimated_budget,
@@ -59,7 +61,7 @@ class ExcelController extends Controller
             }
             Item::insert($arr);
         }
-        return 'Succesfully Added Item';
+        return Redirect::back()->with('itemAdd', 'Successfully added item!');
     }
 
 }

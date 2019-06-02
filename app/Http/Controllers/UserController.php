@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\PisUser;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -13,6 +15,12 @@ class UserController extends Controller
 
     public function home()
     {
-        return view('user.home');
+        $picture = PisUser::where("userid","=",Auth::user()->username)->first()->picture;
+        $test = view('profile',[
+            "picture" => $picture
+        ]);
+        return view('user.home',[
+            "test" => $test
+        ]);
     }
 }

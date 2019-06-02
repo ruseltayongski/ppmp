@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 class PisUser extends Model
 {
     protected $connection = 'pis';
-    protected $table = 'users';
+    protected $table = 'personal_information';
 }
