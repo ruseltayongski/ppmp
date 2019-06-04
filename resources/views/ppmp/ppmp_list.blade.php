@@ -32,7 +32,7 @@ function displayItem($item){
     return "<tr>
                 <td>".$item->code."</td>
                 <td width='35%'>"
-                ."<div style='padding-left: 10%'>"."<input type='text' style='width: 310px' value='$item->description' id='item_description$item->id' class='item-description' >"."</div>".
+                ."<div style='padding-left: 10%'>"."<input type='text' style='width: 100%' value='$item->description' id='item_description$item->id' class='item-description' >"."</div>".
                 "</td>
                 <td><input type='text' style='width: 40px' value='$item->unit_measurement'></td>
                 <td><input type='text' style='width: 40px' value='$item->qty'></td>
