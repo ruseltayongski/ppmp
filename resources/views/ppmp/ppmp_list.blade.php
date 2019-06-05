@@ -51,7 +51,7 @@ function displayItem($item){
                 <td><input type='text' style='width: 30px' value='$item->oct'></td>
                 <td><input type='text' style='width: 30px' value='$item->nov'></td>
                 <td><input type='text' style='width: 30px' value='$item->dec'></td>
-                <td><small class='label label-primary mytooltip' data-tooltip='wew' style='font-size:7pt;cursor: pointer;'><span class='mytext'>$item->encoded_by</span>Approve</small><br></td>
+                <td class='text-center'><label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' class='flat-red' style='font-size:7pt;cursor: pointer;' checked></label></td>
             </tr>";
 }
 function expenseTotal($total){
@@ -144,6 +144,7 @@ function expenseTotal($total){
                             <th>Encoded By/Status</th>
                         </tr>
                         <?php
+                            $grand_total = 0;
                             foreach($expenses as $expense)
                             {
                                 $count_first = 0;
@@ -179,6 +180,7 @@ function expenseTotal($total){
                                             foreach($items as $item){
                                                 echo displayItem($item);
                                                 $expense_total += $item->estimated_budget;
+                                                $grand_total += $expense_total;
                                             }
                                             echo expenseTotal($expense_total);
                                         } //display if first have value
@@ -190,6 +192,7 @@ function expenseTotal($total){
                                             foreach($items as $item){
                                                 echo displayItem($item);
                                                 $expense_total += $item->estimated_budget;
+                                                $grand_total += $expense_total;
                                             }
                                             if($expense_total != 0)
                                                 echo expenseTotal($expense_total);
@@ -204,6 +207,7 @@ function expenseTotal($total){
                                     foreach($items as $item){
                                         echo displayItem($item);
                                         $expense_total += $item->estimated_budget;
+                                        $grand_total += $expense_total;
                                     }
                                     if($expense_total != 0)
                                         echo expenseTotal($expense_total);
@@ -302,6 +306,31 @@ function expenseTotal($total){
             </div>
         </div>
     </div>
+    <footer id="footer">
+        <div class="container">
+            <div class="col-md-6">
+                <button class="btn btn-app" type="submit">
+                    <i class="fa fa-save"></i> Save
+                </button>
+                <a href="{{ url('FPDF/print/report.php') }}" target="_blank" class="btn btn-app">
+                    <i class="fa fa-file-pdf-o"></i> Generate PDF
+                </a>
+                <a class="btn btn-app">
+                    <span class="badge bg-blue">{{ count($all_item) }}</span>
+                    <i class="fa fa-object-group"></i> Items
+                </a>
+                <a class="btn btn-app">
+                    <span class="badge bg-green">{{ $encoded }}</span>
+                    <i class="fa fa-keyboard-o"></i> Encoded
+                </a>
+            </div>
+            <div class="col-md-6" >
+                <h1>
+                    Grand Total: <span class="badge bg-red" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ $grand_total }}</span>
+                </h1>
+            </div>
+        </div>
+    </footer>
 @endsection
 
 @section('js')
@@ -334,6 +363,12 @@ function expenseTotal($total){
                     delay: 0,
                     source: item_filter
                 });
+            })
+
+            //Flat red color scheme for iCheck
+            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+                checkboxClass: 'icheckbox_flat-green',
+                radioClass   : 'iradio_flat-green'
             })
         });
     </script>

@@ -17,12 +17,6 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/dist/css/skins/_all-skins.min.css') }}">
-    @if(isset(Request::segments()[1]))
-        @if(Request::segments()[0].'/'.Request::segments()[1] == 'admin/home' || Request::segments()[0].'/'.Request::segments()[1] == 'user/home')
-            <!-- Morris chart -->
-                <link rel="stylesheet" href="{{ asset('public/adminLTE/bower_components/morris.js/morris.css') }}">
-        @endif
-    @endif
     <!-- jvectormap -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/bower_components/jvectormap/jquery-jvectormap.css') }}">
     <!-- Date Picker -->
@@ -33,6 +27,8 @@
     <link rel="stylesheet" href="{{ asset('public/adminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
     <!-- lobibox -->
     <link rel="stylesheet" type="text/css" href="{{ asset('public/plugin/Lobibox new/css/lobibox.css') }}" />
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="{{ asset('public/adminLTE/plugins/iCheck/all.css') }}">
 
     <!-- Google Font -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/google.css') }}">
@@ -104,39 +100,7 @@
 
     <!-- /.content-wrapper -->
 
-    @if(Request::segments()[0].'/'.Request::segments()[1] == 'ppmp/list')
-        <footer id="footer">
-            <div class="container">
-                <a class="btn btn-app">
-                    <i class="fa fa-edit"></i> Edit
-                </a>
-                <a class="btn btn-app">
-                    <i class="fa fa-play"></i> Play
-                </a>
-                <a class="btn btn-app">
-                    <i class="fa fa-repeat"></i> Repeat
-                </a>
-                <a class="btn btn-app">
-                    <i class="fa fa-pause"></i> Pause
-                </a>
-                <button class="btn btn-app" type="submit">
-                    <i class="fa fa-save"></i> Save
-                </button>
-                <a class="btn btn-app">
-                    <span class="badge bg-yellow">3</span>
-                    <i class="fa fa-bullhorn"></i> Notifications
-                </a>
-                <a class="btn btn-app">
-                    <span class="badge bg-green">300</span>
-                    <i class="fa fa-barcode"></i> Products
-                </a>
-                <a class="btn btn-app">
-                    <span class="badge bg-purple">891</span>
-                    <i class="fa fa-users"></i> Users
-                </a>
-            </div>
-        </footer>
-    @else
+    @if(Request::segments()[0].'/'.Request::segments()[1] != 'ppmp/list')
         <footer id="footer">
             <div class="container">
                 <b>Version</b> 2.0
@@ -161,27 +125,16 @@
     <script src="{{ asset('public/adminLTE/dist/js/adminlte.min.js') }}"></script>
     @if(isset(Request::segments()[1]))
         @if(Request::segments()[0].'/'.Request::segments()[1] == 'admin/home' || Request::segments()[0].'/'.Request::segments()[1] == 'user/home')
-            <!-- Morris.js charts -->
-            <script src="{{ asset('public/adminLTE/bower_components/raphael/raphael.min.js') }}"></script>
-            <script src="{{ asset('public/adminLTE/bower_components/morris.js/morris.min.js') }}"></script>
-            <!-- Sparkline -->
-            <script src="{{ asset('public/adminLTE/bower_components/jquery-sparkline/dist/jquery.sparkline.min.js') }}"></script>
-            <!-- jvectormap -->
-            <script src="{{ asset('public/adminLTE/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js') }}"></script>
-            <script src="{{ asset('public/adminLTE/plugins/jvectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
-            <!-- jQuery Knob Chart -->
-            <script src="{{ asset('public/adminLTE/bower_components/jquery-knob/dist/jquery.knob.min.js') }}"></script>
-            <!-- daterangepicker -->
-            <script src="{{ asset('public/adminLTE/bower_components/moment/min/moment.min.js') }}"></script>
-            <script src="{{ asset('public/adminLTE/bower_components/bootstrap-daterangepicker/daterangepicker.js') }}"></script>
-            <!-- datepicker -->
-            <script src="{{ asset('public/adminLTE/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-            <!-- Bootstrap WYSIHTML5 -->
-            <script src="{{ asset('public/adminLTE/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
-            <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-            <script src="{{ asset('public/adminLTE/dist/js/pages/dashboard.js') }}"></script>
             <!-- AdminLTE for demo purposes -->
             <script src="{{ asset('public/adminLTE/dist/js/demo.js') }}"></script>
+            <!-- FLOT CHARTS -->
+            <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.js') }}"></script>
+            <!-- FLOT RESIZE PLUGIN - allows the chart to redraw when the window is resized -->
+            <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.resize.js') }}"></script>
+            <!-- FLOT PIE PLUGIN - also used to draw donut charts -->
+            <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.pie.js') }}"></script>
+            <!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
+            <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.categories.js') }}"></script>
         @endif
     @endif
     <!-- lobibox -->
@@ -193,6 +146,8 @@
     <!-- page specific plugin scripts -->
     <script src="{{ asset('public/assets/js/jquery-ui.min.js') }}"></script>
     @endif
+    <!-- iCheck 1.0.1 -->
+    <script src="{{ asset('public/adminLTE/plugins/iCheck/icheck.min.js') }}"></script>
 
 
     @section('js')

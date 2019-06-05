@@ -4,6 +4,7 @@
 @extends('layouts.app')
 
 @section('content')
+    <title>Dashboard</title>
     <div class="col-md-9">
         <div class="box">
             <!-- Main content -->
@@ -13,167 +14,31 @@
                     <!-- Content Header (Page header) -->
                     <section class="content-header">
                         <h1>
-                            SA # 9999999999
+                            <i class="fa fa-bar-chart-o"></i> Bar Chart
                             <small>DOH-99999</small>
-                            <span data-toggle="tooltip" title="{{ $test }}" data-html="true" data-content="{{ $test }}" class="badge bg-yellow">3</span>
                         </h1>
                         <ol class="breadcrumb">
                             <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
                             <li class="active">Dashboard</li>
                         </ol>
-                    </section><br>
-                    <div class="col-lg-6 col-xs-6">
-                        <!-- small box -->
-                        <div class="small-box bg-aqua">
-                            <div class="inner">
-                                <h3>1000000</h3>
-
-                                <p>Beginning Balance</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-6 col-xs-6">
-                        <!-- small box -->
-                        <div class="small-box bg-green">
-                            <div class="inner">
-                                <h3>1000000</h3>
-
-                                <p>Remaining Balance</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                </div>
-                <div class="row">
-                    <!-- Content Header (Page header) -->
-                    <section class="content-header">
-                        <h1>
-                            SA # 9999999999
-                            <small>DOH-99999</small>
-                        </h1>
-                    </section><br>
-                    <div class="col-lg-6 col-xs-6">
-                        <!-- small box -->
-                        <div class="small-box bg-yellow">
-                            <div class="inner">
-                                <h3>1000000</h3>
-
-                                <p>Beginning Balance</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                    <div class="col-lg-6 col-xs-6">
-                        <!-- small box -->
-                        <div class="small-box bg-red">
-                            <div class="inner">
-                                <h3>1000000</h3>
-
-                                <p>Remaining Balance</p>
-                            </div>
-                            <div class="icon">
-                                <i class="ion ion-stats-bars"></i>
-                            </div>
-                            <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                        </div>
-                    </div>
-                    <!-- ./col -->
-                </div>
-            </section>
-
-            <!-- Main content -->
-            <section class="content">
-                <!-- Main row -->
-                <div class="row">
-                    <!-- Left col -->
-                    <section class="col-lg-12 connectedSortable">
-                        <!-- Custom tabs (Charts with tabs)-->
-                        <div class="nav-tabs-custom">
-                            <!-- Tabs within a box -->
-                            <ul class="nav nav-tabs pull-right">
-                                <li class="active"><a href="#revenue-chart" data-toggle="tab">Area</a></li>
-                                <li><a href="#sales-chart" data-toggle="tab">Donut</a></li>
-                                <li class="pull-left header"><i class="fa fa-inbox"></i> Sales</li>
-                            </ul>
-                            <div class="tab-content no-padding">
-                                <!-- Morris chart - Sales -->
-                                <div class="chart tab-pane active" id="revenue-chart" style="position: relative; height: 300px;"></div>
-                                <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;"></div>
-                            </div>
-                        </div>
-                        <!-- /.nav-tabs-custom -->
-
                     </section>
-
-                    <section class="col-lg-12 connectedSortable">
-
-                        <!-- solid sales graph -->
-                        <div class="box box-solid bg-teal-gradient">
-                            <div class="box-header">
-                                <i class="fa fa-th"></i>
-
-                                <h3 class="box-title">Sales Graph</h3>
-
-                                <div class="box-tools pull-right">
-                                    <button type="button" class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i>
-                                    </button>
-                                    <button type="button" class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="box-body border-radius-none">
-                                <div class="chart" id="line-chart" style="height: 250px;"></div>
-                            </div>
-                            <!-- /.box-body -->
-                            <div class="box-footer no-border">
-                                <div class="row">
-                                    <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                                        <input type="text" class="knob" data-readonly="true" value="20" data-width="60" data-height="60"
-                                               data-fgColor="#39CCCC">
-
-                                        <div class="knob-label">Mail-Orders</div>
-                                    </div>
-                                    <!-- ./col -->
-                                    <div class="col-xs-4 text-center" style="border-right: 1px solid #f4f4f4">
-                                        <input type="text" class="knob" data-readonly="true" value="50" data-width="60" data-height="60"
-                                               data-fgColor="#39CCCC">
-
-                                        <div class="knob-label">Online</div>
-                                    </div>
-                                    <!-- ./col -->
-                                    <div class="col-xs-4 text-center">
-                                        <input type="text" class="knob" data-readonly="true" value="30" data-width="60" data-height="60"
-                                               data-fgColor="#39CCCC">
-
-                                        <div class="knob-label">In-Store</div>
-                                    </div>
-                                    <!-- ./col -->
-                                </div>
-                                <!-- /.row -->
-                            </div>
-                            <!-- /.box-footer -->
-                        </div>
-                        <!-- /.box -->
-                    </section>
-
+                    <!-- Bar chart -->
+                    <div class="box-body">
+                        <div id="bar-chart" style="height: 300px;"></div>
+                    </div>
                 </div>
-                <!-- /.row (main row) -->
             </section>
         </div>
-
+        <div class="box">
+            <!-- interactive chart -->
+            <div class="box-header">
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title">Interactive Area Chart</h3>
+            </div>
+            <div class="box-body">
+                <div id="interactive" style="height: 300px;"></div>
+            </div>
+        </div>
         <!-- /.box -->
     </div>
     @include('sidebar')
@@ -187,5 +52,281 @@
             });
             <?php Session::put('status',null); ?>
         @endif
+
+            $(function () {
+                /*
+                 * Flot Interactive Chart
+                 * -----------------------
+                 */
+                // We use an inline data source in the example, usually data would
+                // be fetched from a server
+                var data = [], totalPoints = 100
+
+                function getRandomData() {
+
+                    if (data.length > 0)
+                        data = data.slice(1)
+
+                    // Do a random walk
+                    while (data.length < totalPoints) {
+
+                        var prev = data.length > 0 ? data[data.length - 1] : 50,
+                            y    = prev + Math.random() * 10 - 5
+
+                        if (y < 0) {
+                            y = 0
+                        } else if (y > 100) {
+                            y = 100
+                        }
+
+                        data.push(y)
+                    }
+
+                    // Zip the generated y values with the x values
+                    var res = []
+                    for (var i = 0; i < data.length; ++i) {
+                        res.push([i, data[i]])
+                    }
+
+                    return res
+                }
+
+                var interactive_plot = $.plot('#interactive', [getRandomData()], {
+                    grid  : {
+                        borderColor: '#f3f3f3',
+                        borderWidth: 1,
+                        tickColor  : '#f3f3f3'
+                    },
+                    series: {
+                        shadowSize: 0, // Drawing is faster without shadows
+                        color     : '#3c8dbc'
+                    },
+                    lines : {
+                        fill : true, //Converts the line chart to area chart
+                        color: '#3c8dbc'
+                    },
+                    yaxis : {
+                        min : 0,
+                        max : 100,
+                        show: true
+                    },
+                    xaxis : {
+                        show: true
+                    }
+                })
+
+                var updateInterval = 500 //Fetch data ever x milliseconds
+                var realtime       = 'on' //If == to on then fetch data every x seconds. else stop fetching
+                function update() {
+
+                    interactive_plot.setData([getRandomData()])
+
+                    // Since the axes don't change, we don't need to call plot.setupGrid()
+                    interactive_plot.draw()
+                    if (realtime === 'on')
+                        setTimeout(update, updateInterval)
+                }
+
+                //INITIALIZE REALTIME DATA FETCHING
+                if (realtime === 'on') {
+                    update()
+                }
+                //REALTIME TOGGLE
+                $('#realtime .btn').click(function () {
+                    if ($(this).data('toggle') === 'on') {
+                        realtime = 'on'
+                    }
+                    else {
+                        realtime = 'off'
+                    }
+                    update()
+                })
+                /*
+                 * END INTERACTIVE CHART
+                 */
+
+                /*
+                 * LINE CHART
+                 * ----------
+                 */
+                //LINE randomly generated data
+
+                var sin = [], cos = []
+                for (var i = 0; i < 14; i += 0.5) {
+                    sin.push([i, Math.sin(i)])
+                    cos.push([i, Math.cos(i)])
+                }
+                var line_data1 = {
+                    data : sin,
+                    color: '#3c8dbc'
+                }
+                var line_data2 = {
+                    data : cos,
+                    color: '#00c0ef'
+                }
+                $.plot('#line-chart', [line_data1, line_data2], {
+                    grid  : {
+                        hoverable  : true,
+                        borderColor: '#f3f3f3',
+                        borderWidth: 1,
+                        tickColor  : '#f3f3f3'
+                    },
+                    series: {
+                        shadowSize: 0,
+                        lines     : {
+                            show: true
+                        },
+                        points    : {
+                            show: true
+                        }
+                    },
+                    lines : {
+                        fill : false,
+                        color: ['#3c8dbc', '#f56954']
+                    },
+                    yaxis : {
+                        show: true
+                    },
+                    xaxis : {
+                        show: true
+                    }
+                })
+                //Initialize tooltip on hover
+                $('<div class="tooltip-inner" id="line-chart-tooltip"></div>').css({
+                    position: 'absolute',
+                    display : 'none',
+                    opacity : 0.8
+                }).appendTo('body')
+                $('#line-chart').bind('plothover', function (event, pos, item) {
+
+                    if (item) {
+                        var x = item.datapoint[0].toFixed(2),
+                            y = item.datapoint[1].toFixed(2)
+
+                        $('#line-chart-tooltip').html(item.series.label + ' of ' + x + ' = ' + y)
+                            .css({ top: item.pageY + 5, left: item.pageX + 5 })
+                            .fadeIn(200)
+                    } else {
+                        $('#line-chart-tooltip').hide()
+                    }
+
+                })
+                /* END LINE CHART */
+
+                /*
+                 * FULL WIDTH STATIC AREA CHART
+                 * -----------------
+                 */
+                var areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
+                    [8, 124.6], [9, 130.3], [10, 134.3], [11, 141.4], [12, 146.5], [13, 151.7], [14, 159.9],
+                    [15, 165.4], [16, 167.8], [17, 168.7], [18, 169.5], [19, 168.0]]
+                $.plot('#area-chart', [areaData], {
+                    grid  : {
+                        borderWidth: 0
+                    },
+                    series: {
+                        shadowSize: 0, // Drawing is faster without shadows
+                        color     : '#00c0ef'
+                    },
+                    lines : {
+                        fill: true //Converts the line chart to area chart
+                    },
+                    yaxis : {
+                        show: false
+                    },
+                    xaxis : {
+                        show: false
+                    }
+                })
+
+                /* END AREA CHART */
+
+                /*
+                 * BAR CHART
+                 * ---------
+                 */
+
+                var bar_data = {
+                    data : [
+                            ['Jan', "<?php echo $item_qty->jan ?>"],
+                            ['Feb', "<?php echo $item_qty->feb ?>"],
+                            ['Mar', "<?php echo $item_qty->mar ?>"],
+                            ['Apr', "<?php echo $item_qty->apr ?>"],
+                            ['May', "<?php echo $item_qty->may ?>"],
+                            ['Jun', "<?php echo $item_qty->jun ?>"],
+                            ['Jul', "<?php echo $item_qty->jul ?>"],
+                            ['Aug', "<?php echo $item_qty->aug ?>"],
+                            ['Sep', "<?php echo $item_qty->sep ?>"],
+                            ['Oct', "<?php echo $item_qty->oct ?>"],
+                            ['Nov', "<?php echo $item_qty->nov ?>"],
+                            ['Dec', "<?php echo $item_qty->dece ?>"]
+                            ],
+                    color: '#00CC99'
+                }
+                $.plot('#bar-chart', [bar_data], {
+                    grid  : {
+                        borderWidth: 1,
+                        borderColor: '#f3f3f3',
+                        tickColor  : '#f3f3f3'
+                    },
+                    series: {
+                        bars: {
+                            show    : true,
+                            barWidth: 0.5,
+                            align   : 'center'
+                        }
+                    },
+                    xaxis : {
+                        mode      : 'categories',
+                        tickLength: 0
+                    }
+                })
+                /* END BAR CHART */
+
+                /*
+                 * DONUT CHART
+                 * -----------
+                 */
+
+                var donutData = [
+                    { label: 'Series2', data: 30, color: '#3c8dbc' },
+                    { label: 'Series3', data: 20, color: '#0073b7' },
+                    { label: 'Series4', data: 50, color: '#00c0ef' }
+                ]
+                $.plot('#donut-chart', donutData, {
+                    series: {
+                        pie: {
+                            show       : true,
+                            radius     : 1,
+                            innerRadius: 0.5,
+                            label      : {
+                                show     : true,
+                                radius   : 2 / 3,
+                                formatter: labelFormatter,
+                                threshold: 0.1
+                            }
+
+                        }
+                    },
+                    legend: {
+                        show: false
+                    }
+                })
+                /*
+                 * END DONUT CHART
+                 */
+
+            })
+
+        /*
+         * Custom Label formatter
+         * ----------------------
+         */
+        function labelFormatter(label, series) {
+            return '<div style="font-size:13px; text-align:center; padding:2px; color: #fff; font-weight: 600;">'
+                + label
+                + '<br>'
+                + Math.round(series.percent) + '%</div>'
+        }
     </script>
 @endsection

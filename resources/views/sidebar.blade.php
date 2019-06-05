@@ -1,63 +1,89 @@
-    <div class="col-md-3">
-        <div class="box box-success box-solid">
-            <div class="box-header with-border">
-                <h3 class="box-title">Welcome</h3>
+<div class="col-md-3">
+    <!-- Profile Image -->
+    <div class="box box-success">
+        <div class="box-body box-profile">
+            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmp','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" alt="User profile picture">
+
+            <h3 class="profile-username text-center">{{ strtoupper($information->fname.' '.$information->lname) }}</h3>
+
+            <p class="text-muted text-center">{{ $information->section }}</p>
+
+        </div>
+        <!-- /.box-body -->
+    </div>
+    <!-- /.box -->
+
+    <!-- About Me Box -->
+    <div class="box">
+        <div style="padding: 2%">
+            <div class="info-box bg-yellow">
+                <span class="info-box-icon"><i class="ion ion-ios-pricetag-outline"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Inventory</span>
+                    <span class="info-box-number">5,200</span>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 50%"></div>
+                    </div>
+                    <span class="progress-description">
+                    50% Increase in 30 Days
+                  </span>
+                </div>
+                <!-- /.info-box-content -->
             </div>
-            <div class="panel-body">
-                <div class="form-group">
-                    <label>Account Name</label>
-                    <input type="text" readonly class="form-control" value="{{ strtoupper(Auth::user()->lname.', '.Auth::user()->fname) }}" />
-                </div>
+            <!-- /.info-box -->
+            <div class="info-box bg-green">
+                <span class="info-box-icon"><i class="ion ion-ios-heart-outline"></i></span>
 
-                <div class="form-group">
-                    <label>Division</label>
-                    <input type="text" readonly class="form-control" value="MSD" />
-                </div>
+                <div class="info-box-content">
+                    <span class="info-box-text">Mentions</span>
+                    <span class="info-box-number">92,050</span>
 
-                <div class="form-group">
-                    <label>Section</label>
-                    <input type="text" readonly class="form-control" value="ICTU" />
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 20%"></div>
+                    </div>
+                    <span class="progress-description">
+                    20% Increase in 30 Days
+                  </span>
                 </div>
-                <div class="form-group">
-                    <a href="{{ asset('logout') }}" class="btn btn-success col-xs-12"><i class="fa fa-sign-out"></i> Logout</a>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+            <div class="info-box bg-red">
+                <span class="info-box-icon"><i class="ion ion-ios-cloud-download-outline"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Downloads</span>
+                    <span class="info-box-number">114,381</span>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 70%"></div>
+                    </div>
+                    <span class="progress-description">
+                    70% Increase in 30 Days
+                  </span>
                 </div>
+                <!-- /.info-box-content -->
+            </div>
+            <!-- /.info-box -->
+            <div class="info-box bg-aqua">
+                <span class="info-box-icon"><i class="ion-ios-chatbubble-outline"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Direct Messages</span>
+                    <span class="info-box-number">163,921</span>
+
+                    <div class="progress">
+                        <div class="progress-bar" style="width: 40%"></div>
+                    </div>
+                    <span class="progress-description">
+                    40% Increase in 30 Days
+                  </span>
+                </div>
+                <!-- /.info-box-content -->
             </div>
         </div>
     </div>
-
-    <div class="col-md-3">
-        <div class="box box-success box-solid">
-            <div class="box-header with-border">
-                <h3 class="box-title">Other Links</h3>
-            </div>
-            <div class="panel-body">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <a href="#" class="btn btn-warning col-xs-12">
-                            <i class="fa fa-briefcase"></i> Manage PPMP
-                        </a>
-                        <div class="clearfix"></div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#feedback" data-toggle="modal" class="btn btn-info col-xs-12">
-                            <i class="fa fa-envelope-o"></i> Send Us a Feedback
-                        </a>
-                        <div class="clearfix"></div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#" class="btn btn-success col-xs-12">
-                            <i class="fa fa-video-camera"></i> Video Tutorial
-                        </a>
-                        <div class="clearfix"></div>
-                    </li>
-                </ul>
-                <div class="form-group" style="margin-top:10px;">
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-
-
+    <!-- /.box -->
+</div>
