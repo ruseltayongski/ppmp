@@ -27,6 +27,7 @@ Route::get('user/privileged','MaintenanceController@userPrivileged');
 //ppmp
 Route::get('ppmp/list','PpmpController@index');
 Route::post('ppmp/import','ExcelController@importItem');
+Route::post('ppmp/update','PpmpController@ppmpUpdate');
 //charge
 Route::get('charge/default','ChargeController@chargeDefault');
 Route::post('charge/add','ChargeController@chargeAdd');

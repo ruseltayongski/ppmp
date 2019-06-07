@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Expense;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
+use App\ModeProcurement;
 
 class PpmpController extends Controller
 {
@@ -15,10 +17,50 @@ class PpmpController extends Controller
         $expenses = Expense::get();
         $all_item = Item::get();
         $encoded = Item::where('userid','=',Auth::user()->username)->count();
+        $mode_procurement = ModeProcurement::get();
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
-            "encoded" => $encoded
+            "encoded" => $encoded,
+            "mode_procurement" => $mode_procurement
         ]);
     }
+
+    public function ppmpUpdate(Request $request){
+        foreach($request->get('item_id') as $value){
+            if($request->get('status'.$value)){
+                $status = 'approve';
+            } else {
+                $status = 'pending';
+            }
+            Item::updateOrCreate(
+                ['id'=>$value],
+                [
+                    'description' => $request->get('description'.$value),
+                    'unit_measurement' => $request->get('unit_measurement'.$value),
+                    'qty' => $request->get('qty'.$value),
+                    'unit_cost' => $request->get('unit_cost'.$value),
+                    'estimated_budget' => $request->get('estimated_budget'.$value),
+                    'mode_procurement' => $request->get('mode_procurement'.$value),
+                    'jan' => $request->get('jan'.$value),
+                    'feb' => $request->get('feb'.$value),
+                    'mar' => $request->get('mar'.$value),
+                    'apr' => $request->get('apr'.$value),
+                    'may' => $request->get('may'.$value),
+                    'jun' => $request->get('jun'.$value),
+                    'jul' => $request->get('jul'.$value),
+                    'aug' => $request->get('aug'.$value),
+                    'sep' => $request->get('sep'.$value),
+                    'oct' => $request->get('aug'.$value),
+                    'nov' => $request->get('aug'.$value),
+                    'dec' => $request->get('dec'.$value),
+                    'status' => $status
+                ]
+            );
+
+        }
+
+        return Redirect::back();
+    }
+
 }
