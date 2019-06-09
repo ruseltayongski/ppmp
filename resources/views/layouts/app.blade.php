@@ -123,13 +123,17 @@
                 <strong class="title-info">Welcome,</strong> <strong class="title-desc">{{ strtoupper(Auth::user()->lname.', '.Auth::user()->fname) }}</strong>
             </div>
             <div class="col-md-4">
-                <strong class="title-info">Section:</strong>
-                <strong class="title-desc">
-                {{ \App\Section::find(Auth::user()->section)->description }}
-                </strong>
+                <center>
+                    <strong class="title-info">Section:</strong>
+                    <strong class="title-desc">
+                    {{ \App\Section::find(Auth::user()->section)->description }}
+                    </strong>
+                </center>
             </div>
             <div class="col-md-4">
-                <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }}</strong>
+                <div class="pull-right">
+                    <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }}</strong>
+                </div>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -490,6 +494,15 @@
                     + Math.round(series.percent) + '%</div>'
             }
 
+            @endif
+
+            @if(session()->has('success'))
+            Lobibox.notify('success', {
+                title: '',
+                msg: "<?php echo session()->get('success'); ?>",
+                size: 'mini',
+                rounded: true
+            });
             @endif
 
         },100);

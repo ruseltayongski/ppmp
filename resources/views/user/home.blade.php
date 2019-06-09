@@ -6,7 +6,7 @@
 @section('content')
     <title>Dashboard</title>
     <div class="col-md-9">
-        <div class="box">
+        <div class="box box-primary">
             <!-- Main content -->
             <section class="content">
                 <!-- Small boxes (Stat box) -->
@@ -29,7 +29,7 @@
                 </div>
             </section>
         </div>
-        <div class="box">
+        <div class="box box-primary">
             <!-- interactive chart -->
             <div class="box-header">
                 <i class="fa fa-bar-chart-o"></i>
@@ -41,7 +41,7 @@
         </div>
         <!-- /.box -->
     </div>
-    @include('sidebar')
+    @include('user.user_sidebar')
 @endsection
 
 @section('js')

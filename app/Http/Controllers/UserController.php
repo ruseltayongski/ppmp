@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\PisUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Charge;
 
 class UserController extends Controller
 {
@@ -32,6 +33,7 @@ class UserController extends Controller
                         DB::raw("sum(item.oct) as oct"),
                         DB::raw("sum(item.nov) as nov"),
                         DB::raw("sum(item.dec) as dece"))->first();
+
         return view('user.home',[
             "information" => $information,
             "item_qty" => $item_qty

@@ -5,7 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
-use App\Saa;
+use App\Charge;
+use Illuminate\Support\Facades\Session;
 
 class UserPriv
 {
@@ -18,8 +19,9 @@ class UserPriv
      */
     public function handle($request, Closure $next){
         if(!Auth::user()->user_priv){
-            $saa = Saa::where('section','=',Auth::user()->section)->first();
-            if($saa){
+            $charge_to = Charge::where('section','=',Auth::user()->section)->get();
+            if(isset($charge_to)){
+                Session::put('charge_to',$charge_to);
                 return $next($request);
             } else {
                 return Redirect::to('charge/default');

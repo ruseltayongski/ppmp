@@ -10,19 +10,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use App\ModeProcurement;
+use App\Charge;
 
 class PpmpController extends Controller
 {
-    public function index(){
+    public function index($id){
         $expenses = Expense::get();
         $all_item = Item::get();
         $encoded = Item::where('userid','=',Auth::user()->username)->count();
         $mode_procurement = ModeProcurement::get();
+        $charge_to = Charge::where('id','=',$id)->get();
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
             "encoded" => $encoded,
-            "mode_procurement" => $mode_procurement
+            "mode_procurement" => $mode_procurement,
+            "charge_to" => $charge_to
         ]);
     }
 
@@ -36,6 +39,9 @@ class PpmpController extends Controller
             Item::updateOrCreate(
                 ['id'=>$value],
                 [
+                    'userid' => $request->get('userid'.$value),
+                    'expense_id' => $request->get('expense_id'.$value),
+                    'tranche' => $request->get('tranche'.$value),
                     'description' => $request->get('description'.$value),
                     'unit_measurement' => $request->get('unit_measurement'.$value),
                     'qty' => $request->get('qty'.$value),
@@ -60,7 +66,12 @@ class PpmpController extends Controller
 
         }
 
-        return Redirect::back();
+        return Redirect::back()->with('success', 'Successfully updated item!');
+    }
+
+    public function ppmpDelete(Request $request){
+        Item::find($request->id)->delete();
+        return 'Successfully Delete!';
     }
 
 }

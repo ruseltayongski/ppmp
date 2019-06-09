@@ -41,32 +41,124 @@ function displayItem($item,$mode_procurement){
     if($item->status == 'approve'){
         $checked = 'checked';
     }
-    return "<tr>
+    return "<tr class='$item->id'>
                 <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
-                <td>".$item->code."</td>
-                <td width='35%'>"
-                ."<div style='padding-left: 10%'>"."<input type='text' id='no-border' name='description$item->id' style='width: 100%' value='$item->description' id='item_description$item->id' class='item-description' >"."</div>".
+                <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
+                <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
+                <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
+                <td><div class='tooltip_top'>".$item->code."<span class='tooltiptext'>Code</span></div></td>
+                <td width='35%'>".
+                    "<div class='tooltip_top' style='width: 100%;'>".
+                    "<div style='padding-left: 10%' >"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='no-border' class='item-description' >"."</div>".
+                    "<span class='tooltiptext'>Item Description</span>
+                    </div>".
                 "</td>
-                <td><input type='text' id='no-border' name='unit_measurement$item->id' style='width: 40px' value='$item->unit_measurement'></td>
-                <td><input type='text' id='no-border' name='qty$item->id' style='width: 40px' value='$item->qty' readonly></td>
-                <td><input type='text' id='no-border' name='unit_cost$item->id' style='width: 50px' value='$item->unit_cost'></td>
-                <td><input type='text' id='no-border' name='estimated_budget$item->id' style='width: 60px' value='$item->estimated_budget' readonly></td>
                 <td>
-                    $mode_procurement_display
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='unit_measurement$item->id' style='width: 40px' value='$item->unit_measurement'>
+                    <span class='tooltiptext'>Unit Measurement</span>
+                    </div>
                 </td>
-                <td><input type='text' id='no-border' name='jan$item->id' style='width: 30px' value='$item->jan'></td>
-                <td><input type='text' id='no-border' name='feb$item->id' style='width: 30px' value='$item->feb'></td>
-                <td><input type='text' id='no-border' name='mar$item->id' style='width: 30px' value='$item->mar'></td>
-                <td><input type='text' id='no-border' name='apr$item->id' style='width: 30px' value='$item->apr'></td>
-                <td><input type='text' id='no-border' name='may$item->id' style='width: 30px' value='$item->may'></td>
-                <td><input type='text' id='no-border' name='jun$item->id' style='width: 30px' value='$item->jun'></td>
-                <td><input type='text' id='no-border' name='jul$item->id' style='width: 30px' value='$item->jul'></td>
-                <td><input type='text' id='no-border' name='aug$item->id' style='width: 30px' value='$item->aug'></td>
-                <td><input type='text' id='no-border' name='sep$item->id' style='width: 30px' value='$item->sep'></td>
-                <td><input type='text' id='no-border' name='oct$item->id' style='width: 30px' value='$item->oct'></td>
-                <td><input type='text' id='no-border' name='nov$item->id' style='width: 30px' value='$item->nov'></td>
-                <td><input type='text' id='no-border' name='dec$item->id' style='width: 30px' value='$item->dec'></td>
-                <td class='text-center'><label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label></td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='qty$item->id' style='width: 40px' value='$item->qty' readonly>
+                    <span class='tooltiptext'>Quantity</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='unit_cost$item->id' style='width: 50px' value='$item->unit_cost'>
+                    <span class='tooltiptext'>Unit Cost</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='estimated_budget$item->id' style='width: 60px' value='$item->estimated_budget' readonly>
+                    <span class='tooltiptext'>Estimated Budget</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    $mode_procurement_display
+                    <span class='tooltiptext'>Mode of Procurement</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='jan$item->id' style='width: 30px' value='$item->jan'>
+                    <span class='tooltiptext'>January</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='feb$item->id' style='width: 30px' value='$item->feb'>
+                    <span class='tooltiptext'>February</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='mar$item->id' style='width: 30px' value='$item->mar'>
+                    <span class='tooltiptext'>March</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='apr$item->id' style='width: 30px' value='$item->apr'>
+                    <span class='tooltiptext'>April</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='may$item->id' style='width: 30px' value='$item->may'>
+                    <span class='tooltiptext'>May</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='jun$item->id' style='width: 30px' value='$item->jun'>
+                    <span class='tooltiptext'>June</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='jul$item->id' style='width: 30px' value='$item->jul'>
+                    <span class='tooltiptext'>July</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='aug$item->id' style='width: 30px' value='$item->aug'>
+                    <span class='tooltiptext'>August</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='sep$item->id' style='width: 30px' value='$item->sep'>
+                    <span class='tooltiptext'>September</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='oct$item->id' style='width: 30px' value='$item->oct'>
+                    <span class='tooltiptext'>October</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='nov$item->id' style='width: 30px' value='$item->nov'>
+                    <span class='tooltiptext'>November</span>
+                    </div>
+                </td>
+                <td>
+                    <div class='tooltip_top' style='width: 100%;'>
+                    <input type='text' id='no-border' name='dec$item->id' style='width: 30px' value='$item->dec'>
+                    <span class='tooltiptext'>December</span>
+                    </div>
+                </td>
+                <td class='text-center'>
+                    <label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label>
+                    <span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>
+                </td>
             </tr>";
 }
 function expenseTotal($total){
@@ -78,10 +170,10 @@ function expenseTotal($total){
             </td>
         </tr>";
 }
-function addItem($expense_title,$expense,$tranche){
+function addItem($expense_title,$expense,$tranche,$expense_description){
     return "<tr>
         <td colspan='20'>
-            <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
+            <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
         </td>
     </tr>";
 }
@@ -124,14 +216,40 @@ function addItem($expense_title,$expense,$tranche){
             border: none;
         }
 
+        /* TOOLTIP TOP */
+        .tooltip_top {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip_top .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #00CC99;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px;
+        }
+
+        .tooltip_top:hover .tooltiptext {
+            visibility: visible;
+        }
 
     </style>
     <title>PPMP|LIST</title>
-    <form action="{{ asset('ppmp/update') }}" method="POST">
+    <form action="{{ asset('ppmp/update') }}" method="POST" class="item_submit">
         {{ csrf_field() }}
         <div class="row" style="margin-bottom: 60px;">
             <div class="col-md-10">
-                <div class="box">
+                <div class="box box-primary">
                     <div class="box-header">
                         <h3 class="box-title">PPMP</h3>
                         <div class="box-tools">
@@ -212,7 +330,7 @@ function addItem($expense_title,$expense,$tranche){
                                                     $grand_total += $expense_total;
                                                 }
                                                 echo "</tbody>";
-                                                echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$display_second),$expense->id,$tranche);
+                                                echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                                 echo expenseTotal($expense_total);
                                             } //display if first have value
                                             if(!isset($flag[$display_first])){
@@ -257,92 +375,25 @@ function addItem($expense_title,$expense,$tranche){
                 </div>
                 <!-- /.box -->
             </div>
+
             <div class="col-md-2">
-                <div class="box">
-                    <section class="content">
-                        <!-- Small boxes (Stat box) -->
-                        <div class="row">
-                            <!-- Content Header (Page header) -->
-                            <section class="content-header">
-                                <h1>
-                                    SAA # 9999999999
-                                    <small>DOH-99999</small>
-                                </h1>
-                            </section><br>
-                            <div class="col-lg-12 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-aqua">
-                                    <div class="inner">
-                                        <h3>1000000</h3>
-
-                                        <p>Beginning Balance</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-stats-bars"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-12 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-green">
-                                    <div class="inner">
-                                        <h3>1000000</h3>
-
-                                        <p>Remaining Balance</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-stats-bars"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">SA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                        </div>
-                        <div class="row">
-                            <!-- Content Header (Page header) -->
-                            <section class="content-header">
-                                <h1>
-                                    SAA # 9999999999
-                                    <small>DOH-99999</small>
-                                </h1>
-                            </section><br>
-                            <div class="col-lg-12 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-yellow">
-                                    <div class="inner">
-                                        <h3>1000000</h3>
-
-                                        <p>Beginning Balance</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-stats-bars"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">SAA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                            <div class="col-lg-12 col-xs-6">
-                                <!-- small box -->
-                                <div class="small-box bg-red">
-                                    <div class="inner">
-                                        <h3>1000000</h3>
-
-                                        <p>Remaining Balance</p>
-                                    </div>
-                                    <div class="icon">
-                                        <i class="ion ion-stats-bars"></i>
-                                    </div>
-                                    <a href="#" class="small-box-footer">SAA # 9999999999 <i class="fa fa-arrow-circle-right"></i></a>
-                                </div>
-                            </div>
-                            <!-- ./col -->
-                        </div>
-                    </section>
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Budget Allotment</h3>
+                    </div>
+                    <!-- /.box-header -->
+                    <div class="box-body">
+                        @foreach($charge_to as $charge)
+                            <strong><i class="fa fa-paypal margin-r-5"></i> {{ $charge->description }}</strong><br>
+                            Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span>
+                            Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{ $charge->remaining_balance }}</span>
+                        @endforeach
+                    </div>
+                    <!-- /.box-body -->
                 </div>
             </div>
         </div>
+
         <footer id="footer">
             <div class="container">
                 <div class="col-md-6">
@@ -376,93 +427,194 @@ function addItem($expense_title,$expense,$tranche){
 
     <!-- inline scripts related to this page -->
     <script type="text/javascript">
+        //Flat red color scheme for iCheck
+        $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass   : 'iradio_flat-green'
+        });
+
+        //custom autocomplete (category selection)
+        $.widget( "custom.catcomplete", $.ui.autocomplete, {
+            _create: function() {
+                this._super();
+                this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+            },
+            _renderMenu: function( ul, items ) {
+                var that = this,
+                    currentCategory = "";
+                $.each( items, function( index, item ) {
+                    that._renderItemData( ul, item );
+                    return index < 10;
+                });
+            }
+        });
+
+        var item_filter = [];
+        $.each(<?php echo $all_item; ?>,function(x,data){
+            item_filter.push({ label:data.description, id:data.id });
+        });
+        $(".item-description").catcomplete({
+            delay: 0,
+            source: item_filter
+        });
+
+        $('.item_submit').submit(function(e){
+            var item_array = [];
+            var count = 0;
+            $(".item_submit :input.item-description").each(function(){
+                var input = $(this).val(); // This is the jquery object of the input, do what you will
+                item_array[count] = input;
+                count++;
+            });
+            var sorted_arr = item_array.slice().sort();
+            var results = [];
+            for (var i = 0; i < sorted_arr.length - 1; i++) {
+                if (sorted_arr[i + 1] == sorted_arr[i]) {
+                    results.push(sorted_arr[i]);
+                }
+            }
+            console.log(results);
+            Lobibox.alert('success',
+                {
+                    title: "Checker",
+                    msg: results+" was duplicate"
+                });
+            e.preventDefault();
+        });
 
         function uuidv4() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
+                return v.toString(16).charCodeAt(0);
             });
         }
 
         function addItem(element){
+            var id = element.data('id');
             var expense = element.data('expense');
+            var expense_description = element.data('expense_description');
             var tranche = element.data('tranche');
-            var item_unique_row = uuidv4()+"<?php echo Auth::user()->userid; ?>";
-            console.log(item_unique_row);
+            var userid = "<?php echo Auth::user()->username; ?>";
+            var item_unique_row = uuidv4()+userid;
 
-            var mode_procurement = <?php echo $mode_procurement; ?>;
-            var mode_procurement_display = "<select name='estimated_budget"+item_unique_row+"' style='width: 100%'>";
-            $.each(mode_procurement,function(x,y){
-                mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
-            });
-            mode_procurement_display += "</select>";
+            Lobibox.confirm({
+                title: 'Confirmation',
+                msg: "Are you sure you want to add in "+expense_description+" ?",
+                callback: function ($this, type, ev) {
+                    if(type == 'yes'){
+                        var mode_procurement = <?php echo $mode_procurement; ?>;
+                        var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
+                        mode_procurement_display += "<option value=''></option>";
+                        $.each(mode_procurement,function(x,y){
+                            mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
+                        });
+                        mode_procurement_display += "</select>";
 
-            var new_row = "<tr>" +
-                "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
-                "<input type='hidden' name='unit_measurement"+item_unique_row+"' value='"+expense+"' ></td>" +
-                "<input type='hidden' name='unit_measurement"+item_unique_row+"' value='"+tranche+"' ></td>" +
-                "<td ></td>" +
-                "<td width='35%' style='padding-left: 3.8%'><input type='text' name='description"+item_unique_row+"' style='width: 100%'></td>"+
-                "<td><input type='text' name='unit_measurement"+item_unique_row+"' style='width: 40px'></td>"+
-                "<td><input type='text' name='qty"+item_unique_row+"' style='width: 40px'></td>"+
-                "<td><input type='text' name='unit_cost"+item_unique_row+"' style='width: 50px'></td>"+
-                "<td><input type='text' name='estimated_budget"+item_unique_row+"' style='width: 60px'></td>"+
-                "<td>"+mode_procurement_display+"</td>"+
-                "<td><input type='text' name='jan"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='feb"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='mar"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='apr"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='may"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='jun"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='jul"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='aug"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='sep"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='oct"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='nov"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><input type='text' name='dec"+item_unique_row+"' style='width: 30px'></td>"+
-                "<td><span class='label label-primary'>pending</span></td>"+
-                "</tr>";
+                        var new_row = "<tr class='"+item_unique_row+"'>" +
+                            "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
+                            "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
+                            "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
+                            "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
+                            "<td ></td>" +
+                            "<td width='35%' style='padding-left: 3.2%'>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='text' class='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
+                                "<span class='tooltiptext'>Item Description</span>"+
+                                "</div>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='qty"+item_unique_row+"' style='width: 40px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='unit_cost"+item_unique_row+"' style='width: 50px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='estimated_budget"+item_unique_row+"' style='width: 60px'>" +
+                            "</td>"+
+                            "<td>"
+                                +mode_procurement_display+"" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='jan"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='feb"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='mar"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='apr"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='may"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='jun"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='jul"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='aug"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='sep"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='oct"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='nov"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td>" +
+                                "<input type='text' name='dec"+item_unique_row+"' style='width: 30px'>" +
+                            "</td>"+
+                            "<td><span class='label label-primary'>pending</span>" +
+                            "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>" +
+                            "</td>"+
+                            "</tr>";
 
-            var element = $("#"+expense_title.val());
-            element.append(new_row);
-        }
+                        $("#"+id).append(new_row);
+                        $(".item-description").catcomplete({
+                            delay: 0,
+                            source: item_filter
+                        });
 
-        jQuery(function($) {
-            //custom autocomplete (category selection)
-            $.widget( "custom.catcomplete", $.ui.autocomplete, {
-                _create: function() {
-                    this._super();
-                    this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
-                },
-                _renderMenu: function( ul, items ) {
-                    var that = this,
-                        currentCategory = "";
-                    $.each( items, function( index, item ) {
-                        that._renderItemData( ul, item );
-                        return index < 10;
-                    });
+                    }
                 }
             });
+        }
 
-            var item_filter = [];
-            $.each(<?php echo $all_item; ?>,function(x,data){
-                item_filter.push({ label:data.description, id:data.id });
+        function deleteItem(element){
+            Lobibox.confirm({
+                title: 'Confirmation',
+                msg: "Are you sure you want to delete this "+element.data('item_description')+" ?",
+                callback: function ($this, type, ev) {
+                    if(type == 'yes'){
+                        $("."+element.data('id')).remove();
+                        var url = "<?php echo asset('ppmp/delete') ?>";
+                        var json = {
+                            "id" : element.data('id'),
+                            "_token" : "<?php echo csrf_token(); ?>",
+                        };
+                        $.post(url,json,function(result){
+                           console.log(result);
+                        });
+                        Lobibox.notify('error', {
+                            title: '',
+                            msg: "Successfully Deleted!",
+                            size: 'mini',
+                            rounded: true
+                        });
+                    }
+
+                }
             });
-            $(".item-description").each(function(){
-                $("#"+this.id).catcomplete({
-                    delay: 0,
-                    source: item_filter
-                });
-            });
-
-            //Flat red color scheme for iCheck
-            $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
-                checkboxClass: 'icheckbox_flat-green',
-                radioClass   : 'iradio_flat-green'
-            });
-
-
-        });
+        }
 
     </script>
 @endsection
