@@ -52,15 +52,13 @@ $pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->SetLeftMargin(3);
 $pdf->setX(3);
-$pdf->SetFont('Arial','',10);
+$pdf->SetFont('Arial','',7);
 $pdf->SetWidths(array(290));
 $pdf->Row(array("END-USER/UNIT : "));
 $pdf->Row(array("Charged to : "));
 $pdf->Row(array("Project, Programs and Activities(PAPs)"));
 
 $pdf->SetFont('Arial','B',7);
-$pdf->SetWidths(array(290));
-$pdf->Row(array("TEST"));
 $pdf->SetWidths(array(
                 17, //1
                 107.6, //2
@@ -84,12 +82,12 @@ $pdf->SetWidths(array(
 ));
 $pdf->TableTitle([
     "CODE", //1
-    "DESC", //2
-    "UNIT", //3
-    "SIZE", //4
-    "COST", //5
-    "BUDGET", //6
-    "Procurement", //7
+    "General Description", //2
+    "Unit", //3
+    "Qty", //4
+    "Unit Cost", //5
+    "Estimated Budget", //6
+    "Mode of Procurement", //7
     "Jan", //8
     "Feb", //9
     "Mar", //10
@@ -104,6 +102,7 @@ $pdf->TableTitle([
     "Dec", //19
 ]);
 
+$grand_total = 0;
 $expenses = queryExpense();
 foreach($expenses as $expense){
     $count_first = 0;
@@ -136,11 +135,12 @@ foreach($expenses as $expense){
                 $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
-                $items = queryItem("SELECT * FROM ITEM where tranche = '$tranche'");
+                $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where tranche = '$tranche'");
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
                     $pdf->displayItem($item);
                     $expense_total += $item->estimated_budget;
+                    $grand_total += $expense_total;
                 }
                 $pdf->SetFont('Arial','B',7);
                 $pdf->expenseTotal($expense_total);
@@ -150,11 +150,12 @@ foreach($expenses as $expense){
                 $pdf->SetFont('Arial','B',7);
                 $tranche = $expense->id."-".$alphabet[$count_first];
                 $pdf->displayExpense($display_first);
-                $items = queryItem("SELECT * FROM ITEM where tranche = '$tranche'");
+                $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where tranche = '$tranche'");
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
                     $pdf->displayItem($item);
                     $expense_total += $item->estimated_budget;
+                    $grand_total += $expense_total;
                 }
                 if($expense_total != 0){
                     $pdf->SetFont('Arial','B',7);
@@ -168,11 +169,12 @@ foreach($expenses as $expense){
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
         $pdf->displayExpense($expense->description); //display expense if no value from first
-        $items = queryItem("SELECT * FROM ITEM where expense_id = '$expense->id'");
+        $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where expense_id = '$expense->id'");
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);
             $pdf->displayItem($item);
             $expense_total += $item->estimated_budget;
+            $grand_total += $expense_total;
         }
         if($expense_total != 0){
             $pdf->SetFont('Arial','B',7);
@@ -182,28 +184,25 @@ foreach($expenses as $expense){
     }
 }
 
-/*$pdf->SetFont('Arial','',7);
-$pdf->Item([
-    "2019-00008",
-    "Data Filer/Magazine Holder Box, 15 3/4 x 4 1/2 x 9 - Blue",
-    "pcs",
-    "24",
-    "2000",
-    "20000",
-    "small value",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-    "500",
-]);*/
+$pdf->Ln(3);
+$pdf->SetFont('Arial','BU',7);
+$pdf->SetWidths(array(160,20));
+$pdf->TableFooter(array("TOTAL BUDGET",$grand_total));
+$pdf->Ln(3);
+$pdf->SetFont('Arial','',6);
+$pdf->SetWidths(array(12,160));
+$pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project being proposed shall be submitted as part of the PPMP"));
+$pdf->Ln(3);
+$pdf->SetWidths(array(160,100));
+$pdf->TableFooter(array("Prepared By:","Submitted By:"));
+$pdf->Ln(3);
+$pdf->SetFont('Arial','B',7);
+$pdf->SetWidths(array(15,160,100));
+$pdf->TableFooter(array("",$_GET['end_user_name'],$_GET['head_name']));
+
+$pdf->SetWidths(array(12,160,100));
+$pdf->SetFont('Arial','',7);
+$pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
 
 $pdf->Output();
 ?>
