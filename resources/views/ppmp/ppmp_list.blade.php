@@ -335,10 +335,22 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                                                 $expense_total = 0;
-                                                $items = Item::where('tranche','=',$tranche)->select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                if($status == 'inactivate'){
+                                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.tranche','=',$tranche)
+                                                        ->where('item.status','=','inactivate')
                                                         ->get();
+                                                } else {
+                                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                        ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                        ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.tranche','=',$tranche)
+                                                        ->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','pending')
+                                                        ->get();
+                                                }
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':'],'HAHA',$display_second)."'>";
                                                 foreach($items as $item){
                                                     echo displayItem($item,$mode_procurement,$title_header_second);
@@ -353,11 +365,23 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 $expense_total = 0;
                                                 echo displayHeader($display_first);
                                                 $tranche = $expense->id."-".$alphabet[$count_first];
-                                                $items = Item::where('tranche','=',$tranche)->select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+
+                                                if($status == 'inactivate'){
+                                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.tranche','=',$tranche)
+                                                        ->where('item.status','=','inactivate')
                                                         ->get();
-
+                                                } else {
+                                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                        ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                        ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.tranche','=',$tranche)
+                                                        ->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','pending')
+                                                        ->get();
+                                                }
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':'],'HAHA',$display_first)."'>";
                                                 foreach($items as $item){
                                                     echo displayItem($item,$mode_procurement,$display_first);
@@ -365,6 +389,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     $grand_total += $expense_total;
                                                 }
                                                 echo "</tbody>";
+
                                                 echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$display_first),$expense->id,$tranche,$display_first);
                                                 if($expense_total != 0){
                                                     echo expenseTotal($expense_total);
@@ -376,10 +401,24 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                     } else {
                                         $expense_total = 0;
                                         echo displayHeader($expense->description); //display expense if no value from first
-                                        $items = Item::where('expense_id','=',$expense->id)->select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+
+                                        if($status == 'inactivate'){
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                 ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->where('item.expense_id','=',$expense->id)
+                                                ->where('item.status','=','inactivate')
                                                 ->get();
+                                        } else {
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->where('expense_id','=',$expense->id)
+                                                ->where('item.status','=','approve')
+                                                ->orWhere('item.status','=','pending')
+                                                ->get();
+                                        }
+
                                         echo "<tbody id='".str_replace([' ','/','.','-',':'],'HAHA',$expense->description)."'>";
                                         foreach($items as $item){
                                             echo displayItem($item,$mode_procurement,$expense->description);
@@ -387,6 +426,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             $grand_total += $expense_total;
                                         }
                                         echo "</tbody>";
+
                                         echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$expense->description),$expense->id,$tranche,$expense->description);
                                         if($expense_total != 0){
                                             echo expenseTotal($expense_total);
@@ -410,7 +450,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <div class="box-body">
                         @foreach($charge_to as $charge)
                             <strong><i class="fa fa-paypal margin-r-5"></i> {{ $charge->description }}</strong><br>
-                            Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span>
+                            Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span><br>
                             Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{ $charge->remaining_balance }}</span>
                         @endforeach
                     </div>
@@ -425,7 +465,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <button class="btn btn-app" type="submit">
                         <i class="fa fa-save"></i> Save
                     </button>
-                    <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation }}" target="_blank" class="btn btn-app">
+                    <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status }}" target="_blank" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
                     <a class="btn btn-app">
@@ -488,38 +528,35 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
             var count = 0;
             $(".item_submit :input.item-description").each(function(){
                 var expense_title = $("#expense_"+this.name).text();
-                var input = $(this).val()+"|"+expense_title; // This is the jquery object of the input, do what you will
+                var input = $(this).val(); // This is the jquery object of the input, do what you will
+                console.log($(this)[0]);
                 item_array[count] = input;
                 count++;
             });
             var sorted_arr = item_array.slice().sort();
             var results = [];
             var expense_flag = [];
-            var result_display = "<ul>";
+            var result_display = "Duplicate List:<ul>";
             for (var i = 0; i < sorted_arr.length - 1; i++) {
                 if (sorted_arr[i + 1] == sorted_arr[i]) {
                     results.push(sorted_arr[i]);
-                    if(expense_flag[sorted_arr[i].split('|')[1]]){
-                        result_display += sorted_arr[i].split('|')[1];
-                    }
-                    result_display += "<li style='margin-left: 40px;'>"+sorted_arr[i].split('|')[0]+"</li>";
+                    result_display += "<li style='margin-left: 20px;'>"+sorted_arr[i]+"</li>";
                     expense_flag[sorted_arr[i].split('|')[1]] = true;
                 }
             }
-            result_display += "</ul>";
+            result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
 
             if (results === undefined || results.length == 0) {
                 //success
             }
             else {
-                Lobibox.alert('error',
+                /*Lobibox.alert('error',
                     {
                         title: "Checker",
                         msg: result_display
                     });
-                e.preventDefault();
+                e.preventDefault();*/
             }
-            e.preventDefault();
 
         });
 

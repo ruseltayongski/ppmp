@@ -71,7 +71,15 @@
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
                             <ul class="dropdown-menu">
                                 @foreach(Session::get('charge_to') as $charge)
-                                    <li style="background-color: white;"><a href="{{ asset('ppmp/list').'/'.$charge->id }}"><i class="fa fa-sticky-note"></i> {{ $charge->description }}</a></li>
+                                    <li style="background-color: white;" class="dropdown-submenu">
+                                        <a href="#" data-toggle="dropdown"><i class="fa fa-sticky-note"></i> {{ $charge->description }}</a>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{{ asset('ppmp/list').'/'.$charge->id.'/approve_pending' }}"><i class="fa fa-sticky-note"></i> Aprrove/Pending</a>
+                                                <a href="{{ asset('ppmp/list').'/'.$charge->id.'/inactivate' }}"><i class="fa fa-sticky-note"></i> Inactivate</a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 @endforeach
                             </ul>
                         </li>

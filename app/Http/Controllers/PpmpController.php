@@ -18,10 +18,15 @@ use App\Designation;
 
 class PpmpController extends Controller
 {
-    public function index($id){
+    public function index($id,$status){
         $expenses = Expense::get();
         $all_item = Item::get();
-        $encoded = Item::where('userid','=',Auth::user()->username)->count();
+
+        if($status == 'inactivate')
+            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','inactivate')->count();
+        else
+            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
+
         $mode_procurement = ModeProcurement::get();
         $charge_to = Charge::where('id','=',$id)->get();
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
@@ -39,7 +44,8 @@ class PpmpController extends Controller
             "charge_to" => $charge_to,
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
-            "head" => $head
+            "head" => $head,
+            "status" => $status
         ]);
     }
 

@@ -21,7 +21,7 @@
         <div class="box-body">
             @foreach(Session::get('charge_to') as $charge)
                 <strong><i class="fa fa-paypal margin-r-5"></i> {{ $charge->description }}</strong><br>
-                Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span>
+                Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span><br>
                 Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{ $charge->remaining_balance }}</span>
                 <a href="{{ asset('ppmp/list').'/'.$charge->id }}" type="button" class="btn btn-block btn-primary btn-xs" style="margin-top:10px;">Check PPMP</a>
             @endforeach
