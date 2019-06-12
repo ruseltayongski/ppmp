@@ -220,7 +220,7 @@ class PDF_MC_Table extends FPDF
     function displayItem($item){
         $mode_procurement = $item->mode_procurement_description;
         if(preg_match_all('/\b(\w)/',strtoupper(str_replace(',',' ',$mode_procurement)),$m)) {
-            $mode_procurement_description = implode('',$m[1]);
+            $mode_procurement = implode('',$m[1]);
         }
         $this->Item([
             $item->code,

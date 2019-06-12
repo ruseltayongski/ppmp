@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Division;
 use App\Item;
+use App\Section;
 use Illuminate\Http\Request;
 use App\PisUser;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +20,6 @@ class UserController extends Controller
 
     public function home()
     {
-        $picture = PisUser::where("userid","=",Auth::user()->username)->first()->picture;
         $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
         $item_qty = Item::select(
                         DB::raw("sum(item.jan) as jan"),

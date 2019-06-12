@@ -550,12 +550,12 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 //success
             }
             else {
-                /*Lobibox.alert('error',
+                Lobibox.alert('error',
                     {
                         title: "Checker",
                         msg: result_display
                     });
-                e.preventDefault();*/
+                e.preventDefault();
             }
 
         });

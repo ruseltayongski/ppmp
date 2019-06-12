@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Item;
 use Illuminate\Support\Facades\DB;
+use App\User;
+use App\Section;
 
 class AdminController extends Controller
 {
@@ -36,6 +38,10 @@ class AdminController extends Controller
             "information" => $information,
             "item_qty" => $item_qty
         ]);
+    }
+
+    public function resetSection(){
+
     }
 
 }

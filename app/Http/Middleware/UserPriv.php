@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use App\Charge;
 use Illuminate\Support\Facades\Session;
+use App\Division;
+use App\Section;
 
 class UserPriv
 {
@@ -20,14 +22,23 @@ class UserPriv
     public function handle($request, Closure $next){
         if(!Auth::user()->user_priv){
             $charge_to = Charge::where('section','=',Auth::user()->section)->get();
-            if(isset($charge_to)){
-                Session::put('charge_to',$charge_to);
-                return $next($request);
-            } else {
+            /*$division = Division::where('id','=',Auth::user()->division);
+            $section = Section::where('id','=',Auth::user()->section);
+            if(isset($division) || !isset($section) || count($division) == 0 || count($section) == 0 ){
+                return Redirect::to('section/division');
+            }
+            else*/if(count($charge_to) == 0){
+                Session::put('section',$charge_to);
+                Session::put('division',$charge_to);
                 return Redirect::to('charge/default');
+            }
+            else {
+                Session::put('charge_to',$charge_to);
+                Session::put('charge_menu',true);
+                return $next($request);
             }
         }
         else
-            return Redirect::to('/privilage');
+            return Redirect::to('user/privileged');
     }
 }

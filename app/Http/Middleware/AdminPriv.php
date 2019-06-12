@@ -22,6 +22,7 @@ class AdminPriv
         if(Auth::user()->user_priv){
             $charge_to = Charge::get();
             Session::put('charge_to',$charge_to);
+            Session::put('charge_menu',true);
             return $next($request);
         }
         else

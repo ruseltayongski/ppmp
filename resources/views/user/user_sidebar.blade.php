@@ -2,11 +2,20 @@
     <!-- Profile Image -->
     <div class="box box-primary">
         <div class="box-body box-profile">
-            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmp','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" alt="User profile picture">
+            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmp','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" onerror="this.onerror=null;this.src='{{ str_replace('ppmp','pis',asset('')).'public/upload_picture/picture/uknown.png' }}' " alt="User profile picture">
 
             <h3 class="profile-username text-center">{{ strtoupper($information->fname.' '.$information->lname) }}</h3>
 
-            <p class="text-muted text-center">{{ $information->section }}</p>
+            <p class="text-muted text-center">
+                <?php
+                    $section = \App\Section::find(Auth::user()->section);
+                    if(isset($section)){
+                        echo $section->description;
+                    } else {
+                        echo 'NO SECTION';
+                    }
+                ?>
+            </p>
 
         </div>
         <!-- /.box-body -->

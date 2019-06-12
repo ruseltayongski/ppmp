@@ -43,4 +43,9 @@ Route::get('excel/import','ExcelController@excelImport');
 Route::post('expense/import','ExcelController@importExpense');
 Route::post('item/import','ExcelController@importItem');
 
+//reset user section in ICTU
+Route::get('section/reset','AdminController@resetSection');
+
+//NO SECTION OR DIVISION
+Route::get('section/division','MaintenanceController@changeSectionDivision');
 

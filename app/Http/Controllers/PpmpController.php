@@ -20,12 +20,15 @@ class PpmpController extends Controller
 {
     public function index($id,$status){
         $expenses = Expense::get();
-        $all_item = Item::get();
 
-        if($status == 'inactivate')
+        if($status == 'inactivate'){
+            $all_item = Item::where('status','=','inactivate')->get();
             $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','inactivate')->count();
-        else
+        }
+        else{
+            $all_item = Item::where('status','=','approve')->orWhere('status','=','pending')->get();
             $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
+        }
 
         $mode_procurement = ModeProcurement::get();
         $charge_to = Charge::where('id','=',$id)->get();

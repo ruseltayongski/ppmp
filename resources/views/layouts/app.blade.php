@@ -126,7 +126,14 @@
                 <center>
                     <strong class="title-info">Section:</strong>
                     <strong class="title-desc">
-                    {{ \App\Section::find(Auth::user()->section)->description }}
+                    <?php
+                        $section = \App\Section::find(Auth::user()->section);
+                        if(isset($section)){
+                            echo $section->description;
+                        } else {
+                            echo 'NO SECTION';
+                        }
+                    ?>
                     </strong>
                 </center>
             </div>

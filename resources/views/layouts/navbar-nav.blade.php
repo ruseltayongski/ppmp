@@ -63,7 +63,7 @@
         <ul class="nav navbar-nav">
             <li><a href="{{ url('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
 
-            @if(!isset($charge_menu))
+            @if(Session::get('charge_menu'))
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-shopping-cart"></i> PPMP<span class="caret"></span></a>
                     <ul class="dropdown-menu">
