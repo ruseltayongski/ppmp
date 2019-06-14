@@ -33,7 +33,9 @@ class UserController extends Controller
                         DB::raw("sum(item.sep) as sep"),
                         DB::raw("sum(item.oct) as oct"),
                         DB::raw("sum(item.nov) as nov"),
-                        DB::raw("sum(item.dec) as dece"))->first();
+                        DB::raw("sum(item.dec) as dece"))
+            ->where('division','=',Auth::user()->division)
+            ->first();
 
         return view('user.home',[
             "information" => $information,

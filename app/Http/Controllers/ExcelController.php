@@ -38,6 +38,7 @@ class ExcelController extends Controller
                     'userid' => $value->userid,
                     'expense_id' => $value->expense_id,
                     'tranche' => $value->tranche,
+                    'division' => 6,
                     'description' => $value->description,
                     'unit_measurement' => $value->unit_measurement,
                     'qty' => $value->qty,

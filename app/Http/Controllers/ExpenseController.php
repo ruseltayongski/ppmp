@@ -9,12 +9,157 @@ use App\Expense;
 class ExpenseController extends Controller
 {
     public function expenseList(){
-        $expense = Expense::get();
+        $expense = Expense::paginate(10);
         return view('expense.expense_list',[
             'expense' => $expense
         ]);
     }
-    public function test(){
+    public function code(){
+
+        $id = 122;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Cebu Province' => [
+            ],
+            'Bohol Province' => [
+            ],
+            'Negros Oriental and Siquijor' => [
+            ],
+            'Regionwide' => [
+            ]
+        ]);
+        $expense->save();
+
+        $id = 124;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Expanded Program on Immunization' => [
+                "Regionwide"
+            ]
+        ]);
+        $expense->save();
+
+
+        $id = 125;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Management of Sick Child' => [
+                "Integrated Management of Childhood Illnes"
+            ]
+        ]);
+        $expense->save();
+
+        $id = 126;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Venue, Meals and Accommodation' => [
+                "Environmental and Occupational Health Unit (EOHU)",
+                "Hospital Operations Management Service (HOMS)",
+                "Medicine Access Service Unit (MASU)",
+            ]
+        ]);
+        $expense->save();
+
+
+        $id = 129;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Venue, Meals and Accommodation' => [
+            ]
+        ]);
+        $expense->save();
+
+        $id = 130;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Health Leadership and Governance Program (HLGP)' => [
+            ],
+            'Provincial Leadership and Governance Program (PLGP)' => [
+            ],
+            'Municipal Leadership and Governance Program (MLGP)' => [
+            ],
+        ]);
+        $expense->save();
+
+
+        $id = 132;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Prevention of Blindness Program' => [
+                "Cebu Province",
+                "Negros Oriental and Siquijor Province",
+                "Bohol Province",
+            ],
+            'Violence and Injury Prevention Program' => [
+                "Regionwide"
+            ],
+            'Tobacco Control Program	' => [
+                "Regionwide"
+            ],
+            'Substance Abuse Program' => [
+                "Regionwide"
+            ],
+            'Mental Health and Persons with Disabilities Program' => [
+                "Regionwide"
+            ],
+        ]);
+        $expense->save();
+
+
+        $id = 143;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Prevention of Blindness Program' => [
+                "Cebu Province",
+                "Negros Oriental and Siquijor Province",
+                "Bohol Province",
+            ],
+            'Violence and Injury Prevention Program' => [
+                "Regionwide"
+            ],
+            'Tobacco Control Program	' => [
+                "Regionwide"
+            ],
+            'Substance Abuse Program' => [
+                "Regionwide"
+            ],
+            'Mental Health and Persons with Disabilities Program' => [
+                "Regionwide"
+            ],
+        ]);
+        $expense->save();
+
+
+        $id = 144;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Venue, meals and accommodation' => [
+            ]
+        ]);
+        $expense->save();
+
+        $id = 146;
+        $expense = Expense::find($id);
+        $expense->code = json_encode([
+            'Preparedness' => [
+            ],
+            'Response' => [
+            ]
+        ]);
+        $expense->save();
+
+
+
+        return $id;
+
+
+
+
+
+
+
+
+
         /*$expense = Expense::find(1);
         $expense->code = json_encode([
             'A. CONSUMABLES:' => [
@@ -32,9 +177,15 @@ class ExpenseController extends Controller
 
 
         $expense->save();
-        return 'Successfully Expenses Saved';*/
+        return $id;*/
 
-        $code = json_encode([
+
+
+
+
+
+
+        /*$code = json_encode([
             'A. CONSUMABLES:' => [
                 "1. COMMON-USE/REGULAR/STANDARD OFFICE SUPPLIES:",
                 "2. TRAINING SUPPLIES:",
@@ -60,7 +211,7 @@ class ExpenseController extends Controller
                 echo json_encode($val1)."======".$expense.'-'.$index2."=======\n\n";
             }
             $index1++;
-        }
+        }*/
 
     }
 }

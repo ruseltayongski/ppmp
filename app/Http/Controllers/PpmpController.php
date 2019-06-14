@@ -19,7 +19,7 @@ use App\Designation;
 class PpmpController extends Controller
 {
     public function index($id,$status){
-        $expenses = Expense::get();
+        $expenses = Expense::where('division','=',Auth::user()->division)->paginate(1);
 
         if($status == 'inactivate'){
             $all_item = Item::where('status','=','inactivate')->get();

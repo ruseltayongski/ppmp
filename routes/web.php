@@ -36,7 +36,7 @@ Route::get('charge/test','ChargeController@test');
 
 //expense
 Route::get('expense/list','ExpenseController@expenseList');
-Route::get('expense/test','ExpenseController@test');
+Route::get('expense/code','ExpenseController@code');
 
 //excel
 Route::get('excel/import','ExcelController@excelImport');

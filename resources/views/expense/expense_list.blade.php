@@ -27,13 +27,14 @@
                     </tr>
                     @foreach($expense as $row)
                     <tr>
-                        <td>{{ $row->code }}</td>
+                        <td></td>
                         <td>{{ $row->description }}</td>
                         <td><span class="label label-primary">Approved</span></td>
                     </tr>
                     @endforeach
                 </table>
             </div>
+            {{ $expense->links() }}
         </div>
     </div>
 @endsection

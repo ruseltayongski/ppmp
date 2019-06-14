@@ -339,16 +339,22 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.expense_id','=',$expense->id)
                                                         ->where('item.tranche','=',$tranche)
                                                         ->where('item.status','=','inactivate')
+                                                        ->where('item.division','=',Auth::user()->division)
                                                         ->get();
                                                 } else {
                                                     $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.expense_id','=',$expense->id)
                                                         ->where('item.tranche','=',$tranche)
-                                                        ->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','pending')
+                                                        ->where(function($q){
+                                                            $q->where('item.status','=','approve')
+                                                                ->orWhere('item.status','=','pending');
+                                                        })
+                                                        ->where('item.division','=',Auth::user()->division)
                                                         ->get();
                                                 }
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':'],'HAHA',$display_second)."'>";
@@ -362,24 +368,42 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 echo expenseTotal($expense_total);
                                             } //display if first have value
                                             if(!isset($flag[$display_first])){
+                                                if(isset($flag[$expense->description])){
+                                                    $title_header_expense = "";
+                                                } else {
+                                                    $title_header_expense = $expense->description;
+                                                    $flag[$expense->description] = true;
+                                                }
+                                                if(isset($flag[$display_first])){
+                                                    $title_header_first = "";
+                                                } else {
+                                                    $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
+                                                    $flag[$display_first] = true;
+                                                }
                                                 $expense_total = 0;
-                                                echo displayHeader($display_first);
                                                 $tranche = $expense->id."-".$alphabet[$count_first];
+                                                echo displayHeader($title_header_expense.$title_header_first);
 
                                                 if($status == 'inactivate'){
                                                     $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.expense_id','=',$expense->id)
                                                         ->where('item.tranche','=',$tranche)
                                                         ->where('item.status','=','inactivate')
+                                                        ->where('item.division','=',Auth::user()->division)
                                                         ->get();
                                                 } else {
                                                     $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                        ->where('item.expense_id','=',$expense->id)
                                                         ->where('item.tranche','=',$tranche)
-                                                        ->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','pending')
+                                                        ->where(function($q){
+                                                            $q->where('item.status','=','approve')
+                                                                ->orWhere('item.status','=','pending');
+                                                        })
+                                                        ->where('item.division','=',Auth::user()->division)
                                                         ->get();
                                                 }
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':'],'HAHA',$display_first)."'>";
@@ -408,14 +432,18 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                 ->where('item.expense_id','=',$expense->id)
                                                 ->where('item.status','=','inactivate')
+                                                ->where('item.division','=',Auth::user()->division)
                                                 ->get();
                                         } else {
                                             $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                                 ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                 ->where('expense_id','=',$expense->id)
-                                                ->where('item.status','=','approve')
-                                                ->orWhere('item.status','=','pending')
+                                                ->where(function($q){
+                                                    $q->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','pending');
+                                                })
+                                                ->where('item.division','=',Auth::user()->division)
                                                 ->get();
                                         }
 
@@ -427,7 +455,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                         }
                                         echo "</tbody>";
 
-                                        echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$expense->description),$expense->id,$tranche,$expense->description);
+                                        echo addItem(str_replace([' ','/','.','-',':'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                         if($expense_total != 0){
                                             echo expenseTotal($expense_total);
                                         }
@@ -436,6 +464,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             ?>
                         </table>
                     </div>
+                    {{ $expenses->links() }}
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
@@ -533,7 +562,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 item_array[count] = input;
                 count++;
             });
-            var sorted_arr = item_array.slice().sort();
+            var sorted_arr = item_filter.slice().sort();
             var results = [];
             var expense_flag = [];
             var result_display = "Duplicate List:<ul>";
@@ -550,11 +579,15 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 //success
             }
             else {
-                Lobibox.alert('error',
+                /*Lobibox.alert('error',
                     {
                         title: "Checker",
                         msg: result_display
-                    });
+                    });*/
+                Lobibox.window({
+                    title: 'Checker',
+                    content: result_display
+                });
                 e.preventDefault();
             }
 

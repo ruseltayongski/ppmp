@@ -85,7 +85,7 @@ class PDF_MC_Table extends FPDF
         $this->Ln($h);
     }
 
-    function TableTitle($data){
+    function TableTitle($data,$border){
         //Calculate the height of the row
         $nb=0;
         for($i=0;$i<count($data);$i++)
@@ -97,14 +97,16 @@ class PDF_MC_Table extends FPDF
         for($i=0;$i<count($data);$i++)
         {
             $w=$this->widths[$i];
-            $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'L';
+            $a=isset($this->aligns[$i]) ? $this->aligns[$i] : 'C';
             //Save the current position
             $x=$this->GetX();
             $y=$this->GetY();
             //Draw the border
-            $this->Rect($x,$y,$w,$h);
+            //$this->Rect($x,$y,$w,$h,'R');
             //Print the text
-            $this->MultiCell($w,5,$data[$i],0,$a);
+            if($data[$i] == 'Jan')
+                $border = 1;
+            $this->MultiCell($w,5,$data[$i],$border,$a);
             //Put the position to the right of the cell
             $this->SetXY($x+$w,$y);
         }

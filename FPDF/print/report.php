@@ -68,27 +68,47 @@ $pdf->SetWidths(array(
                 15.2, //5
                 15.2, //6
                 19, //7
-                8, //8
-                8, //9
-                8, //10
-                8, //11
-                8, //12
-                8, //13
-                8, //14
-                8, //15
-                8, //16
-                8, //17
-                8, //18
-                8 //19
+                96 //8
 ));
 $pdf->TableTitle([
     "CODE", //1
     "General Description", //2
     "Unit", //3
-    "Qty", //4
+    "Qty /", //4
     "Unit Cost", //5
-    "Estimated Budget", //6
-    "Mode of Procurement", //7
+    "Estimated", //6
+    "Mode", //7
+    "SCHEDULE / MILESTONE OF ACTIVITIES", //8
+],'TLR');
+$pdf->SetWidths(array(
+    17, //1
+    107.6, //2
+    10, //3
+    10, //4
+    15.2, //5
+    15.2, //6
+    19, //7
+    8, //8
+    8, //9
+    8, //10
+    8, //11
+    8, //12
+    8, //13
+    8, //14
+    8, //15
+    8, //16
+    8, //17
+    8, //18
+    8 //19
+));
+$pdf->TableTitle([
+    "", //1
+    "", //2
+    "", //3
+    "Size", //4
+    "Cost", //5
+    "Budget", //6
+    "Procurement", //7
     "Jan", //8
     "Feb", //9
     "Mar", //10
@@ -101,7 +121,7 @@ $pdf->TableTitle([
     "Oct", //17
     "Nov", //18
     "Dec", //19
-]);
+],'BLR');
 
 $grand_total = 0;
 $expenses = queryExpense();
@@ -137,9 +157,9 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
                 if($_GET['status'] == 'inactivate'){
-                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'inactivate' ");
+                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'inactivate' and item.expense_id = '$expense->id' ");
                 } else {
-                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'approve' or item.status = 'pending' ");
+                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.expense_id = '$expense->id' and (item.status = 'approve' or item.status = 'pending') ");
                 }
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -156,9 +176,9 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first];
                 $pdf->displayExpense($display_first);
                 if($_GET['status'] == 'inactivate') {
-                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'inactivate' ");
+                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'inactivate' and item.expense_id = '$item->expense_id' ");
                 } else {
-                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.status = 'approve' or item.status = 'pending' ");
+                    $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.tranche = '$tranche' and item.expense_id = '$expense->id' and (item.status = 'approve' or item.status = 'pending') ");
                 }
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -181,7 +201,7 @@ foreach($expenses as $expense){
         if($_GET['status'] == 'inactivate') {
             $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.expense_id = '$expense->id' and item.status = 'inactivate' ");
         } else {
-            $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.expense_id = '$expense->id' and item.status = 'approve' or item.status = 'pending' ");
+            $items = queryItem("SELECT item.*,mode_procurement.description as mode_procurement_description FROM ITEM left join mode_procurement on mode_procurement.id = item.mode_procurement where item.expense_id = '$expense->id' and (item.status = 'approve' or item.status = 'pending') ");
         }
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);
