@@ -14,14 +14,14 @@ function conn()
     return $pdo;
 }
 
-function queryExpense(){
+function queryExpense($division){
     $pdo = conn();
-    $query = "SELECT * FROM EXPENSE ORDER BY ID ASC";
+    $query = "SELECT * FROM EXPENSE where division = ? ORDER BY ID ASC";
 
     try
     {
         $st = $pdo->prepare($query);
-        $st->execute();
+        $st->execute(array($division));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -61,14 +61,14 @@ $pdf->Row(array("Project, Programs and Activities(PAPs)"));
 
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(
-                17, //1
-                107.6, //2
-                10, //3
-                10, //4
-                15.2, //5
-                15.2, //6
-                19, //7
-                96 //8
+    17, //1
+    107.6, //2
+    10, //3
+    10, //4
+    15.2, //5
+    15.2, //6
+    19, //7
+    96 //8
 ));
 $pdf->TableTitle([
     "CODE", //1
@@ -124,7 +124,7 @@ $pdf->TableTitle([
 ],'BLR');
 
 $grand_total = 0;
-$expenses = queryExpense();
+$expenses = queryExpense($_GET['division']);
 foreach($expenses as $expense){
     $count_first = 0;
     $count_second = 0;

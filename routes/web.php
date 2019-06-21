@@ -25,7 +25,7 @@ Route::get('admin/privileged','MaintenanceController@adminPrivilage');
 Route::get('user/home','UserController@home');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 //ppmp
-Route::get('ppmp/list/{id}/{status}','PpmpController@index');
+Route::get('ppmp/list/{status}/{expense_id}','PpmpController@index');
 Route::post('ppmp/import','ExcelController@importItem');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
@@ -48,4 +48,6 @@ Route::get('section/reset','AdminController@resetSection');
 
 //NO SECTION OR DIVISION
 Route::get('section/division','MaintenanceController@changeSectionDivision');
+Route::get('section/update','MaintenanceController@updateSection');
+Route::get('division/update','MaintenanceController@updateDivision');
 

@@ -26,4 +26,13 @@ class MaintenanceController extends Controller
             "section" => $section
         ]);
     }
+
+    public function updateSection(){
+
+    }
+
+    public function updateDivision(){
+
+    }
+
 }

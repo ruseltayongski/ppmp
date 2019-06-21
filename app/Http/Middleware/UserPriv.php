@@ -22,12 +22,15 @@ class UserPriv
     public function handle($request, Closure $next){
         if(!Auth::user()->user_priv){
             $charge_to = Charge::where('section','=',Auth::user()->section)->get();
-            /*$division = Division::where('id','=',Auth::user()->division);
-            $section = Section::where('id','=',Auth::user()->section);
-            if(isset($division) || !isset($section) || count($division) == 0 || count($section) == 0 ){
+            $division = Division::where('id','=',Auth::user()->division)->first();
+            $section = Section::where('id','=',Auth::user()->section)->first();
+            if(isset($division)){
                 return Redirect::to('section/division');
             }
-            else*/if(count($charge_to) == 0){
+            elseif(isset($section)){
+                return Redirect::to('section/division');
+            }
+            elseif(count($charge_to) == 0){
                 Session::put('section',$charge_to);
                 Session::put('division',$charge_to);
                 return Redirect::to('charge/default');
