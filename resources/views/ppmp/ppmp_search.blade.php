@@ -62,11 +62,11 @@ function displayItem($item,$mode_procurement,$expense_title){
                 $expense_title_display
                 <td style='width: 50px'><div class='tooltip_top'>".$item->code."<span class='tooltiptext'>Code</span></div></td>
                 <td >".
-                    "<div class='tooltip_top' style='width: 100%;'>".
-                    "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='no-border' class='item-description' placeholder='Item Description'>"."</div>".
-                    "<span class='tooltiptext'>Item Description</span>
+        "<div class='tooltip_top' style='width: 100%;'>".
+        "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='no-border' class='item-description' placeholder='Item Description'>"."</div>".
+        "<span class='tooltiptext'>Item Description</span>
                     </div>".
-                "</td>
+        "</td>
                 <td>
                     <div class='tooltip_top' >
                     <input type='text' id='no-border' name='unit_measurement$item->id' style='width: 50px' value='$item->unit_measurement' placeholder='Unit Measurement'>
@@ -266,9 +266,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                         <h3 class="box-title">PPMP</h3>
                         <div class="box-tools">
                             <div class="input-group input-group-sm" style="width: 150px;">
-                                <input type="text" style="width: 300px;" id="item_search" class="form-control pull-right" placeholder="Search">
+                                <input type="text" style="width: 300px;" id="item_search" class="form-control pull-right" value="{{ $keyword }}" placeholder="Search">
                                 <div class="input-group-btn">
                                     <button type="button" onclick="itemSearch()" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    <!-- <button type="button" onclick="urlBack()" class="btn btn-primary"><i class="fa fa-arrow-left"></i></button> -->
                                 </div>
                             </div>
                         </div>
@@ -350,6 +351,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                         $q->where('item.status','=','approve')
                                                             ->orWhere('item.status','=','pending');
                                                     })
+                                                    ->where("item.description","like","%$keyword%")
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
                                             }
@@ -398,6 +400,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                         $q->where('item.status','=','approve')
                                                             ->orWhere('item.status','=','pending');
                                                     })
+                                                    ->where("item.description","like","%$keyword%")
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
                                             }
@@ -430,11 +433,12 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                         $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                             ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                             ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->where('expense_id','=',$expense->id)
+                                            ->where('item.expense_id','=',$expense->id)
                                             ->where(function($q){
                                                 $q->where('item.status','=','approve')
                                                     ->orWhere('item.status','=','pending');
                                             })
+                                            ->where("item.description","like","%$keyword%")
                                             ->where('item.division','=',Auth::user()->division)
                                             ->get();
                                     }
@@ -454,7 +458,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             ?>
                         </table>
                     </div>
-                {{ $expenses->links() }}
+                {{--{{ $expenses->links() }}--}}
                 <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
@@ -474,7 +478,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 </div>
             </div>--}}
         </div>
-
         <div class="modal fade" id="modal-default">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -533,6 +536,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
 @endsection
 
 @section('js')
+
     <!-- inline scripts related to this page -->
     <script type="text/javascript">
         //Initialize Select2 Elements
@@ -598,14 +602,14 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                         title: "Checker",
                         msg: result_display
                     });*/
-                Lobibox.window({
+                /*Lobibox.window({
                     title: 'Checker',
                     content: result_display
                 });
-                event.preventDefault();
+                event.preventDefault();*/
             }
 
-            event.preventDefault();
+            /*event.preventDefault();*/
         }
 
         function itemSearch(){
@@ -613,6 +617,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
             var url = "<?php echo asset('ppmp/search'); ?>"+"/"+encodeURIComponent(keyword);
             window.location.replace(url);
         }
+
+        /*function urlBack(){
+            history.back();
+        }*/
 
         function filterItems(){
             var select_val = $("#filter_item").select2("val");
@@ -656,7 +664,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             "<td ></td>" +
                             "<td width='35%' style='padding-left: 3.7%'>" +
                             "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' class='item-description' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
+                            "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
                             "<span class='tooltiptext'>Item Description</span>"+
                             "</div>" +
                             "</td>"+

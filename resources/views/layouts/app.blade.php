@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="{{ asset('public/adminLTE/bower_components/font-awesome/css/font-awesome.min.css') }}">
     <!-- Ionicons -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/bower_components/Ionicons/css/ionicons.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('public/adminLTE/bower_components/select2/dist/css/select2.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/dist/css/AdminLTE.min.css') }}">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -29,7 +31,6 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('public/plugin/Lobibox new/css/lobibox.css') }}" />
     <!-- iCheck for checkboxes and radio inputs -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/plugins/iCheck/all.css') }}">
-
     <!-- Google Font -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/google.css') }}">
 
@@ -151,16 +152,15 @@
         </div>
         @include('layouts.navbar-nav')
     </nav>
-    <div class="{{ Request::segments()[0].'/'.Request::segments()[1] == 'ppmp/list' ? 'container-fluid' : 'container' }}">
+    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search'), true) ? 'container-fluid' : 'container' }}">
         <div class="loading"></div>
         @yield('content')
         <div class="clearfix"></div>
     </div> <!-- /container -->
 
-
     <!-- /.content-wrapper -->
 
-    @if(Request::segments()[0].'/'.Request::segments()[1] != 'ppmp/list')
+    @if( !in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search'), true))
         <footer id="footer">
             <div class="container">
                 <b>Version</b> 2.0
@@ -201,7 +201,7 @@
     <!-- lobibox -->
     <script src="{{ asset('public/plugin/Lobibox new/js/Lobibox.js') }}"></script>
 
-    @if(Request::segments()[0].'/'.Request::segments()[1] == 'ppmp/list')
+    @if( in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search'), true) )
     <!-- page specific plugin scripts ACE-->
     <script src="{{ asset('public/assets/js/jquery-2.1.4.min.js') }}"></script>
     <!-- page specific plugin scripts -->
@@ -209,6 +209,8 @@
     @endif
     <!-- iCheck 1.0.1 -->
     <script src="{{ asset('public/adminLTE/plugins/iCheck/icheck.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('public/adminLTE/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
 
 
     @section('js')

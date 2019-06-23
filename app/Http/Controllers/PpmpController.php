@@ -105,8 +105,41 @@ class PpmpController extends Controller
     }
 
     public function ppmpDelete(Request $request){
-        Item::find($request->id)->delete();
-        return 'Successfully Delete!';
+        $item = Item::find($request->id);
+        if($item){
+            $item->delete();
+            return 'Successfully Delete!';
+        } else {
+            return 'No item found!';
+        }
+    }
+
+    public function ppmpSearch($keyword){
+        $item = Item::where('division','=',Auth::user()->division)->where("description","like","%$keyword%")->pluck('expense_id')->toArray();
+        $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
+
+        $all_item = Item::where('status','=','approve')->orWhere('status','=','pending')->get();
+        $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
+
+        $mode_procurement = ModeProcurement::get();
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Section::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id','=',Auth::user()->section)
+            ->first();
+        return view('ppmp.ppmp_search',[
+            "expenses" => $expenses,
+            "all_item" => $all_item,
+            "encoded" => $encoded,
+            "mode_procurement" => $mode_procurement,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head,
+            "status" => "approve",
+            "keyword" => $keyword
+        ]);
     }
 
 }
