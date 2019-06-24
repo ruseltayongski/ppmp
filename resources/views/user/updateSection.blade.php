@@ -8,20 +8,11 @@
                 <h3 class="box-title">Section Division</h3>
             </div>
             <div class="panel-body">
-                <form action="{{ asset('charge/add') }}" method="POST">
+                <form action="{{ asset('user/section/update') }}" method="POST">
                     {{ csrf_field() }}
                     <ul class="list-group">
                         <li class="list-group-item">
-                            <select name="division" id="" class="form-control" required>
-                                <option value="">Please select division</option>
-                                @foreach($division as $div)
-                                    <option value="{{ $div->id }}">{{ $div->description }}</option>
-                                @endforeach
-                            </select>
-                            <div class="clearfix"></div>
-                        </li>
-                        <li class="list-group-item">
-                            <select name="division" id="" class="form-control" required>
+                            <select name="section" id="" class="form-control" required>
                                 <option value="">Please select section</option>
                                 @foreach($section as $sec)
                                     <option value="{{ $sec->id }}">{{ $sec->description }}</option>

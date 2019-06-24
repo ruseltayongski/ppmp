@@ -24,15 +24,13 @@ class UserPriv
             $charge_to = Charge::where('section','=',Auth::user()->section)->get();
             $division = Division::where('id','=',Auth::user()->division)->first();
             $section = Section::where('id','=',Auth::user()->section)->first();
-            if(isset($division)){
-                return Redirect::to('section/division');
+            if(!isset($division)){
+                return Redirect::to('division/update');
             }
-            elseif(isset($section)){
-                return Redirect::to('section/division');
+            elseif(!isset($section)){
+                return Redirect::to('section/update');
             }
             elseif(count($charge_to) == 0){
-                Session::put('section',$charge_to);
-                Session::put('division',$charge_to);
                 return Redirect::to('charge/default');
             }
             else {
@@ -44,4 +42,6 @@ class UserPriv
         else
             return Redirect::to('user/privileged');
     }
+
+
 }

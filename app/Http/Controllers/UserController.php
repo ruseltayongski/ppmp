@@ -10,6 +10,8 @@ use App\PisUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Charge;
+use App\User;
+use Illuminate\Support\Facades\Redirect;
 
 class UserController extends Controller
 {
@@ -42,4 +44,6 @@ class UserController extends Controller
             "item_qty" => $item_qty
         ]);
     }
+
+
 }

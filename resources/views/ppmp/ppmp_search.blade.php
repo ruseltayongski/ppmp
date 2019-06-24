@@ -602,14 +602,13 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                         title: "Checker",
                         msg: result_display
                     });*/
-                /*Lobibox.window({
+                Lobibox.window({
                     title: 'Checker',
                     content: result_display
                 });
-                event.preventDefault();*/
+                event.preventDefault();
             }
 
-            /*event.preventDefault();*/
         }
 
         function itemSearch(){
