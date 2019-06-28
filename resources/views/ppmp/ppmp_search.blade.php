@@ -338,7 +338,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                     ->where('item.expense_id','=',$expense->id)
                                                     ->where('item.tranche','=',$tranche)
-                                                    ->where('item.status','=','inactivate')
+                                                    ->where(function($q){
+                                                        $q->where('item.status','=','approve')
+                                                            ->orWhere('item.status','=','pending');
+                                                    })
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
                                             } else {
@@ -347,10 +350,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                     ->where('item.expense_id','=',$expense->id)
                                                     ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
+                                                    ->where('item.status','=',$status)
                                                     ->where("item.description","like","%$keyword%")
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
@@ -387,7 +387,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                     ->where('item.expense_id','=',$expense->id)
                                                     ->where('item.tranche','=',$tranche)
-                                                    ->where('item.status','=','inactivate')
+                                                    ->where(function($q){
+                                                        $q->where('item.status','=','approve')
+                                                            ->orWhere('item.status','=','pending');
+                                                    })
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
                                             } else {
@@ -396,10 +399,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                     ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                     ->where('item.expense_id','=',$expense->id)
                                                     ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
+                                                    ->where('item.status','=',$status)
                                                     ->where("item.description","like","%$keyword%")
                                                     ->where('item.division','=',Auth::user()->division)
                                                     ->get();
@@ -421,15 +421,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                 } else {
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
-                                    if($status == 'inactivate'){
-                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->where('item.expense_id','=',$expense->id)
-                                            ->where('item.status','=','inactivate')
-                                            ->where('item.division','=',Auth::user()->division)
-                                            ->get();
-                                    } else {
+                                    if($status = "approve_pending"){
                                         $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
                                             ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                             ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
@@ -438,6 +430,15 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 $q->where('item.status','=','approve')
                                                     ->orWhere('item.status','=','pending');
                                             })
+                                            ->where("item.description","like","%$keyword%")
+                                            ->where('item.division','=',Auth::user()->division)
+                                            ->get();
+                                    } else {
+                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                            ->where('item.expense_id','=',$expense->id)
+                                            ->where('item.status','=',$status)
                                             ->where("item.description","like","%$keyword%")
                                             ->where('item.division','=',Auth::user()->division)
                                             ->get();
@@ -597,15 +598,15 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 //success
             }
             else {
-                /*Lobibox.alert('error',
+                Lobibox.alert('error',
                     {
                         title: "Checker",
                         msg: result_display
-                    });*/
-                Lobibox.window({
+                    });
+                /*Lobibox.window({
                     title: 'Checker',
                     content: result_display
-                });
+                });*/
                 event.preventDefault();
             }
 
@@ -613,7 +614,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
 
         function itemSearch(){
             var keyword = $("#item_search").val();
-            var url = "<?php echo asset('ppmp/search'); ?>"+"/"+encodeURIComponent(keyword);
+            if(!keyword.includes("/")){
+                keyword = encodeURIComponent(keyword);
+            }
+            var url = "<?php echo asset('ppmp/search').'/'.$status; ?>"+"/"+keyword;
             window.location.replace(url);
         }
 

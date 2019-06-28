@@ -15,28 +15,34 @@ use Illuminate\Support\Facades\Redirect;
 use App\ModeProcurement;
 use App\Charge;
 use App\Designation;
+use App\Division;
 
 class PpmpController extends Controller
 {
     public function index($status,$expense_id){
         $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->paginate(1);
 
-        if($status == 'inactivate'){
-            $all_item = Item::where('status','=','inactivate')->get();
-            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','inactivate')->count();
-        }
-        else{
-            $all_item = Item::where('status','=','approve')->orWhere('status','=','pending')->get();
-            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
+        if($status == 'approve_pending'){
+            $all_item = Item::where('status','=','approve')
+                        ->orWhere('status','=','pending')->get();
+            $encoded = Item::where('userid','=',Auth::user()->username)
+                        ->where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','pending');
+                        })
+                        ->count();
+        } else {
+            $all_item = Item::where('status','=',$status)->get();
+            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=',$status)->count();
         }
 
         $mode_procurement = ModeProcurement::get();
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
         $end_user_designation = Designation::find(Auth::user()->designation)->description;
-        $head = Section::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
-            ->LeftJoin('dts.users','users.id','=','section.head')
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
-            ->where('section.id','=',Auth::user()->section)
+            ->where('division.id','=',Auth::user()->division)
             ->first();
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
@@ -114,8 +120,19 @@ class PpmpController extends Controller
         }
     }
 
-    public function ppmpSearch($keyword){
-        $item = Item::where('division','=',Auth::user()->division)->where("description","like","%$keyword%")->pluck('expense_id')->toArray();
+    public function ppmpSearch($status,$keyword){
+        if($status == "approve_pending"){
+            $item = Item::where('division','=',Auth::user()->division)
+                ->where("description","like","%$keyword%")
+                ->where(function($q){
+                    $q->where('item.status','=','approve')
+                        ->orWhere('item.status','=','pending');
+                })
+                ->pluck('expense_id')->toArray();
+        } else {
+            $item = Item::where('division','=',Auth::user()->division)->where("status","=",$status)->where("description","like","%$keyword%")->pluck('expense_id')->toArray();
+        }
+
         $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
 
         $all_item = Item::where('status','=','approve')->orWhere('status','=','pending')->get();

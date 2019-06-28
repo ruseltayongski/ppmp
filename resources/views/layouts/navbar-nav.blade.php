@@ -70,17 +70,25 @@
                         <li class="dropdown-submenu">
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
                             <ul class="dropdown-menu">
-                                @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
-                                    <li>
-                                        <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
-                                        {{--<ul class="dropdown-menu">
-                                            <li>
-                                                <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Aprrove/Pending</a>
-                                                <a href="{{ asset('ppmp/list').'/inactivate'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Inactivate</a>
-                                            </li>
-                                        </ul>--}}
-                                    </li>
-                                @endforeach
+                                @if(Auth::user()->user_priv)
+                                    @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
+                                        <li class="dropdown-submenu">
+                                            <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> {{ $expense->description }}</a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Approve</a>
+                                                    <a href="{{ asset('ppmp/list').'/pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Pending</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    @endforeach
+                                @else
+                                    @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
+                                        <li>
+                                            <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                        </li>
+                                    @endforeach
+                                @endif
                             </ul>
                         </li>
                         <li class="divider"></li>

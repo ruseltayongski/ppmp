@@ -265,7 +265,7 @@ $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);
 $pdf->SetWidths(array(160,20));
 $pdf->TableFooter(array("TOTAL BUDGET",$grand_total));
-$pdf->Ln(3);
+/*$pdf->Ln(3);
 $pdf->SetFont('Arial','',6);
 $pdf->SetWidths(array(12,160));
 $pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project being proposed shall be submitted as part of the PPMP"));
@@ -275,11 +275,11 @@ $pdf->TableFooter(array("Prepared By:","Submitted By:"));
 $pdf->Ln(3);
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(15,160,100));
-$pdf->TableFooter(array("",$_GET['end_user_name'],$_GET['head_name']));
+$pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
 
-$pdf->SetWidths(array(12,160,100));
+$pdf->SetWidths(array(15,160,100));
 $pdf->SetFont('Arial','',7);
-$pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+$pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));*/
 
 $pdf->Output();
 ?>

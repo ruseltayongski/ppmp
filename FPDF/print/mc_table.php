@@ -231,7 +231,7 @@ class PDF_MC_Table extends FPDF
             $item->unit_measurement,
             $item->qty,
             $item->unit_cost,
-            $item->estimated_budget,
+            number_format((float)$item->estimated_budget, 2, '.', ''),
             ' ', //consult pako pu
             $item->jan,
             $item->feb,
