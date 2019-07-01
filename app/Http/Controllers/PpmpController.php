@@ -121,17 +121,13 @@ class PpmpController extends Controller
     }
 
     public function ppmpSearch($status,$keyword){
-        if($status == "approve_pending"){
-            $item = Item::where('division','=',Auth::user()->division)
-                ->where("description","like","%$keyword%")
-                ->where(function($q){
-                    $q->where('item.status','=','approve')
-                        ->orWhere('item.status','=','pending');
-                })
-                ->pluck('expense_id')->toArray();
-        } else {
-            $item = Item::where('division','=',Auth::user()->division)->where("status","=",$status)->where("description","like","%$keyword%")->pluck('expense_id')->toArray();
-        }
+        $item = Item::where('division','=',Auth::user()->division)
+            ->where("description","like","%$keyword%")
+            ->where(function($q){
+                $q->where('item.status','=','approve')
+                    ->orWhere('item.status','=','pending');
+            })
+            ->pluck('expense_id')->toArray();
 
         $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
 
@@ -154,7 +150,7 @@ class PpmpController extends Controller
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
             "head" => $head,
-            "status" => "approve",
+            "status" => $status,
             "keyword" => $keyword
         ]);
     }

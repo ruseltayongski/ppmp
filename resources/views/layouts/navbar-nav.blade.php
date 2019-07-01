@@ -70,25 +70,11 @@
                         <li class="dropdown-submenu">
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
                             <ul class="dropdown-menu">
-                                @if(Auth::user()->user_priv)
-                                    @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
-                                        <li class="dropdown-submenu">
-                                            <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> {{ $expense->description }}</a>
-                                            <ul class="dropdown-menu">
-                                                <li>
-                                                    <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Approve</a>
-                                                    <a href="{{ asset('ppmp/list').'/pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> Pending</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    @endforeach
-                                @else
-                                    @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
-                                        <li>
-                                            <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
-                                        </li>
-                                    @endforeach
-                                @endif
+                                @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
+                                    <li>
+                                        <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                    </li>
+                                @endforeach
                             </ul>
                         </li>
                         <li class="divider"></li>

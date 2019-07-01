@@ -332,29 +332,18 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                                             $expense_total = 0;
-                                            if($status == 'inactivate'){
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            } else {
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where('item.status','=',$status)
-                                                    ->where("item.description","like","%$keyword%")
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            }
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->where('item.expense_id','=',$expense->id)
+                                                ->where('item.tranche','=',$tranche)
+                                                ->where(function($q){
+                                                    $q->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','pending');
+                                                })
+                                                ->where('item.division','=',Auth::user()->division)
+                                                ->where("item.description","like","%$keyword%")
+                                                ->get();
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                             foreach($items as $item){
                                                 echo displayItem($item,$mode_procurement,$title_header_second);
@@ -381,29 +370,18 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            if($status == 'inactivate'){
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            } else {
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where('item.status','=',$status)
-                                                    ->where("item.description","like","%$keyword%")
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            }
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->where('item.expense_id','=',$expense->id)
+                                                ->where('item.tranche','=',$tranche)
+                                                ->where(function($q){
+                                                    $q->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','pending');
+                                                })
+                                                ->where('item.division','=',Auth::user()->division)
+                                                ->where("item.description","like","%$keyword%")
+                                                ->get();
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
                                             foreach($items as $item){
                                                 echo displayItem($item,$mode_procurement,$display_first);
@@ -421,28 +399,17 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                 } else {
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
-                                    if($status = "approve_pending"){
-                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->where('item.expense_id','=',$expense->id)
-                                            ->where(function($q){
-                                                $q->where('item.status','=','approve')
-                                                    ->orWhere('item.status','=','pending');
-                                            })
-                                            ->where("item.description","like","%$keyword%")
-                                            ->where('item.division','=',Auth::user()->division)
-                                            ->get();
-                                    } else {
-                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
-                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->where('item.expense_id','=',$expense->id)
-                                            ->where('item.status','=',$status)
-                                            ->where("item.description","like","%$keyword%")
-                                            ->where('item.division','=',Auth::user()->division)
-                                            ->get();
-                                    }
+                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                        ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                        ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                        ->where('item.expense_id','=',$expense->id)
+                                        ->where(function($q){
+                                            $q->where('item.status','=','approve')
+                                                ->orWhere('item.status','=','pending');
+                                        })
+                                        ->where("item.description","like","%$keyword%")
+                                        ->where('item.division','=',Auth::user()->division)
+                                        ->get();
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$expense->description)."'>";
                                     foreach($items as $item){
                                         echo displayItem($item,$mode_procurement,$expense->description);
