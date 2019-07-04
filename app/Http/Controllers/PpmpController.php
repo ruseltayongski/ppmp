@@ -57,6 +57,8 @@ class PpmpController extends Controller
     }
 
     public function ppmpUpdate(Request $request){
+        $request->get('item_id');
+
         foreach($request->get('item_id') as $value){
             $qty = $request->get('jan'.$value)+
                 $request->get('feb'.$value)+
@@ -81,6 +83,7 @@ class PpmpController extends Controller
                 [
                     'userid' => $request->get('userid'.$value),
                     'division' => Auth::user()->division,
+                    'section' => Auth::user()->section,
                     'expense_id' => $request->get('expense_id'.$value),
                     'tranche' => $request->get('tranche'.$value),
                     'description' => $request->get('description'.$value),
