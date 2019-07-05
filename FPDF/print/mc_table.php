@@ -41,7 +41,7 @@ class PDF_MC_Table extends FPDF
         // Arial italic 8
         $this->SetFont('Arial','I',6);
         // Page number
-        $prepared_by = $_GET['division'] == 6 ? "Rusel T. Tayong" : "Louise T. Suson";
+        $prepared_by = $_GET['division'] == 6 ? "" : "Louise T. Suson";
         $this->Cell(0,10,"\t\t\t".$prepared_by."\t\t\t".date("h:i a")."\t\t\t".date('m/d/Y'),0,0,'L');
         $this->Cell(0,10,'Page '.$this->PageNo().'/{nb}',0,0,'R');
     }
