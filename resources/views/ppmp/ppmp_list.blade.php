@@ -27,7 +27,7 @@ function displayHeader($title){
         </tr>";
 }
 function displayItem($item,$mode_procurement,$expense_title){
-    $qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dec;
+    $qty = $item->qty_jan+$item->qty_feb+$item->qty_mar+$item->qty_apr+$item->qty_may+$item->qty_jun+$item->qty_jul+$item->qty_aug+$item->qty_sep+$item->qty_oct+$item->qty_nov+$item->qty_dec;
     $estimated_budget = $item->unit_cost * $qty;
     $mode_procurement_display = "<select name='mode_procurement$item->id' id='no-border'";
     $mode_procurement_display .= "<option value='$item->mode_procurement'>$item->mode_pro_desc</option>";
@@ -334,7 +334,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             }
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
-                                            $expense_total = 0;
                                             if($status == "approve_pending"){
                                                 $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc")
                                                     ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
@@ -385,14 +384,15 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                             foreach($items as $item){
                                                 echo displayItem($item,$mode_procurement,$title_header_second);
-                                                $expense_total += $item->estimated_budget;
-                                                $grand_total += $expense_total;
+                                                $qty = $item->qty_jan+$item->qty_feb+$item->qty_mar+$item->qty_apr+$item->qty_may+$item->qty_jun+$item->qty_jul+$item->qty_aug+$item->qty_sep+$item->qty_oct+$item->qty_nov+$item->qty_dec;
+                                                $estimated_budget = $item->unit_cost * $qty;
+                                                $grand_total += $estimated_budget;
                                             }
                                             echo "</tbody>";
                                             if($tranche != ("1-A-1" || "1-A-2" || "1-A-3") )
                                                 echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
 
-                                            echo expenseTotal($expense_total);
+                                            echo expenseTotal($grand_total);
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){
                                             if(isset($flag[$expense->description])){
