@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DtsUser;
 use App\Item;
 use App\PisUser;
+use App\Qty;
 use App\Section;
 use App\User;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ use App\Division;
 class PpmpController extends Controller
 {
     public function index($status,$expense_id){
+
         $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->paginate(1);
 
         if($status == 'approve_pending'){
@@ -32,8 +34,15 @@ class PpmpController extends Controller
                         })
                         ->count();
         } else {
-            $all_item = Item::where('status','=',$status)->get();
-            $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=',$status)->count();
+            $all_item = Item::where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','fixed');
+                        })->get();
+            $encoded = Item::where('userid','=',Auth::user()->username)->where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','fixed');
+                        })
+                        ->count();
         }
 
         $mode_procurement = ModeProcurement::get();
@@ -57,10 +66,8 @@ class PpmpController extends Controller
     }
 
     public function ppmpUpdate(Request $request){
-        $request->get('item_id');
-
         foreach($request->get('item_id') as $value){
-            $qty = $request->get('jan'.$value)+
+            $qty_all = $request->get('jan'.$value)+
                 $request->get('feb'.$value)+
                 $request->get('mar'.$value)+
                 $request->get('apr'.$value)+
@@ -72,15 +79,75 @@ class PpmpController extends Controller
                 $request->get('oct'.$value)+
                 $request->get('nov'.$value)+
                 $request->get('dec'.$value);
-            $estimated_budget = $request->get('unit_cost'.$value) * $qty;
-            if($request->get('status'.$value)){
-                $status = 'approve';
-            } else {
-                $status = 'pending';
+            $estimated_budget = $request->get('unit_cost'.$value) * $qty_all;
+            $status = $request->get('status'.$value);
+            if(
+                $request->get('jan'.$value) != '' ||
+                $request->get('feb'.$value) != '' ||
+                $request->get('mar'.$value) != '' ||
+                $request->get('apr'.$value) != '' ||
+                $request->get('may'.$value) != '' ||
+                $request->get('jun'.$value) != '' ||
+                $request->get('jul'.$value) != '' ||
+                $request->get('aug'.$value) != '' ||
+                $request->get('sep'.$value) != '' ||
+                $request->get('oct'.$value) != '' ||
+                $request->get('nov'.$value) != '' ||
+                $request->get('dec'.$value)
+                )
+            {
+                if(
+                    $qty =  Qty::where(function($q) use ($value){
+                            $q->where('qty.item_id','=',$value)
+                                ->orWhere('qty.unique_id','=',$value);
+                            })
+                            ->where('created_by','=',Auth::user()->username)
+                            ->where('section','=',Auth::user()->section)
+                            ->where('division','=',Auth::user()->division)
+                            ->first()
+                ){
+                    $qty->item_id = $value;
+                    $qty->jan = $request->get('jan'.$value);
+                    $qty->feb = $request->get('feb'.$value);
+                    $qty->mar = $request->get('mar'.$value);
+                    $qty->apr = $request->get('apr'.$value);
+                    $qty->may = $request->get('may'.$value);
+                    $qty->jun = $request->get('jun'.$value);
+                    $qty->jul = $request->get('jul'.$value);
+                    $qty->aug = $request->get('aug'.$value);
+                    $qty->sep = $request->get('sep'.$value);
+                    $qty->oct = $request->get('oct'.$value);
+                    $qty->nov = $request->get('nov'.$value);
+                    $qty->dec = $request->get('dec'.$value);
+                    $qty->save();
+                } else {
+                    //ADD NEW
+                    $qty = new Qty();
+                    $qty->item_id = $value;
+                    $qty->unique_id = $value;
+                    $qty->created_by = Auth::user()->username;
+                    $qty->division = Auth::user()->division;
+                    $qty->section = Auth::user()->section;
+                    $qty->jan = $request->get('jan'.$value);
+                    $qty->feb = $request->get('feb'.$value);
+                    $qty->mar = $request->get('mar'.$value);
+                    $qty->apr = $request->get('apr'.$value);
+                    $qty->may = $request->get('may'.$value);
+                    $qty->jun = $request->get('jun'.$value);
+                    $qty->jul = $request->get('jul'.$value);
+                    $qty->aug = $request->get('aug'.$value);
+                    $qty->sep = $request->get('sep'.$value);
+                    $qty->oct = $request->get('oct'.$value);
+                    $qty->nov = $request->get('nov'.$value);
+                    $qty->dec = $request->get('dec'.$value);
+                    $qty->save();
+                }
             }
+
             Item::updateOrCreate(
                 ['id'=>$value],
                 [
+                    'unique_id' => $value,
                     'userid' => $request->get('userid'.$value),
                     'division' => Auth::user()->division,
                     'section' => Auth::user()->section,
@@ -88,22 +155,9 @@ class PpmpController extends Controller
                     'tranche' => $request->get('tranche'.$value),
                     'description' => $request->get('description'.$value),
                     'unit_measurement' => $request->get('unit_measurement'.$value),
-                    'qty' => $qty,
                     'unit_cost' => $request->get('unit_cost'.$value),
                     'estimated_budget' => $estimated_budget,
                     'mode_procurement' => $request->get('mode_procurement'.$value),
-                    'jan' => $request->get('jan'.$value),
-                    'feb' => $request->get('feb'.$value),
-                    'mar' => $request->get('mar'.$value),
-                    'apr' => $request->get('apr'.$value),
-                    'may' => $request->get('may'.$value),
-                    'jun' => $request->get('jun'.$value),
-                    'jul' => $request->get('jul'.$value),
-                    'aug' => $request->get('aug'.$value),
-                    'sep' => $request->get('sep'.$value),
-                    'oct' => $request->get('aug'.$value),
-                    'nov' => $request->get('aug'.$value),
-                    'dec' => $request->get('dec'.$value),
                     'status' => $status
                 ]
             );
@@ -116,7 +170,8 @@ class PpmpController extends Controller
     public function ppmpDelete(Request $request){
         $item = Item::find($request->id);
         if($item){
-            $item->delete();
+            $item->status = 'deactivate';
+            $item->save();
             return 'Successfully Delete!';
         } else {
             return 'No item found!';
@@ -128,13 +183,16 @@ class PpmpController extends Controller
             ->where("description","like","%$keyword%")
             ->where(function($q){
                 $q->where('item.status','=','approve')
-                    ->orWhere('item.status','=','pending');
+                    ->orWhere('item.status','=','fixed');
             })
             ->pluck('expense_id')->toArray();
 
         $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
 
-        $all_item = Item::where('status','=','approve')->orWhere('status','=','pending')->get();
+        $all_item = Item::where(function($q){
+            $q->where('item.status','=','approve')
+                ->orWhere('item.status','=','fixed');
+        })->get();
         $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
 
         $mode_procurement = ModeProcurement::get();

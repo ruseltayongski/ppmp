@@ -23,9 +23,6 @@ function displayHeader($title){
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
         </tr>";
 }
 function displayItem($item,$mode_procurement,$expense_title){
@@ -43,7 +40,7 @@ function displayItem($item,$mode_procurement,$expense_title){
     if($item->status == 'approve'){
         $checked = 'checked';
     }
-    if(Auth::user()->user_priv){
+    /*if(Auth::user()->user_priv){
         $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label>
                    <span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
     } else {
@@ -52,13 +49,19 @@ function displayItem($item,$mode_procurement,$expense_title){
         } else{
             $status = "<span class='label label-primary'>Pending</span>";
         }
+    }*/
+    $status = '';
+    if(Auth::user()->username == $item->userid){
+        $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
     }
     $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
     return "<tr class='$item->id'>
                 <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
+                <input type='hidden' id='no-border' name='qty_unique_id[]' value='$item->qty_unique_id'>
                 <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
                 <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
                 <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
+                <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
                 $expense_title_display
                 <td style='width: 50px'><div class='tooltip_top'>".$item->code."<span class='tooltiptext'>Code</span></div></td>
                 <td >".
@@ -75,20 +78,8 @@ function displayItem($item,$mode_procurement,$expense_title){
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='read_only' name='qty$item->id' style='width: 50px' value='$qty' readonly>
-                    <span class='tooltiptext'>Quantity</span>
-                    </div>
-                </td>
-                <td>
-                    <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='unit_cost$item->id' style='width: 50px' value='$item->unit_cost' placeholder='Unit Cost'>
+                    <input type='text' id='no-border' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost'>
                     <span class='tooltiptext'>Unit Cost</span>
-                    </div>
-                </td>
-                <td>
-                    <div class='tooltip_top' >
-                    <input type='text' id='read_only' name='estimated_budget$item->id' style='width: 50px' value='$estimated_budget' readonly>
-                    <span class='tooltiptext'>Estimated Budget</span>
                     </div>
                 </td>
                 <td>
@@ -99,77 +90,77 @@ function displayItem($item,$mode_procurement,$expense_title){
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='jan$item->id' style='width: 25px' value='$item->jan' placeholder='Jan'>
+                    <input type='number' id='no-border' name='jan$item->id' style='width: 40px' value='$item->qty_jan' placeholder='Jan'>
                     <span class='tooltiptext'>January</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='feb$item->id' style='width: 25px' value='$item->feb' placeholder='Feb'>
+                    <input type='number' id='no-border' name='feb$item->id' style='width: 40px' value='$item->qty_feb' placeholder='Feb'>
                     <span class='tooltiptext'>February</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top'>
-                    <input type='text' id='no-border' name='mar$item->id' style='width: 25px' value='$item->mar' placeholder='Mar'>
+                    <input type='number' id='no-border' name='mar$item->id' style='width: 40px' value='$item->qty_mar' placeholder='Mar'>
                     <span class='tooltiptext'>March</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='apr$item->id' style='width: 25px' value='$item->apr' placeholder='Apr'>
+                    <input type='number' id='no-border' name='apr$item->id' style='width: 40px' value='$item->qty_apr' placeholder='Apr'>
                     <span class='tooltiptext'>April</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='may$item->id' style='width: 25px' value='$item->may' placeholder='May'>
+                    <input type='number' id='no-border' name='may$item->id' style='width: 40px' value='$item->qty_may' placeholder='May'>
                     <span class='tooltiptext'>May</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='jun$item->id' style='width: 25px' value='$item->jun' placeholder='Jun'>
+                    <input type='number' id='no-border' name='jun$item->id' style='width: 40px' value='$item->qty_jun' placeholder='Jun'>
                     <span class='tooltiptext'>June</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top'>
-                    <input type='text' id='no-border' name='jul$item->id' style='width: 25px' value='$item->jul' placeholder='Jul'>
+                    <input type='number' id='no-border' name='jul$item->id' style='width: 40px' value='$item->qty_jul' placeholder='Jul'>
                     <span class='tooltiptext'>July</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='aug$item->id' style='width: 25px' value='$item->aug' placeholder='Aug'>
+                    <input type='number' id='no-border' name='aug$item->id' style='width: 40px' value='$item->qty_aug' placeholder='Aug'>
                     <span class='tooltiptext'>August</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='sep$item->id' style='width: 25px' value='$item->sep' placeholder='Sep'>
+                    <input type='number' id='no-border' name='sep$item->id' style='width: 40px' value='$item->qty_sep' placeholder='Sep'>
                     <span class='tooltiptext'>September</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top'>
-                    <input type='text' id='no-border' name='oct$item->id' style='width: 25px' value='$item->oct' placeholder='Oct'>
+                    <input type='number' id='no-border' name='oct$item->id' style='width: 40px' value='$item->qty_oct' placeholder='Oct'>
                     <span class='tooltiptext'>October</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='nov$item->id' style='width: 25px' value='$item->nov' placeholder='Nov'>
+                    <input type='number' id='no-border' name='nov$item->id' style='width: 40px' value='$item->qty_nov' placeholder='Nov'>
                     <span class='tooltiptext'>November</span>
                     </div>
                 </td>
                 <td>
                     <div class='tooltip_top' >
-                    <input type='text' id='no-border' name='dec$item->id' style='width: 25px' value='$item->dec' placeholder='Dec'>
+                    <input type='number' id='no-border' name='dec$item->id' style='width: 40px' value='$item->qty_dec' placeholder='Dec'>
                     <span class='tooltiptext'>December</span>
                     </div>
                 </td>
-                <td class='text-center'>
+                <td>
                     $status
                 </td>
             </tr>";
@@ -281,9 +272,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                 <th>Code</th>
                                 <th>Item Description/General Specification</th>
                                 <th>Unit</th>
-                                <th>QTY</th>
                                 <th>Unit Cost</th>
-                                <th>Estimated<br>Budget</th>
                                 <th>Mode of<br>Procurement</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
@@ -332,14 +321,34 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                                             $expense_total = 0;
-                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc",
+                                                    "qty.unique_id as qty_unique_id",
+                                                    "qty.jan as qty_jan",
+                                                    "qty.feb as qty_feb",
+                                                    "qty.mar as qty_mar",
+                                                    "qty.apr as qty_apr",
+                                                    "qty.may as qty_may",
+                                                    "qty.jun as qty_jun",
+                                                    "qty.jul as qty_jul",
+                                                    "qty.aug as qty_aug",
+                                                    "qty.sep as qty_sep",
+                                                    "qty.oct as qty_oct",
+                                                    "qty.nov as qty_nov",
+                                                    "qty.dec as qty_dec")
                                                 ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->leftJoin('qty',function($join){
+                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                                    $join->on(function($join2){
+                                                        $join2->on('qty.item_id','=','item.id');
+                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
+                                                    });
+                                                })
                                                 ->where('item.expense_id','=',$expense->id)
                                                 ->where('item.tranche','=',$tranche)
                                                 ->where(function($q){
                                                     $q->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','pending');
+                                                        ->orWhere('item.status','=','fixed');
                                                 })
                                                 ->where('item.division','=',Auth::user()->division)
                                                 ->where("item.description","like","%$keyword%")
@@ -370,14 +379,34 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc",
+                                                    "qty.unique_id as qty_unique_id",
+                                                    "qty.jan as qty_jan",
+                                                    "qty.feb as qty_feb",
+                                                    "qty.mar as qty_mar",
+                                                    "qty.apr as qty_apr",
+                                                    "qty.may as qty_may",
+                                                    "qty.jun as qty_jun",
+                                                    "qty.jul as qty_jul",
+                                                    "qty.aug as qty_aug",
+                                                    "qty.sep as qty_sep",
+                                                    "qty.oct as qty_oct",
+                                                    "qty.nov as qty_nov",
+                                                    "qty.dec as qty_dec")
                                                 ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->leftJoin('qty',function($join){
+                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                                    $join->on(function($join2){
+                                                        $join2->on('qty.item_id','=','item.id');
+                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
+                                                    });
+                                                })
                                                 ->where('item.expense_id','=',$expense->id)
                                                 ->where('item.tranche','=',$tranche)
                                                 ->where(function($q){
                                                     $q->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','pending');
+                                                        ->orWhere('item.status','=','fixed');
                                                 })
                                                 ->where('item.division','=',Auth::user()->division)
                                                 ->where("item.description","like","%$keyword%")
@@ -399,25 +428,45 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                 } else {
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
-                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc")
+                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by"),"mode_procurement.description as mode_pro_desc",
+                                            "qty.unique_id as qty_unique_id",
+                                            "qty.jan as qty_jan",
+                                            "qty.feb as qty_feb",
+                                            "qty.mar as qty_mar",
+                                            "qty.apr as qty_apr",
+                                            "qty.may as qty_may",
+                                            "qty.jun as qty_jun",
+                                            "qty.jul as qty_jul",
+                                            "qty.aug as qty_aug",
+                                            "qty.sep as qty_sep",
+                                            "qty.oct as qty_oct",
+                                            "qty.nov as qty_nov",
+                                            "qty.dec as qty_dec")
                                         ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                        ->leftJoin('qty',function($join){
+                                            $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                            $join->on(function($join2){
+                                                $join2->on('qty.item_id','=','item.id');
+                                                $join2->orOn('qty.unique_id','=','item.unique_id');
+                                            });
+                                        })
                                         ->where('item.expense_id','=',$expense->id)
                                         ->where(function($q){
                                             $q->where('item.status','=','approve')
-                                                ->orWhere('item.status','=','pending');
+                                                ->orWhere('item.status','=','fixed');
                                         })
                                         ->where("item.description","like","%$keyword%")
                                         ->where('item.division','=',Auth::user()->division)
                                         ->get();
-                                    echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$expense->description)."'>";
+                                    echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     foreach($items as $item){
                                         echo displayItem($item,$mode_procurement,$expense->description);
                                         $expense_total += $item->estimated_budget;
                                         $grand_total += $expense_total;
                                     }
                                     echo "</tbody>";
-                                    echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$expense->id,'',$expense->description);
+                                    echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
                                     }
@@ -494,7 +543,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 </div>
                 <div class="col-md-6" >
                     <h1>
-                        Grand Total: <span class="badge bg-red" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ $grand_total }}</span>
+                        Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ $grand_total }}</span>
                     </h1>
                 </div>
             </div>
@@ -630,119 +679,107 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
                             "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
                             "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
+                            "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
                             "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
                             "<td ></td>" +
                             "<td width='35%' style='padding-left: 3.7%'>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
-                            "<span class='tooltiptext'>Item Description</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
+                                "<span class='tooltiptext'>Item Description</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
-                            "<span class='tooltiptext'>Unit Measurement</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>Unit Measurement</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Qty' name='qty"+item_unique_row+"' style='width: 40px'>" +
-                            "<span class='tooltiptext'>Quantity</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
+                                "<span class='tooltiptext'>Unit Cost</span>"+
+                                "</div>" +
+                                "</td>"+
+                            "<td>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                mode_procurement_display+
+                                "<span class='tooltiptext'>Mode of Procurement</span>"+
+                                "</div>" +
+                                "</td>"+
+                            "<td>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>Estimated Budget</span>"+
+                                "</div>" +
+                                "</td>"+
+                            "<td>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>February</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Cost' name='unit_cost"+item_unique_row+"' style='width: 50px'>" +
-                            "<span class='tooltiptext'>Unit Cost</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>March</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' name='estimated_budget"+item_unique_row+"' style='width: 60px'>" +
-                            "<span class='tooltiptext'>Estimated Budget</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>April</span>"+
+                                "</div>" +
+                                "</td>"+
+                            "<td>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>May</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            mode_procurement_display+
-                            "<span class='tooltiptext'>Mode of Procurement</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>June</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>Estimated Budget</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>July</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>February</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>August</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>March</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>September</span>"+
+                                "</div>" +
+                                "</td>"+
+                            "<td>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>October</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>April</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>November</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='May' name='may"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>May</span>"+
-                            "</div>" +
+                                "<div class='tooltip_top' style='width: 100%;'>"+
+                                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
+                                "<span class='tooltiptext'>December</span>"+
+                                "</div>" +
                             "</td>"+
                             "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>June</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>July</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>August</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>September</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>October</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>November</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<div class='tooltip_top' style='width: 100%;'>"+
-                            "<input type='text' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 25px'>" +
-                            "<span class='tooltiptext'>December</span>"+
-                            "</div>" +
-                            "</td>"+
-                            "<td>" +
-                            "<span class='label label-primary'>pending</span>" +
-                            "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>" +
+                                "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>" +
                             "</td>"+
                             "</tr>";
                         $("#"+id).append(new_row);

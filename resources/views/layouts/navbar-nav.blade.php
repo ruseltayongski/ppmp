@@ -72,7 +72,7 @@
                             <ul class="dropdown-menu">
                                 @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
                                     <li>
-                                        <a href="{{ asset('ppmp/list').'/approve_pending'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                        <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
                                     </li>
                                 @endforeach
                             </ul>
