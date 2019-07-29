@@ -4,7 +4,7 @@ function conn()
 {
     $server = 'localhost';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmp",'root','');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
