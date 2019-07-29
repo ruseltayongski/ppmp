@@ -70,7 +70,7 @@
                         <li class="dropdown-submenu">
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
                             <ul class="dropdown-menu">
-                                @foreach(\App\Expense::where('division','=',Auth::user()->division)->get() as $expense)
+                                @foreach(\App\Expense::get() as $expense)
                                     <li>
                                         <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
                                     </li>
