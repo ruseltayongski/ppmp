@@ -125,6 +125,7 @@ $pdf->TableTitle([
 
 $grand_total = 0;
 $expenses = queryExpense($_GET['division']);
+$userid = $_GET['userid'];
 foreach($expenses as $expense){
     $count_first = 0;
     $count_second = 0;
@@ -177,7 +178,7 @@ foreach($expenses as $expense){
                                               mode_procurement.description as mode_procurement_description 
                                               FROM ITEM 
                                               left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                                              left join qty on qty.created_by = '0619' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
+                                              left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
                                               where item.tranche = '$tranche' 
                                               and item.expense_id = '$expense->id' 
                                               and (item.status = 'approve' or item.status = 'fixed') 
@@ -218,7 +219,7 @@ foreach($expenses as $expense){
                                             mode_procurement.description as mode_procurement_description 
                                             FROM ITEM 
                                             left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                                            left join qty on qty.created_by = '0619' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
+                                            left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
                                             where item.tranche = '$tranche' 
                                             and item.expense_id = '$expense->id' 
                                             and (item.status = 'approve' or item.status = 'fixed') 
@@ -263,7 +264,7 @@ foreach($expenses as $expense){
                                     mode_procurement.description as mode_procurement_description 
                                     FROM ITEM 
                                     left join mode_procurement on mode_procurement.id = item.mode_procurement
-                                    left join qty on qty.created_by = '0619' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
+                                    left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
                                     where item.expense_id = '$expense->id' 
                                     and (item.status = 'approve' or item.status = 'fixed') 
                                     order by item.description asc");

@@ -577,7 +577,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
                         <a href="#" onclick="filterItems()" type="button" class="btn btn-primary">Filter Items {{ $status }}</a>
-                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division }}" target="_blank" type="button" class="btn btn-success">All Items</a>
+                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" type="button" class="btn btn-success">All Items</a>
                     </div>
                 </div>
                 <!-- /.modal-content -->
