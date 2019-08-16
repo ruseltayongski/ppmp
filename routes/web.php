@@ -59,3 +59,12 @@ Route::get('section/division','MaintenanceController@changeSectionDivision');
 Route::get('section/update','MaintenanceController@updateSection');
 Route::get('division/update','MaintenanceController@updateDivision');
 
+//consolidated
+Route::get('consolidate/section','PpmpController@ConsolidateSection');
+
+//PAP
+Route::get('pap/home','PapController@Pap');
+Route::post('pap/add','PapController@PapAdd');
+Route::post('pap/edit','PapController@PapEdit');
+Route::post('pap/edit_save','PapController@PapEditSave');
+

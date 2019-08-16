@@ -2,7 +2,6 @@
 use App\Item;
 function displayHeader($title){
     return "<tr>
-            <td></td>
             <td>
                 <strong>
                     ".$title."
@@ -36,10 +35,6 @@ function displayItem($item,$mode_procurement,$expense_title){
         }
     }
     $mode_procurement_display .= "</select>";
-    $checked = '';
-    if($item->status == 'approve'){
-        $checked = 'checked';
-    }
     /*if(Auth::user()->user_priv){
         $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label>
                    <span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
@@ -50,9 +45,18 @@ function displayItem($item,$mode_procurement,$expense_title){
             $status = "<span class='label label-primary'>Pending</span>";
         }
     }*/
-    $status = '';
+    $status = "<span class='label label-success'>".$item->encoded_by."</span>";
     if(Auth::user()->username == $item->userid){
         $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+    }
+    if($item->status == 'fixed'){
+        $description = [
+            "readonly" => "readonly"
+        ];
+    } else {
+        $description = [
+            "readonly" => ""
+        ];
     }
     $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
     return "<tr class='$item->id'>
@@ -63,13 +67,12 @@ function displayItem($item,$mode_procurement,$expense_title){
                 <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
                 <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
                 $expense_title_display
-                <td style='width: 50px'><div class='tooltip_top'>".$item->code."<span class='tooltiptext'>Code</span></div></td>
                 <td >".
-        "<div class='tooltip_top' style='width: 100%;'>".
-        "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='no-border' class='item-description' placeholder='Item Description'>"."</div>".
-        "<span class='tooltiptext'>Item Description</span>
+                    "<div class='tooltip_top' style='width: 100%;'>".
+                        "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='no-border' class='item-description' placeholder='Item Description'>"."</div>".
+                        "<span class='tooltiptext'>Item Description</span>
                     </div>".
-        "</td>
+                "</td>
                 <td>
                     <div class='tooltip_top' >
                     <input type='text' id='no-border' name='unit_measurement$item->id' style='width: 50px' value='$item->unit_measurement' placeholder='Unit Measurement'>
@@ -269,7 +272,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
                             <tr>
-                                <th>Code</th>
                                 <th>Item Description/General Specification</th>
                                 <th>Unit</th>
                                 <th>Unit Cost</th>
@@ -360,7 +362,8 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 $grand_total += $expense_total;
                                             }
                                             echo "</tbody>";
-                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
+                                            if($tranche != ("1-A-1" || "1-A-2" || "1-A-3") )
+                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($expense_total);
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){
@@ -418,7 +421,8 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                                 $grand_total += $expense_total;
                                             }
                                             echo "</tbody>";
-                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                            if($tranche != "1-B")
+                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
                                             if($expense_total != 0){
                                                 echo expenseTotal($expense_total);
                                             }
@@ -681,7 +685,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
                             "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
                             "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
-                            "<td ></td>" +
                             "<td width='35%' style='padding-left: 3.7%'>" +
                                 "<div class='tooltip_top' style='width: 100%;'>"+
                                 "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +

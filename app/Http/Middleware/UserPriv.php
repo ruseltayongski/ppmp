@@ -30,9 +30,9 @@ class UserPriv
             elseif(!isset($section)){
                 return Redirect::to('section/update');
             }
-            elseif(count($charge_to) == 0){
+            /*elseif(count($charge_to) == 0){
                 return Redirect::to('charge/default');
-            }
+            }*/
             else {
                 Session::put('charge_to',$charge_to);
                 Session::put('charge_menu',true);

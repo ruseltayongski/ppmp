@@ -70,19 +70,69 @@
                         <li class="dropdown-submenu">
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
                             <ul class="dropdown-menu">
+                                <li class="dropdown-submenu">
+                                    <a href="#"><i class="fa fa-sticky-note"></i> Regular Allotment</a>
+                                    <ul class="dropdown-menu">
+                                        @foreach(
+                                                    \App\PapSection::join('ppmpv2.pap','pap.id','=','papsection.pap_id')
+                                                                    ->where('papsection.section_id','=',Auth::user()->section)
+                                                                    ->where('pap.pap','=','Regular Allotment')
+                                                                    ->get() as $pap
+                                                )
+                                            <li class="dropdown-submenu">
+                                                <a href="#"><i class="fa fa-sticky-note"></i> {{ $pap->description }}</a>
+                                                <ul class="dropdown-menu">
+                                                    @foreach(\App\Expense::get() as $expense)
+                                                        <li>
+                                                            <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                                <li class="dropdown-submenu">
+                                    <a href="#"><i class="fa fa-sticky-note"></i> Sub Allotment</a>
+                                    <ul class="dropdown-menu">
+                                        @foreach(
+                                                   \App\PapSection::join('ppmpv2.pap','pap.id','=','papsection.pap_id')
+                                                                   ->where('papsection.section_id','=',Auth::user()->section)
+                                                                   ->where('pap.pap','=','Sub Allotment')
+                                                                   ->get() as $pap
+                                               )
+                                            <li class="dropdown-submenu">
+                                                <a href="#"><i class="fa fa-sticky-note"></i> {{ $pap->description }}</a>
+                                                <ul class="dropdown-menu">
+                                                    @foreach(\App\Expense::get() as $expense)
+                                                        <li>
+                                                            <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            </ul>
+                            <!--
+                            <ul class="dropdown-menu">
                                 @foreach(\App\Expense::get() as $expense)
                                     <li>
                                         <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
                                     </li>
                                 @endforeach
                             </ul>
+                            -->
                         </li>
                         <li class="divider"></li>
                         <li>
-                            <a href="{{ url('FPDF/print/report.php') }}" target="_blank"><i class="fa fa-bar-chart"></i> Report</a>
+                            <a href="{{ url('consolidate/section') }}"><i class="fa fa-bar-chart"></i> Report</a>
                         </li>
                     </ul>
                 </li>
+                @if(Auth::user()->user_priv)
+                <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>
                     <ul class="dropdown-menu">
@@ -91,6 +141,9 @@
                 </li>
                 <li><a href="{{ url('expense/list') }}"><i class="fa fa-rub"></i> Expense</a></li>
                 <li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>
+                -->
+                <li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>
+                @endif
             @endif
             <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
         </ul>

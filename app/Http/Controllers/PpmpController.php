@@ -216,4 +216,46 @@ class PpmpController extends Controller
         ]);
     }
 
+    public function ConsolidateSection(){
+        $expenses = Expense::where('division','=',Auth::user()->division)->get();
+        $all_item = Item::where(function($q){
+                        $q->where('item.status','=','approve')
+                            ->orWhere('item.status','=','fixed');
+                    })
+                    ->get();
+
+        $encoded = Item::where('userid','=',Auth::user()->username)->where(function($q){
+                        $q->where('item.status','=','approve')
+                            ->orWhere('item.status','=','fixed');
+                    })
+                    ->count();
+
+        $mode_procurement = ModeProcurement::get();
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+        return view('consolidate.consolidate_section',[
+            "expenses" => $expenses,
+            "all_item" => $all_item,
+            "encoded" => $encoded,
+            "mode_procurement" => $mode_procurement,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head
+        ]);
+    }
+
+    public static function AppendItem($item){
+        $qty = Qty::where('item_id','=',$item->id)->get();
+        return view('consolidate.item_append',[
+            "item" => $item,
+            "qty" => $qty,
+            "item_id" => $item->id
+        ]);
+    }
+
 }
