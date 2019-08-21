@@ -31,11 +31,11 @@ Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
-Route::get('ppmp/list/{status}/{expense_id}','PpmpController@index');
+Route::get('ppmp/list/{expense_id}','PpmpController@index');
 Route::post('ppmp/import','ExcelController@importItem');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
-Route::get('ppmp/search/{status}/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
+Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
 
 //charge
 Route::get('charge/default','ChargeController@chargeDefault');

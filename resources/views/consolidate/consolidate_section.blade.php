@@ -12,9 +12,7 @@ function displayHeader($title){
 function displayItem($item){
     $item_append = \App\Http\Controllers\PpmpController::AppendItem($item);
     return "<tr class='$item->id'>
-                <td>
-                    $item_append
-                </td>
+                $item_append
             </tr>";
 }
 ?>
@@ -24,13 +22,14 @@ function displayItem($item){
     <title>consolidate|section</title>
     <div class="box box-success">
         <div class="box-header with-border">
-            <h3 class="box-title">Consolidate by section</h3> <br><label for="">Legend:  <span class='badge bg-blue'>Unit</span> <span class='badge bg-yellow'>Price</span> <span class='badge bg-green'>QTY</span></label>
+            <h3 class="box-title">Consolidate by section</h3>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
             <table class="table table-striped">
                 <tr>
                     <th>Item Description/General Specification</th>
+                    <th ></th>
                 </tr>
                 <?php
                     $grand_total = 0;

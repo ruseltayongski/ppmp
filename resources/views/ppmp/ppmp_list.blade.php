@@ -96,12 +96,6 @@
                         </div>
                     </td>
                     <td>
-                        <div class='tooltip_top'>
-                        $mode_procurement_display
-                        <span class='tooltiptext'>Mode of Procurement</span>
-                        </div>
-                    </td>
-                    <td>
                         <div class='tooltip_top' >
                         <input type='number' id='no-border' name='jan$item->id' style='width: 40px' value='$item->qty_jan' placeholder='Jan'>
                         <span class='tooltiptext'>January</span>
@@ -284,7 +278,6 @@
                                 <th>Item Description/General Specification</th>
                                 <th>Unit</th>
                                 <th>Unit Cost</th>
-                                <th>Mode of<br>Procurement</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
                                 <th>Mar</th>
@@ -331,51 +324,37 @@
                                             }
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
-                                            if($status == "approve_pending"){
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            } else{
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                                        "qty.unique_id as qty_unique_id",
-                                                        "qty.jan as qty_jan",
-                                                        "qty.feb as qty_feb",
-                                                        "qty.mar as qty_mar",
-                                                        "qty.apr as qty_apr",
-                                                        "qty.may as qty_may",
-                                                        "qty.jun as qty_jun",
-                                                        "qty.jul as qty_jul",
-                                                        "qty.aug as qty_aug",
-                                                        "qty.sep as qty_sep",
-                                                        "qty.oct as qty_oct",
-                                                        "qty.nov as qty_nov",
-                                                        "qty.dec as qty_dec")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->leftJoin('qty',function($join){
-                                                        $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                        $join->on(function($join2){
-                                                            $join2->on('qty.item_id','=','item.id');
-                                                            $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                        });
-                                                    })
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','fixed');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            }
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
+                                                "qty.unique_id as qty_unique_id",
+                                                "qty.jan as qty_jan",
+                                                "qty.feb as qty_feb",
+                                                "qty.mar as qty_mar",
+                                                "qty.apr as qty_apr",
+                                                "qty.may as qty_may",
+                                                "qty.jun as qty_jun",
+                                                "qty.jul as qty_jul",
+                                                "qty.aug as qty_aug",
+                                                "qty.sep as qty_sep",
+                                                "qty.oct as qty_oct",
+                                                "qty.nov as qty_nov",
+                                                "qty.dec as qty_dec")
+                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->leftJoin('qty',function($join){
+                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                                    $join->on(function($join2){
+                                                        $join2->on('qty.item_id','=','item.id');
+                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
+                                                    });
+                                                })
+                                                ->where('item.expense_id','=',$expense->id)
+                                                ->where('item.tranche','=',$tranche)
+                                                ->where(function($q){
+                                                    $q->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','fixed');
+                                                })
+                                                ->where('item.division','=',Auth::user()->division)
+                                                ->get();
 
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
@@ -407,51 +386,37 @@
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            if($status == "approve_pending"){
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','pending');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            } else{
-                                                $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                                        "qty.unique_id as qty_unique_id",
-                                                        "qty.jan as qty_jan",
-                                                        "qty.feb as qty_feb",
-                                                        "qty.mar as qty_mar",
-                                                        "qty.apr as qty_apr",
-                                                        "qty.may as qty_may",
-                                                        "qty.jun as qty_jun",
-                                                        "qty.jul as qty_jul",
-                                                        "qty.aug as qty_aug",
-                                                        "qty.sep as qty_sep",
-                                                        "qty.oct as qty_oct",
-                                                        "qty.nov as qty_nov",
-                                                        "qty.dec as qty_dec")
-                                                    ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                    ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                    ->leftJoin('qty',function($join){
-                                                        $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                        $join->on(function($join2){
-                                                            $join2->on('qty.item_id','=','item.id');
-                                                            $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                        });
-                                                    })
-                                                    ->where('item.expense_id','=',$expense->id)
-                                                    ->where('item.tranche','=',$tranche)
-                                                    ->where(function($q){
-                                                        $q->where('item.status','=','approve')
-                                                            ->orWhere('item.status','=','fixed');
-                                                    })
-                                                    ->where('item.division','=',Auth::user()->division)
-                                                    ->get();
-                                            }
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
+                                                "qty.unique_id as qty_unique_id",
+                                                "qty.jan as qty_jan",
+                                                "qty.feb as qty_feb",
+                                                "qty.mar as qty_mar",
+                                                "qty.apr as qty_apr",
+                                                "qty.may as qty_may",
+                                                "qty.jun as qty_jun",
+                                                "qty.jul as qty_jul",
+                                                "qty.aug as qty_aug",
+                                                "qty.sep as qty_sep",
+                                                "qty.oct as qty_oct",
+                                                "qty.nov as qty_nov",
+                                                "qty.dec as qty_dec")
+                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                                ->leftJoin('qty',function($join){
+                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                                    $join->on(function($join2){
+                                                        $join2->on('qty.item_id','=','item.id');
+                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
+                                                    });
+                                                })
+                                                ->where('item.expense_id','=',$expense->id)
+                                                ->where('item.tranche','=',$tranche)
+                                                ->where(function($q){
+                                                    $q->where('item.status','=','approve')
+                                                        ->orWhere('item.status','=','fixed');
+                                                })
+                                                ->where('item.division','=',Auth::user()->division)
+                                                ->get();
 
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
@@ -473,49 +438,37 @@
                                 } else {
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
-                                    if($status == "approve_pending"){
-                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc")
-                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->where('item.expense_id','=',$expense->id)
-                                            ->where(function($q){
-                                                $q->where('item.status','=','approve')
-                                                    ->orWhere('item.status','=','pending');
-                                            })
-                                            ->where('item.division','=',Auth::user()->division)
-                                            ->get();
-                                    } else{
-                                        $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                                "qty.unique_id as qty_unique_id",
-                                                "qty.jan as qty_jan",
-                                                "qty.feb as qty_feb",
-                                                "qty.mar as qty_mar",
-                                                "qty.apr as qty_apr",
-                                                "qty.may as qty_may",
-                                                "qty.jun as qty_jun",
-                                                "qty.jul as qty_jul",
-                                                "qty.aug as qty_aug",
-                                                "qty.sep as qty_sep",
-                                                "qty.oct as qty_oct",
-                                                "qty.nov as qty_nov",
-                                                "qty.dec as qty_dec")
-                                            ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                            ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                            ->leftJoin('qty',function($join){
-                                                $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                $join->on(function($join2){
-                                                    $join2->on('qty.item_id','=','item.id');
-                                                    $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                });
-                                            })
-                                            ->where('item.expense_id','=',$expense->id)
-                                            ->where(function($q){
-                                                $q->where('item.status','=','approve')
-                                                    ->orWhere('item.status','=','fixed');
-                                            })
-                                            ->where('item.division','=',Auth::user()->division)
-                                            ->get();
-                                    }
+                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
+                                        "qty.unique_id as qty_unique_id",
+                                        "qty.jan as qty_jan",
+                                        "qty.feb as qty_feb",
+                                        "qty.mar as qty_mar",
+                                        "qty.apr as qty_apr",
+                                        "qty.may as qty_may",
+                                        "qty.jun as qty_jun",
+                                        "qty.jul as qty_jul",
+                                        "qty.aug as qty_aug",
+                                        "qty.sep as qty_sep",
+                                        "qty.oct as qty_oct",
+                                        "qty.nov as qty_nov",
+                                        "qty.dec as qty_dec")
+                                        ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
+                                        ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
+                                        ->leftJoin('qty',function($join){
+                                            $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
+                                            $join->on(function($join2){
+                                                $join2->on('qty.item_id','=','item.id');
+                                                $join2->orOn('qty.unique_id','=','item.unique_id');
+                                            });
+                                        })
+                                        ->where('item.expense_id','=',$expense->id)
+                                        ->where(function($q){
+                                            $q->where('item.status','=','approve')
+                                                ->orWhere('item.status','=','fixed');
+                                        })
+                                        ->where('item.division','=',Auth::user()->division)
+                                        ->get();
+
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     foreach($items as $item){
                                         echo displayItem($item,$mode_procurement,$expense->description);
@@ -574,8 +527,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        <a href="#" onclick="filterItems()" type="button" class="btn btn-primary">Filter Items {{ $status }}</a>
-                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" type="button" class="btn btn-success">All Items</a>
+                        <a href="#" onclick="filterItems()" type="button" class="btn btn-primary">Filter Items </a>
+                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" type="button" class="btn btn-success">All Items</a>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -588,7 +541,7 @@
                     <button class="btn btn-app" onclick="itemChecker()" type="submit">
                         <i class="fa fa-save"></i> Save
                     </button>
-                    <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
+                    <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
                     <!--
@@ -697,13 +650,13 @@
             if(!keyword.includes("/")){
                 keyword = encodeURIComponent(keyword);
             }
-            var url = "<?php echo asset('ppmp/search').'/'.$status; ?>"+"/"+keyword;
+            var url = "<?php echo asset('ppmp/search'); ?>"+"/"+keyword;
             window.location.replace(url);
         }
 
         function filterItems(){
             var select_val = $("#filter_item").select2("val");
-            var url = "<?php echo url('FPDF/print/report_filter.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division."&select_val="; ?>"+select_val;
+            var url = "<?php echo url('FPDF/print/report_filter.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division."&select_val="; ?>"+select_val;
             var win = window.open(url, '_blank');
             win.focus();
         }
@@ -769,12 +722,6 @@
                                 "<span class='tooltiptext'>Unit Cost</span>"+
                                 "</div>" +
                             "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                mode_procurement_display+
-                                "<span class='tooltiptext'>Mode of Procurement</span>"+
-                                "</div>" +
-                                "</td>"+
                             "<td>" +
                                 "<div class='tooltip_top' style='width: 100%;'>"+
                                 "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
