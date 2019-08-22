@@ -668,17 +668,134 @@
             });
         }
 
-        function addItem(element){
-            var id = element.data('id');
+        function SelectRow(element){
             var expense = element.data('expense');
             var expense_description = element.data('expense_description');
             var tranche = element.data('tranche');
             var userid = "<?php echo Auth::user()->username; ?>";
             var item_unique_row = uuidv4()+userid;
             var encoded_by = "<?php echo Auth::user()->lname.' '.Auth::user()->fname ?>";
+
+            item_status = "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+            var mode_procurement = <?php echo $mode_procurement; ?>;
+            var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
+            mode_procurement_display += "<option value=''></option>";
+            $.each(mode_procurement,function(x,y){
+                mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
+            });
+            mode_procurement_display += "</select>";
+            var new_row = "<tr class='"+item_unique_row+"'>" +
+                "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
+                "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
+                "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
+                "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
+                "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
+                "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
+                "<td width='35%' style='padding-left: 3.7%'>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
+                "<span class='tooltiptext'>Item Description</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>Unit Measurement</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
+                "<span class='tooltiptext'>Unit Cost</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>Estimated Budget</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>February</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>March</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>April</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>May</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>June</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>July</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>August</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>September</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>October</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>November</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>December</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>"+
+                item_status+
+                "</td>"+
+                "</tr>";
+
+            return new_row;
+        }
+
+        function addItem(element){
+            $(".number_of_row").focus();
+            var id = element.data('id');
+            var expense_description = element.data('expense_description');
             Lobibox.confirm({
                 title: 'Confirmation',
-                msg: "Are you sure you want to add in "+expense_description+" ?",
+                msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
                 callback: function ($this, type, ev) {
                     if(type == 'yes'){
                         var item_status;
@@ -689,117 +806,23 @@
                             item_status = "<span class='label label-primary'>pending</span>" +
                             "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
                         @endif--}}
-                        item_status = "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
-                        var mode_procurement = <?php echo $mode_procurement; ?>;
-                        var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
-                        mode_procurement_display += "<option value=''></option>";
-                        $.each(mode_procurement,function(x,y){
-                            mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
-                        });
-                        mode_procurement_display += "</select>";
-                        var new_row = "<tr class='"+item_unique_row+"'>" +
-                            "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
-                            "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
-                            "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
-                            "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
-                            "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
-                            "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
-                            "<td width='35%' style='padding-left: 3.7%'>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
-                                "<span class='tooltiptext'>Item Description</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>Unit Measurement</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
-                                "<span class='tooltiptext'>Unit Cost</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>Estimated Budget</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>February</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>March</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>April</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>May</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>June</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>July</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>August</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>September</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>October</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>November</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>December</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>"+
-                            item_status+
-                            "</td>"+
-                            "</tr>";
-                        $("#"+id).append(new_row);
-                        console.log(id);
+                        var number_of_row = $(".number_of_row").val();
+                        if(number_of_row){
+                            var row_setter;
+                            if(number_of_row > 20){
+                                row_setter = 20;
+                            } else {
+                                row_setter = number_of_row;
+                            }
+                            for(var i=0;i<row_setter;i++){
+                                var new_row = SelectRow(element);
+                                $("#"+id).append(new_row);
+                            }
+                        } else {
+                            var new_row = SelectRow(element);
+                            $("#"+id).append(new_row);
+                        }
+
                         $(".item-description").catcomplete({
                             delay: 0,
                             source: item_filter
@@ -808,6 +831,7 @@
                 }
             });
         }
+
         function deleteItem(element){
             Lobibox.confirm({
                 title: 'Confirmation',

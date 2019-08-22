@@ -69,6 +69,7 @@
                     <ul class="dropdown-menu">
                         <li class="dropdown-submenu">
                             <a href="#" data-toggle="dropdown"><i class="fa fa-database"></i> Manage</a>
+                            <!--
                             <ul class="dropdown-menu">
                                 <li class="dropdown-submenu">
                                     <a href="#"><i class="fa fa-sticky-note"></i> Regular Allotment</a>
@@ -115,20 +116,21 @@
                                     </ul>
                                 </li>
                             </ul>
-                            <!--
+                            -->
                             <ul class="dropdown-menu">
                                 @foreach(\App\Expense::get() as $expense)
                                     <li>
-                                        <a href="{{ asset('ppmp/list').'/approve'.'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
+                                        <a href="{{ asset('ppmp/list').'/'.$expense->id }}"><i class="fa fa-sticky-note"></i> {{ $expense->description }}</a>
                                     </li>
                                 @endforeach
                             </ul>
-                            -->
                         </li>
                         <li class="divider"></li>
+                        @if(Auth::user()->user_priv)
                         <li>
                             <a href="{{ url('consolidate/section') }}"><i class="fa fa-bar-chart"></i> Report</a>
                         </li>
+                        @endif
                     </ul>
                 </li>
                 @if(Auth::user()->user_priv)

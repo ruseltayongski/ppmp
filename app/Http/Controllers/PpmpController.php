@@ -68,7 +68,6 @@ class PpmpController extends Controller
                 $request->get('nov'.$value)+
                 $request->get('dec'.$value);
             $estimated_budget = $request->get('unit_cost'.$value) * $qty_all;
-            $status = $request->get('status'.$value);
             if(
                 $request->get('jan'.$value) != '' ||
                 $request->get('feb'.$value) != '' ||
@@ -132,26 +131,39 @@ class PpmpController extends Controller
                 }
             }
 
-            Item::updateOrCreate(
-                ['id'=>$value],
-                [
-                    'unique_id' => $value,
-                    'userid' => $request->get('userid'.$value),
-                    'division' => Auth::user()->division,
-                    'section' => Auth::user()->section,
-                    'expense_id' => $request->get('expense_id'.$value),
-                    'tranche' => $request->get('tranche'.$value),
-                    'description' => $request->get('description'.$value),
-                    'unit_measurement' => $request->get('unit_measurement'.$value),
-                    'unit_cost' => $request->get('unit_cost'.$value),
-                    'estimated_budget' => $estimated_budget,
-                    'mode_procurement' => $request->get('mode_procurement'.$value),
-                    'status' => $status
-                ]
-            );
+            if($item = Item::where("id","=",$value)
+                ->orWhere("unique_id","=",$value)
+                ->first()){
+                $item->unique_id = $value;
+                $item->userid = $request->get('userid'.$value);
+                $item->division = Auth::user()->division;
+                $item->section = Auth::user()->section;
+                $item->expense_id = $request->get('expense_id'.$value);
+                $item->tranche = $request->get('tranche'.$value);
+                $item->description = $request->get('description'.$value);
+                $item->unit_measurement = $request->get('unit_measurement'.$value);
+                $item->unit_cost = $request->get('unit_cost'.$value);
+                $item->estimated_budget = $estimated_budget;
+                $item->status = $item->status;
+                $item->save();
+            } else {
+                $item = new Item();
+                $item->unique_id = $value;
+                $item->userid = $request->get('userid'.$value);
+                $item->division = Auth::user()->division;
+                $item->section = Auth::user()->section;
+                $item->expense_id = $request->get('expense_id'.$value);
+                $item->tranche = $request->get('tranche'.$value);
+                $item->description = $request->get('description'.$value);
+                $item->unit_measurement = $request->get('unit_measurement'.$value);
+                $item->unit_cost = $request->get('unit_cost'.$value);
+                $item->estimated_budget = $estimated_budget;
+                $item->status = 'approve';
+                $item->save();
+            }
 
         }
-
+        
         return Redirect::back()->with('success', 'Successfully updated item!');
     }
 
@@ -166,7 +178,7 @@ class PpmpController extends Controller
         }
     }
 
-    public function ppmpSearch($status,$keyword){
+    public function ppmpSearch($keyword){
         $item = Item::where('division','=',Auth::user()->division)
             ->where("description","like","%$keyword%")
             ->where(function($q){
@@ -181,6 +193,7 @@ class PpmpController extends Controller
             $q->where('item.status','=','approve')
                 ->orWhere('item.status','=','fixed');
         })->get();
+
         $encoded = Item::where('userid','=',Auth::user()->username)->where('status','=','approve')->orWhere('status','=','pending')->count();
 
         $mode_procurement = ModeProcurement::get();
@@ -191,6 +204,7 @@ class PpmpController extends Controller
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('section.id','=',Auth::user()->section)
             ->first();
+
         return view('ppmp.ppmp_search',[
             "expenses" => $expenses,
             "all_item" => $all_item,
@@ -212,25 +226,21 @@ class PpmpController extends Controller
 
     public static function AppendItem($item){
         $division = Qty::
-                    select("division.description as division","qty.division as division_id","qty.section as section_id","qty.created_at","qty.item_id")
+                    select("division.description as division",
+                                    "qty.division as division_id",
+                                    "qty.section as section_id",
+                                    "qty.created_at",
+                                    "qty.item_id",
+                                    "qty.unique_id"
+                            )
                     ->where("qty.item_id","=",$item->id)
+                    ->orWhere("qty.unique_id","=",$item->unique_id)
                     ->join('dts.division',"division.id","=","qty.division")
                     ->groupBy("qty.division")
                     ->get();
-        $qty = Qty::
-                select(
-                    "division.description as division",
-                            "section.description as section",
-                            DB::raw("upper(concat(users.fname,' ',users.mname,' ',users.lname)) as created_by")
-                    )
-                ->where('item_id','=',$item->id)
-                ->join('dts.division','division.id','=','qty.division')
-                ->join('dts.section','section.id','=','qty.section')
-                ->join('dts.users','users.username','=','qty.created_by')
-                ->get();
+
         return view('consolidate.item_append',[
             "item" => $item,
-            "qty" => $qty,
             "item_id" => $item->id,
             "division" => $division
         ]);

@@ -81,13 +81,13 @@
                     </form>
                     <form action="{{ asset('pap/edit_save') }}" method="POST">
                         {{ csrf_field() }}
-                        <div class="modal fade" id="modal-default">
+                        <div class="modal fade" id="pap_edit">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title">Default Modal</h4>
+                                        <h4 class="modal-title">PAP Update</h4>
                                     </div>
                                     <div class="modal-body pap_edit_body">
                                         <p>One fine body&hellip;</p>
@@ -103,9 +103,29 @@
                         </div>
                     </form>
 
+                    <form action="{{ asset('pap/delete') }}" method="POST">
+                        {{ csrf_field() }}
+                        <div class="modal modal-danger sm fade" id="pap_delete">
+                            <div class="modal-dialog modal-sm">
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        <input type="hidden" value="" class="pap_id_delete">
+                                        <strong>Are you sure you want to delete?</strong>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">No</button>
+                                        <button type="submit" class="btn btn-outline"><i class="fa fa-trash"></i> Yes</button>
+                                    </div>
+                                </div>
+                                <!-- /.modal-content -->
+                            </div>
+                            <!-- /.modal-dialog -->
+                        </div>
+                    </form>
+
                     <div class="box">
                         <!-- /.box-header -->
-                        <div class="box-body no-padding">
+                        <div class="box-body no-padding table-responsive">
                             <table class="table table-condensed">
                                 <tr>
                                     <th>Code</th>
@@ -116,28 +136,37 @@
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
-                                @foreach(\App\Pap::get() as $row)
+                                @foreach($pap as $row)
                                 <tr>
                                     <td>{{ $row->code }}</td>
                                     <td>{{ $row->pap }}</td>
                                     <td>{{ $row->description }}</td>
                                     <td>
-                                        <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ $row->amount }}</span>
+                                        <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ number_format($row->amount, 2, '.', ',') }}</span>
                                     </td>
                                     <td>
+                                        <?php $section_amount_total = 0; ?>
                                         @foreach(\App\PapSection::select("section.description as section","papsection.amount")->join("dts.section","section.id","=","papsection.section_id")->where("pap_id","=",$row->id)->get() as $papsection)
-                                            <li>{{ $papsection->section }} <span class='badge bg-green'>{{ $papsection->amount }}</span></li>
+                                            <?php
+                                                $section_amount_total += $papsection->amount;
+                                            ?>
+                                            <li>{{ $papsection->section }} <span class='badge bg-green'>{{ number_format($papsection->amount, 2, '.', ',') }}</span></li>
                                         @endforeach
                                     </td>
                                     <td>
-                                        <div class="progress progress-xs">
-                                            <div class="progress-bar progress-bar-danger" style="width: 55%"></div>
+                                        <span class="progress-text">Amount Allocated {{ (($section_amount_total / $row->amount) * 100).'%' }}</span><br>
+                                        <span class="progress-number"><b>{{ $section_amount_total }}</b>/{{ $row->amount }}</span>
+
+                                        <div class="progress sm">
+                                            <div class="progress-bar progress-bar-red" style="width: {{ (($section_amount_total / $row->amount) * 100).'%' }}"></div>
                                         </div>
-                                        <span class="badge bg-red">55%</span>
                                     </td>
                                     <td>
-                                        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#modal-default" onclick="EditPap({{ $row->id }})">
+                                        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#pap_edit" onclick="EditPap({{ $row->id }})">
                                             <i class="fa fa-pencil"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#pap_delete" onclick="DeletePap({{ $row->id }})">
+                                            <i class="fa fa-trash"></i>
                                         </button>
                                     </td>
                                 </tr>
@@ -156,7 +185,9 @@
         $('.select2').select2();
         @if(session()->has('pap_add'))
         Lobibox.notify('info',{
-            msg:"<?php echo session()->get('pap_add'); ?>"
+            msg:"<?php echo session()->get('pap_add'); ?>",
+            size: 'mini',
+            rounded: true
         });
         @endif
 
@@ -179,6 +210,10 @@
                 AppendAllottedSection(false);
                 $(".pap_edit_body").html(result);
             });
+        }
+
+        function DeletePap(pap_id){
+            $(".pap_id_delete").val(pap_id);
         }
 
         function AllocatedRemove(data){

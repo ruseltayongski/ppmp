@@ -35,28 +35,9 @@ function displayItem($item,$mode_procurement,$expense_title){
         }
     }
     $mode_procurement_display .= "</select>";
-    /*if(Auth::user()->user_priv){
-        $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label>
-                   <span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
-    } else {
-        if($item->status == 'approve'){
-            $status = "<span class='label label-success'>Approve</span>";
-        } else{
-            $status = "<span class='label label-primary'>Pending</span>";
-        }
-    }*/
     $status = "<span class='label label-success'>".$item->encoded_by."</span>";
     if(Auth::user()->username == $item->userid){
         $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
-    }
-    if($item->status == 'fixed'){
-        $description = [
-            "readonly" => "readonly"
-        ];
-    } else {
-        $description = [
-            "readonly" => ""
-        ];
     }
     $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
     return "<tr class='$item->id'>
@@ -83,12 +64,6 @@ function displayItem($item,$mode_procurement,$expense_title){
                     <div class='tooltip_top' >
                     <input type='text' id='no-border' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost'>
                     <span class='tooltiptext'>Unit Cost</span>
-                    </div>
-                </td>
-                <td>
-                    <div class='tooltip_top'>
-                    $mode_procurement_display
-                    <span class='tooltiptext'>Mode of Procurement</span>
                     </div>
                 </td>
                 <td>
@@ -275,7 +250,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                 <th>Item Description/General Specification</th>
                                 <th>Unit</th>
                                 <th>Unit Cost</th>
-                                <th>Mode of<br>Procurement</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
                                 <th>Mar</th>
@@ -479,25 +453,10 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                             ?>
                         </table>
                     </div>
-                {{--{{ $expenses->links() }}--}}
                 <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
             </div>
-            {{--<div class="col-md-2">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Budget Allotment</h3>
-                    </div>
-                    <div class="box-body">
-                        @foreach($charge_to as $charge)
-                            <strong><i class="fa fa-paypal margin-r-5"></i> {{ $charge->description }}</strong><br>
-                            Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span><br>
-                            Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{ $charge->remaining_balance }}</span>
-                        @endforeach
-                    </div>
-                </div>
-            </div>--}}
         </div>
         <div class="modal fade" id="modal-default">
             <div class="modal-dialog">
@@ -520,7 +479,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
                         <a href="#" onclick="filterItems()" type="button" class="btn btn-primary">Filter Items</a>
-                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division }}" target="_blank" type="button" class="btn btn-success">All Items</a>
+                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division }}" target="_blank" type="button" class="btn btn-success">All Items</a>
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -533,9 +492,9 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                     <button class="btn btn-app" onclick="itemChecker()" type="submit">
                         <i class="fa fa-save"></i> Save
                     </button>
-                    <button type="button" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false" class="btn btn-app">
+                    <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
-                    </button>
+                    </a>
                     <a class="btn btn-app">
                         <span class="badge bg-blue">{{ count($all_item) }}</span>
                         <i class="fa fa-object-group"></i> Items
@@ -637,17 +596,13 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
             if(!keyword.includes("/")){
                 keyword = encodeURIComponent(keyword);
             }
-            var url = "<?php echo asset('ppmp/search').'/'.$status; ?>"+"/"+keyword;
+            var url = "<?php echo asset('ppmp/search'); ?>"+"/"+keyword;
             window.location.replace(url);
         }
 
-        /*function urlBack(){
-            history.back();
-        }*/
-
         function filterItems(){
             var select_val = $("#filter_item").select2("val");
-            var url = "<?php echo url('FPDF/print/report_filter.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&status='.$status.'&division='.Auth::user()->division."&select_val="; ?>"+select_val;
+            var url = "<?php echo url('FPDF/print/report_filter.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division."&select_val="; ?>"+select_val;
             var win = window.open(url, '_blank');
             win.focus();
         }
@@ -659,134 +614,153 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
             });
         }
 
-        function addItem(element){
-            var id = element.data('id');
+        function SelectRow(element){
             var expense = element.data('expense');
             var expense_description = element.data('expense_description');
             var tranche = element.data('tranche');
             var userid = "<?php echo Auth::user()->username; ?>";
             var item_unique_row = uuidv4()+userid;
+            var encoded_by = "<?php echo Auth::user()->lname.' '.Auth::user()->fname ?>";
+
+            item_status = "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+            var mode_procurement = <?php echo $mode_procurement; ?>;
+            var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
+            mode_procurement_display += "<option value=''></option>";
+            $.each(mode_procurement,function(x,y){
+                mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
+            });
+            mode_procurement_display += "</select>";
+            var new_row = "<tr class='"+item_unique_row+"'>" +
+                "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
+                "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
+                "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
+                "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
+                "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
+                "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
+                "<td width='35%' style='padding-left: 3.7%'>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
+                "<span class='tooltiptext'>Item Description</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>Unit Measurement</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
+                "<span class='tooltiptext'>Unit Cost</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>Estimated Budget</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>February</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>March</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>April</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>May</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>June</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>July</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>August</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>September</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>October</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>November</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
+                "<span class='tooltiptext'>December</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>"+
+                item_status+
+                "</td>"+
+                "</tr>";
+
+            return new_row;
+        }
+
+        function addItem(element){
+            $(".number_of_row").focus();
+            var id = element.data('id');
+            var expense_description = element.data('expense_description');
             Lobibox.confirm({
                 title: 'Confirmation',
-                msg: "Are you sure you want to add in "+expense_description+" ?",
+                msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
                 callback: function ($this, type, ev) {
                     if(type == 'yes'){
-                        var mode_procurement = <?php echo $mode_procurement; ?>;
-                        var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
-                        mode_procurement_display += "<option value=''></option>";
-                        $.each(mode_procurement,function(x,y){
-                            mode_procurement_display += "<option value='"+y.id+"'>"+y.description+"</option>";
-                        });
-                        mode_procurement_display += "</select>";
-                        var new_row = "<tr class='"+item_unique_row+"'>" +
-                            "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
-                            "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
-                            "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
-                            "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
-                            "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
-                            "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
-                            "<td width='35%' style='padding-left: 3.7%'>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
-                                "<span class='tooltiptext'>Item Description</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>Unit Measurement</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
-                                "<span class='tooltiptext'>Unit Cost</span>"+
-                                "</div>" +
-                                "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                mode_procurement_display+
-                                "<span class='tooltiptext'>Mode of Procurement</span>"+
-                                "</div>" +
-                                "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>Estimated Budget</span>"+
-                                "</div>" +
-                                "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>February</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>March</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>April</span>"+
-                                "</div>" +
-                                "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>May</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>June</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>July</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>August</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>September</span>"+
-                                "</div>" +
-                                "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>October</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>November</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<div class='tooltip_top' style='width: 100%;'>"+
-                                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
-                                "<span class='tooltiptext'>December</span>"+
-                                "</div>" +
-                            "</td>"+
-                            "<td>" +
-                                "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>" +
-                            "</td>"+
-                            "</tr>";
-                        $("#"+id).append(new_row);
-                        console.log(id);
+                        var number_of_row = $(".number_of_row").val();
+                        if(number_of_row){
+                            var row_setter;
+                            if(number_of_row > 20){
+                                row_setter = 20;
+                            } else {
+                                row_setter = number_of_row;
+                            }
+                            for(var i=0;i<row_setter;i++){
+                                var new_row = SelectRow(element);
+                                $("#"+id).append(new_row);
+                            }
+                        } else {
+                            var new_row = SelectRow(element);
+                            $("#"+id).append(new_row);
+                        }
+
                         $(".item-description").catcomplete({
                             delay: 0,
                             source: item_filter
@@ -795,6 +769,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 }
             });
         }
+
         function deleteItem(element){
             Lobibox.confirm({
                 title: 'Confirmation',
@@ -820,5 +795,6 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                 }
             });
         }
+
     </script>
 @endsection

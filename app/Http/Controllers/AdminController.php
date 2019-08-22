@@ -21,19 +21,27 @@ class AdminController extends Controller
     public function home()
     {
         $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
+
         $item_qty = Item::select(
-            DB::raw("sum(item.jan) as jan"),
-            DB::raw("sum(item.feb) as feb"),
-            DB::raw("sum(item.mar) as mar"),
-            DB::raw("sum(item.apr) as apr"),
-            DB::raw("sum(item.may) as may"),
-            DB::raw("sum(item.jun) as jun"),
-            DB::raw("sum(item.jul) as jul"),
-            DB::raw("sum(item.aug) as aug"),
-            DB::raw("sum(item.sep) as sep"),
-            DB::raw("sum(item.oct) as oct"),
-            DB::raw("sum(item.nov) as nov"),
-            DB::raw("sum(item.dec) as dece"))->first();
+                        \DB::raw("SUM(COALESCE(qty.jan,0)) as jan"),
+                        \DB::raw("SUM(COALESCE(qty.feb,0)) as feb"),
+                        \DB::raw("SUM(COALESCE(qty.mar,0)) as mar"),
+                        \DB::raw("SUM(COALESCE(qty.apr,0)) as apr"),
+                        \DB::raw("SUM(COALESCE(qty.may,0)) as may"),
+                        \DB::raw("SUM(COALESCE(qty.jun,0)) as jun"),
+                        \DB::raw("SUM(COALESCE(qty.jul,0)) as jul"),
+                        \DB::raw("SUM(COALESCE(qty.aug,0)) as aug"),
+                        \DB::raw("SUM(COALESCE(qty.sep,0)) as sep"),
+                        \DB::raw("SUM(COALESCE(qty.oct,0)) as oct"),
+                        \DB::raw("SUM(COALESCE(qty.nov,0)) as nov"),
+                        \DB::raw("SUM(COALESCE(qty.dec,0)) as dece")
+                    )
+                    ->join('ppmpv2.qty',function($join){
+                        $join->on("qty.item_id","=","item.id");
+                        $join->on("qty.unique_id","=","item.unique_id");
+                    })
+                    ->first();
+
         return view('admin.home',[
             "information" => $information,
             "item_qty" => $item_qty

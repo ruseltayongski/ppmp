@@ -10,7 +10,10 @@ use Illuminate\Support\Facades\Redirect;
 class PapController extends Controller
 {
     public function Pap(){
-        return  view('pap.pap');
+        $pap = Pap::OrderBy("id","desc")->get();
+        return  view('pap.pap',[
+            "pap" => $pap
+        ]);
     }
     public function PapAdd(Request $request){
         $pap = new Pap();
@@ -57,6 +60,12 @@ class PapController extends Controller
             $section_amount_count++;
         }
 
-        return Redirect::back()->with('pap_add', 'Successfully updated pap!');
+        return Redirect::back()->with('pap_add', 'Successfully updated pap');
     }
+
+    public function PapDelete(Request $request){
+        return Redirect::back()->with('pap_add', 'Successfully deleted pap');
+        ///ask budget if i apil ba delete ang item ang qty table if na assignan na og PAP
+    }
+
 }

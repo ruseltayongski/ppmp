@@ -66,5 +66,6 @@ Route::get('consolidate/section','PpmpController@ConsolidateSection');
 Route::get('pap/home','PapController@Pap');
 Route::post('pap/add','PapController@PapAdd');
 Route::post('pap/edit','PapController@PapEdit');
+Route::post('pap/delete','PapController@PapDelete');
 Route::post('pap/edit_save','PapController@PapEditSave');
 
