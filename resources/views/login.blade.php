@@ -63,6 +63,7 @@
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                 </div><!-- /.col -->
             </div>
+            <strong class="center"><a href="{{ asset('public/ppmp.xlsx') }}" download>PPMP FORMAT EXCEL</a></strong>
         </div><!-- /.login-box-body -->
 
     </form>
