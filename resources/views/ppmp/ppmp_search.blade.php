@@ -337,7 +337,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             }
                                             echo "</tbody>";
                                             if($tranche != ("1-A-1" || "1-A-2" || "1-A-3") )
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
+                                                //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($expense_total);
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){
@@ -396,7 +396,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                             }
                                             echo "</tbody>";
                                             if($tranche != "1-B")
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                                //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
                                             if($expense_total != 0){
                                                 echo expenseTotal($expense_total);
                                             }
@@ -444,7 +444,7 @@ function addItem($expense_title,$expense,$tranche,$expense_description){
                                         $grand_total += $expense_total;
                                     }
                                     echo "</tbody>";
-                                    echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
+                                    //echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
                                     }
