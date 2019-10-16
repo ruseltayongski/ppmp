@@ -266,7 +266,9 @@ foreach($expenses as $expense){
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);
             $pdf->displayItem($item);
-            $expense_total += $item->estimated_budget;
+            if($item->estimated_budget){
+                $expense_total += $item->estimated_budget;
+            }
             $grand_total += $expense_total;
         }
         if($expense_total != 0){

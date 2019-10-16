@@ -231,12 +231,13 @@
     }*/
 
     @if(session()->has('success'))
-    Lobibox.notify('success', {
-        title: '',
-        msg: "<?php echo session()->get('success'); ?>",
-        size: 'mini',
-        rounded: true
-    });
+        Lobibox.notify('success', {
+            title: '',
+            msg: "<?php echo session()->get('success'); ?>",
+            size: 'mini',
+            rounded: true
+        });
+        <?php Session::forget('success'); ?>
     @endif
 
     @if(Request::segments()[0].'/'.Request::segments()[1] == 'admin/home' || Request::segments()[0].'/'.Request::segments()[1] == 'user/home')

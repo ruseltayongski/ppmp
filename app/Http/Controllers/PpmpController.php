@@ -17,12 +17,44 @@ use App\ModeProcurement;
 use App\Charge;
 use App\Designation;
 use App\Division;
+use Illuminate\Support\Facades\Session;
 
 class PpmpController extends Controller
 {
-    public function index($expense_id){
+    public function index($expense_id,Request $request){
+        $keyword = "";
+        if($request->isMethod('post')){
+            if($request->item_save){ //if ang button ge saved
+                $item_to_filter = $this->ppmpUpdate($request);
+            }
+            $keyword = $request->item_search;
+            if($keyword){
+                $item = Item::where('division','=',Auth::user()->division)
+                    ->where("description","like","%$keyword%")
+                    ->where(function($q){
+                        $q->where('item.status','=','approve')
+                            ->orWhere('item.status','=','fixed');
+                    })
+                    ->pluck('expense_id')->toArray();
+                if(!$item){ //if mag add sa new item then wala sa result, search the item_to_filter
+                    $keyword = $item_to_filter;
+                    $item = Item::where('division','=',Auth::user()->division)
+                        ->where("description","like","%$keyword%")
+                        ->where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','fixed');
+                        })
+                        ->pluck('expense_id')->toArray();
+                }
+                $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
+            } else {
+                $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->get();
+            }
 
-        $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->paginate(1);
+        } else {
+            $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->get();
+        }
+
 
         $all_item = Item::where(function($q){
             $q->where('item.status','=','approve')
@@ -42,6 +74,7 @@ class PpmpController extends Controller
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('division.id','=',Auth::user()->division)
             ->first();
+
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
@@ -49,11 +82,14 @@ class PpmpController extends Controller
             "mode_procurement" => $mode_procurement,
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
-            "head" => $head
+            "head" => $head,
+            "item_search" => $keyword,
+            "expense_id" => $expense_id
         ]);
     }
 
     public function ppmpUpdate(Request $request){
+        $item_to_filter = "";
         foreach($request->get('item_id') as $value){
             $qty_all = $request->get('jan'.$value)+
                 $request->get('feb'.$value)+
@@ -162,9 +198,13 @@ class PpmpController extends Controller
                 $item->save();
             }
 
+            $item_to_filter = $request->get("description".$value);
+
         }
-        
-        return Redirect::back()->with('success', 'Successfully updated item!');
+        //return Redirect::back()->with('success', 'Successfully updated item!');
+        $request->session()->put('success', 'Successfully updated item!');
+
+        return $item_to_filter;
     }
 
     public function ppmpDelete(Request $request){

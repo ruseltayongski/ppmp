@@ -64,6 +64,8 @@ class PapController extends Controller
     }
 
     public function PapDelete(Request $request){
+        Pap::where('id','=',$request->pap_id_delete)->delete();
+        PapSection::where('pap_id','=',$request->pap_id_delete)->delete();
         return Redirect::back()->with('pap_add', 'Successfully deleted pap');
         ///ask budget if i apil ba delete ang item ang qty table if na assignan na og PAP
     }

@@ -31,7 +31,7 @@ Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
-Route::get('ppmp/list/{expense_id}','PpmpController@index');
+Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@index');
 Route::post('ppmp/import','ExcelController@importItem');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');

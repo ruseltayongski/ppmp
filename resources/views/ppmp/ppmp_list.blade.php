@@ -255,23 +255,25 @@
 
     </style>
     <title>PPMP|LIST</title>
-    <form action="{{ asset('ppmp/update') }}" method="POST" class="item_submit">
+    <form action="{{ asset('ppmp/list/search') }}" method="POST" class="item_submit">
         {{ csrf_field() }}
         <div class="row" style="margin-bottom: 60px;">
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header">
-                        <h3 class="box-title">PPMP</h3>
+                        <h3 class="box-title">{{ isset($expenses) && count($expenses) > 0 ? 'PPMP' : 'Item not found! please select expense' }}</h3>
                         <div class="box-tools">
                             <div class="input-group input-group-sm" style="width: 150px;">
-                                <input type="text" style="width: 300px;" id="item_search" class="form-control pull-right" placeholder="Search">
+                                <input type="text" style="width: 300px;" id="item_search" name="item_search" value="{{ $item_search }}" class="form-control pull-right" placeholder="Search">
                                 <div class="input-group-btn">
-                                    <button type="button" onclick="itemSearch()" class="btn btn-default"><i class="fa fa-search"></i></button>
+                                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <!-- /.box-header -->
+                    <?php $grand_total = 0; ?>
+                    @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
                             <tr>
@@ -293,7 +295,6 @@
                                 <th>Encoded By/<br>Status</th>
                             </tr>
                             <?php
-                            $grand_total = 0;
                             foreach($expenses as $expense)
                             {
                                 $count_first = 0;
@@ -322,8 +323,8 @@
                                                 $title_header_second = "<div style='padding-left: 10%'>".$display_second."</div>";
                                                 $flag[$display_second] = true;
                                             }
-                                            echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
+                                            echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                             $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
                                                 "qty.unique_id as qty_unique_id",
                                                 "qty.jan as qty_jan",
@@ -353,9 +354,11 @@
                                                     $q->where('item.status','=','approve')
                                                         ->orWhere('item.status','=','fixed');
                                                 })
-                                                ->where('item.division','=',Auth::user()->division)
-                                                ->get();
-
+                                                ->where('item.division','=',Auth::user()->division);
+                                            if(isset($item_search)){
+                                                $items = $items->where("item.description","like","%$item_search%");
+                                            }
+                                            $items = $items->get();
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                             foreach($items as $item){
@@ -365,10 +368,10 @@
                                                 $grand_total += $estimated_budget;
                                             }
                                             echo "</tbody>";
-                                            /*if($tranche != ("1-A-1" || "1-A-2" || "1-A-3") )
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);*/
-
+                                            //if($tranche != ("1-A-1" || "1-A-2" || "1-A-3"))
+                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($grand_total);
+
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){
                                             if(isset($flag[$expense->description])){
@@ -415,8 +418,11 @@
                                                     $q->where('item.status','=','approve')
                                                         ->orWhere('item.status','=','fixed');
                                                 })
-                                                ->where('item.division','=',Auth::user()->division)
-                                                ->get();
+                                                ->where('item.division','=',Auth::user()->division);
+                                                if(isset($item_search)){
+                                                    $items = $items->where("item.description","like","%$item_search%");
+                                                }
+                                                $items = $items->get();
 
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
@@ -426,8 +432,8 @@
                                                 $grand_total += $expense_total;
                                             }
                                             echo "</tbody>";
-                                            /*if($tranche != "1-B")
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);*/
+                                            //if($tranche != "1-B")
+                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
 
                                             if($expense_total != 0){
                                                 echo expenseTotal($expense_total);
@@ -466,8 +472,11 @@
                                             $q->where('item.status','=','approve')
                                                 ->orWhere('item.status','=','fixed');
                                         })
-                                        ->where('item.division','=',Auth::user()->division)
-                                        ->get();
+                                        ->where('item.division','=',Auth::user()->division);
+                                        if(isset($item_search)){
+                                            $items = $items->where("item.description","like","%$item_search%");
+                                        }
+                                        $items = $items->get();
 
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     foreach($items as $item){
@@ -476,7 +485,7 @@
                                         $grand_total += $expense_total;
                                     }
                                     echo "</tbody>";
-                                    /*echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);*/
+                                    echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
                                     }
@@ -485,25 +494,50 @@
                             ?>
                         </table>
                     </div>
-                {{ $expenses->links() }}
-                <!-- /.box-body -->
+                    @else
+                        <div class="box-body">
+                            <div class="row">
+                                <?php
+                                    $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
+                                ?>
+                                @foreach(\App\Expense::get() as $expense)
+                                <div class="col-md-3 col-sm-6 col-xs-12">
+                                    <div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                        <span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">
+                                                <?php
+                                                    $temp = $expense->description;
+                                                    $count = 0;
+                                                    $string = "";
+                                                    for($i=0;$i<$expense_length;$i++){
+                                                        if(!isset($temp[$i])){
+                                                            $temp .= ".";
+                                                        }
+                                                        if($count != 23){
+                                                            $count++;
+                                                            $string .= $temp[$i];
+                                                        } else {
+                                                            $count = 0;
+                                                            $string .= "<br>";
+                                                        }
+                                                    }
+                                                    echo $string;
+                                                ?>
+                                            </span>
+                                            <span class="info-box-number">{{ \App\Item::where("expense_id",$expense->id)->count() }}</span>
+                                        </div>
+                                        <!-- /.info-box-content -->
+                                    </div>
+                                    <!-- /.info-box -->
+                                </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
                 <!-- /.box -->
             </div>
-            {{--<div class="col-md-2">
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Budget Allotment</h3>
-                    </div>
-                    <div class="box-body">
-                        @foreach($charge_to as $charge)
-                            <strong><i class="fa fa-paypal margin-r-5"></i> {{ $charge->description }}</strong><br>
-                            Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $charge->beginning_balance }}</span><br>
-                            Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{ $charge->remaining_balance }}</span>
-                        @endforeach
-                    </div>
-                </div>
-            </div>--}}
         </div>
 
         <div class="modal fade" id="modal-default">
@@ -538,17 +572,14 @@
         <footer id="footer">
             <div class="container">
                 <div class="col-md-6">
-                    <button class="btn btn-app" onclick="itemChecker()" type="submit">
+                    @if(isset($expenses) && count($expenses) > 0)
+                    <button class="btn btn-app item_save" onclick="itemChecker()" name="item_save" type="submit">
                         <i class="fa fa-save"></i> Save
                     </button>
+                    @endif
                     <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
-                    <!--
-                    <button type="button" data-toggle="modal" data-target="#modal-default" data-backdrop="static" data-keyboard="false" class="btn btn-app">
-                        <i class="fa fa-file-pdf-o"></i> Generate PDF
-                    </button>
-                    -->
                     <a class="btn btn-app">
                         <span class="badge bg-blue">{{ count($all_item) }}</span>
                         <i class="fa fa-object-group"></i> Items
@@ -558,15 +589,16 @@
                         <i class="fa fa-keyboard-o"></i> Encoded
                     </a>
                 </div>
+                @if(isset($expenses) && count($expenses) > 0)
                 <div class="col-md-6" >
                     <h1>
                         Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ $grand_total }}</span>
                     </h1>
                 </div>
+                @endif
             </div>
         </footer>
     </form>
-
 @endsection
 
 @section('js')
@@ -608,6 +640,8 @@
         });
 
         function itemChecker(){
+            $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/".$expense_id ?>");
+            $(".item_save").val(true);
             var item_array = [];
 
             $(".item_submit :input.item-check").each(function(){
@@ -643,15 +677,6 @@
                 event.preventDefault();
             }
 
-        }
-
-        function itemSearch(){
-            var keyword = $("#item_search").val();
-            if(!keyword.includes("/")){
-                keyword = encodeURIComponent(keyword);
-            }
-            var url = "<?php echo asset('ppmp/search'); ?>"+"/"+keyword;
-            window.location.replace(url);
         }
 
         function filterItems(){
@@ -798,14 +823,6 @@
                 msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
                 callback: function ($this, type, ev) {
                     if(type == 'yes'){
-                        var item_status;
-                        {{--@if(Auth::user()->userpriv)
-                            item_status = "<label class='mytooltip'><span class='mytext'>"+encoded_by+"</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;'></label>" +
-                            "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
-                        @else
-                            item_status = "<span class='label label-primary'>pending</span>" +
-                            "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
-                        @endif--}}
                         var number_of_row = $(".number_of_row").val();
                         if(number_of_row){
                             var row_setter;

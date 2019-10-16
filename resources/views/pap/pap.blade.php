@@ -109,7 +109,7 @@
                             <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-body">
-                                        <input type="hidden" value="" class="pap_id_delete">
+                                        <input type="hidden" value="" name="pap_id_delete" class="pap_id_delete">
                                         <strong>Are you sure you want to delete?</strong>
                                     </div>
                                     <div class="modal-footer">
