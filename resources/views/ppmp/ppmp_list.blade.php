@@ -25,35 +25,7 @@
                 <td></td>
             </tr>";
     }
-    function displayItem($item,$mode_procurement,$expense_title){
-        $qty = $item->qty_jan+$item->qty_feb+$item->qty_mar+$item->qty_apr+$item->qty_may+$item->qty_jun+$item->qty_jul+$item->qty_aug+$item->qty_sep+$item->qty_oct+$item->qty_nov+$item->qty_dec;
-        $estimated_budget = $item->unit_cost * $qty;
-        $mode_procurement_display = "<select name='mode_procurement$item->id' id='no-border'";
-        $mode_procurement_display .= "<option value='$item->mode_procurement'>$item->mode_pro_desc</option>";
-        foreach($mode_procurement as $row){
-            if($item->mode_procurement != $row->id){
-                $mode_procurement_display .= "<option value='$row->id'>$row->description</option>";
-            }
-        }
-        $mode_procurement_display .= "</select>";
-        $checked = '';
-        if($item->status == 'approve'){
-            $checked = 'checked';
-        }
-        /*if(Auth::user()->user_priv){
-            $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by_name</span><input type='checkbox' name='status$item->id' class='flat-red' style='font-size:7pt;cursor: pointer;' $checked></label>
-                       <span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
-        } else {
-            $input_checker = '';
-            if(Auth::user()->username == $item->userid){
-                $input_checker = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;font-size: 5pt' onclick='deleteItem($(this))'><i class='fa fa-remove'></i></span>";
-            }
-            if($item->status == 'approve'){
-                $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by_name</span><span class='label label-success'>Approve</span></label>".$input_checker;
-            } else{
-                $status = "<label class='mytooltip'><span class='mytext'>$item->encoded_by_name</span><span class='label label-primary'>Pending</span></label>".$input_checker;
-            }
-        }*/
+    function displayItem($item,$expense_title){
         $status = "<span class='label label-success'>".$item->encoded_by_name."</span>";
         if(Auth::user()->username == $item->userid){
             $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
@@ -68,13 +40,12 @@
             ];
         }
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
-        return "<tr class='$item->id'>
+        $data = "<tr class='$item->id'>
                     <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
-                    <input type='hidden' id='no-border' name='qty_unique_id[]' value='$item->qty_unique_id'>
+                    <input type='hidden' id='no-border' name='qty_unique_id$item->id' value='$item->qty_unique_id'>
                     <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
                     <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
                     <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
-                    <input type='hidden' id='no-border' name='unique_id$item->id' value='$item->tranche'>
                     <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
                     $expense_title_display
                     <td >".
@@ -85,14 +56,20 @@
                     "</td>
                     <td>
                         <div class='tooltip_top' >
+                        <input type='text' id='".$description['readonly']."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost'>
+                        <span class='tooltiptext'>Unit Cost</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
                         <input type='text' id='no-border' name='unit_measurement$item->id' style='width: 50px' value='$item->unit_measurement' placeholder='Unit Measurement'>
                         <span class='tooltiptext'>Unit Measurement</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='no-border' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost'>
-                        <span class='tooltiptext'>Unit Cost</span>
+                        <input type='text' id='no-border' name='qty$item->id' style='width: 20px' value='$item->qty' placeholder='QTY'>
+                        <span class='tooltiptext'>QTY</span>
                         </div>
                     </td>
                     <td>
@@ -171,6 +148,8 @@
                         $status
                     </td>
                 </tr>";
+
+        return $data;
     }
     function expenseTotal($total){
         return "<tr>
@@ -183,8 +162,19 @@
     }
     function addItem($expense_title,$expense,$tranche,$expense_description){
         return "<tr>
-            <td colspan='20'>
+            <td colspan='17'>
                 <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
+            </td>
+        </tr>";
+    }
+    function paginateItem($expense_title,$item){
+        return "<tr>
+            <td colspan='17'>
+                <div class='div_paginator'>
+                    <div class='pagination_$expense_title'>
+                        $item
+                    </div>
+                </div>
             </td>
         </tr>";
     }
@@ -252,6 +242,11 @@
         .tooltip_top:hover .tooltiptext {
             visibility: visible;
         }
+        .pagination{
+            margin: 0;
+            padding: 0;
+            margin-left: 2%;
+        }
 
     </style>
     <title>PPMP|LIST</title>
@@ -278,8 +273,9 @@
                         <table class="table table-striped">
                             <tr>
                                 <th>Item Description/General Specification</th>
-                                <th>Unit</th>
                                 <th>Unit Cost</th>
+                                <th>Unit<br>Measu<br>rement</th>
+                                <th>QTY</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
                                 <th>Mar</th>
@@ -358,20 +354,25 @@
                                             if(isset($item_search)){
                                                 $items = $items->where("item.description","like","%$item_search%");
                                             }
-                                            $items = $items->get();
+                                            $items = $items->orderBy("item.description","ASC")->get();
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
+                                            $item_collection = [];
                                             foreach($items as $item){
-                                                echo displayItem($item,$mode_procurement,$title_header_second);
+                                                $item_collection[] = displayItem($item,$title_header_second);
+                                                //echo displayItem($item,$title_header_second);
                                                 $qty = $item->qty_jan+$item->qty_feb+$item->qty_mar+$item->qty_apr+$item->qty_may+$item->qty_jun+$item->qty_jul+$item->qty_aug+$item->qty_sep+$item->qty_oct+$item->qty_nov+$item->qty_dec;
                                                 $estimated_budget = $item->unit_cost * $qty;
                                                 $grand_total += $estimated_budget;
                                             }
+                                            $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
+                                            $item_collection->getCollection()->transform(function ($value) {
+                                                echo $value;
+                                            });
                                             echo "</tbody>";
-                                            //if($tranche != ("1-A-1" || "1-A-2" || "1-A-3"))
-                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
+                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());
+                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($grand_total);
-
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){
                                             if(isset($flag[$expense->description])){
@@ -424,16 +425,23 @@
                                                 }
                                                 $items = $items->get();
 
-
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
+                                            $item_collection = [];
                                             foreach($items as $item){
-                                                echo displayItem($item,$mode_procurement,$display_first);
+                                                //echo displayItem($item,$display_first);
+                                                $item_collection[] = displayItem($item,$title_header_second);
                                                 $expense_total += $item->estimated_budget;
                                                 $grand_total += $expense_total;
                                             }
+                                            $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
+                                            $item_collection->getCollection()->transform(function ($value) {
+                                                echo $value;
+                                            });
                                             echo "</tbody>";
-                                            //if($tranche != "1-B")
-                                            echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());
+                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                            if($tranche != "1-B")
+                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
 
                                             if($expense_total != 0){
                                                 echo expenseTotal($expense_total);
@@ -479,12 +487,23 @@
                                         $items = $items->get();
 
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
+                                    $item_collection = [];
                                     foreach($items as $item){
-                                        echo displayItem($item,$mode_procurement,$expense->description);
-                                        $expense_total += $item->estimated_budget;
-                                        $grand_total += $expense_total;
+                                        //echo displayItem($item,$expense->description);
+                                        $item_collection[] = displayItem($item,$expense->description);
+                                        if(is_numeric($item->estimated_budget)){
+                                            $expense_total += $item->estimated_budget;
+                                        }
+                                        if(is_numeric($expense_total)){
+                                            $grand_total += 0;
+                                        }
                                     }
+                                    $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
+                                    $item_collection->getCollection()->transform(function ($value) {
+                                        echo $value;
+                                    });
                                     echo "</tbody>";
+                                    echo paginateItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$item_collection->links());
                                     echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
@@ -569,6 +588,33 @@
             </div>
             <!-- /.modal-dialog -->
         </div>
+
+        <div class="modal modal-default fade" id="modal-info">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Filter PDF</h4>
+                    </div>
+                    <div class="modal-body text-center">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank">
+                            <i class="fa fa-file-pdf-o"></i> Region
+                        </a>
+                        <a class="btn btn-block btn-social btn-facebook">
+                            <i class="fa fa-file-pdf-o"></i> Division
+                        </a>
+                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username.'&section='.Auth::user()->section }}" target="_blank">
+                            <i class="fa fa-file-pdf-o"></i> Section
+                        </a>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
         <footer id="footer">
             <div class="container">
                 <div class="col-md-6">
@@ -577,7 +623,12 @@
                         <i class="fa fa-save"></i> Save
                     </button>
                     @endif
+                    <!--
                     <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
+                        <i class="fa fa-file-pdf-o"></i> Generate PDF
+                    </a>
+                    -->
+                    <a type="button" data-toggle="modal" data-target="#modal-info" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
                     <a class="btn btn-app">
@@ -693,7 +744,7 @@
             });
         }
 
-        function SelectRow(element){
+        function AddRow(element){
             var expense = element.data('expense');
             var expense_description = element.data('expense_description');
             var tranche = element.data('tranche');
@@ -716,10 +767,16 @@
                 "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
                 "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
                 "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
-                "<td width='35%' style='padding-left: 3.7%'>" +
+                "<td width='35%' style='padding-left: 3%'>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
                 "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
                 "<span class='tooltiptext'>Item Description</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
+                "<span class='tooltiptext'>Unit Cost</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
@@ -730,8 +787,8 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='text' placeholder='Unit Cost' name='unit_cost"+item_unique_row+"' style='width: 60px'>" +
-                "<span class='tooltiptext'>Unit Cost</span>"+
+                "<input type='text' placeholder='QTY' name='qty"+item_unique_row+"' style='width: 20px'>" +
+                "<span class='tooltiptext'>QTY</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
@@ -818,6 +875,7 @@
             $(".number_of_row").focus();
             var id = element.data('id');
             var expense_description = element.data('expense_description');
+            console.log(id);
             Lobibox.confirm({
                 title: 'Confirmation',
                 msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
@@ -832,13 +890,15 @@
                                 row_setter = number_of_row;
                             }
                             for(var i=0;i<row_setter;i++){
-                                var new_row = SelectRow(element);
+                                var new_row = AddRow(element);
                                 $("#"+id).append(new_row);
                             }
                         } else {
-                            var new_row = SelectRow(element);
+                            var new_row = AddRow(element);
                             $("#"+id).append(new_row);
                         }
+
+                        console.log("#"+id);
 
                         $(".item-description").catcomplete({
                             delay: 0,
@@ -874,5 +934,13 @@
                 }
             });
         }
+
+        /*$(".div_paginator").each(function(index1){
+            var paginator_href = $(this).children()[0].className;
+            $("."+$(this).children()[0].className).children().children().each(function(index2){
+                var _href = $($(this).children().get(0)).attr('href');
+                $($(this).children().get(0)).attr('href',_href+'&type='+paginator_href);
+            });
+        });*/
     </script>
 @endsection

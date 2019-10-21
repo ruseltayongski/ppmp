@@ -158,29 +158,35 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
 
-                $items = queryItem("SELECT 
-                                              item.*,
-                                              qty.unique_id as qty_unique_id,
-                                              qty.jan as qty_jan,
-                                              qty.feb as qty_feb,
-                                              qty.mar as qty_mar,
-                                              qty.apr as qty_apr,
-                                              qty.may as qty_may,
-                                              qty.jun as qty_jun,
-                                              qty.jul as qty_jul,
-                                              qty.aug as qty_aug,
-                                              qty.sep as qty_sep,
-                                              qty.oct as qty_oct,
-                                              qty.nov as qty_nov,
-                                              qty.dec as qty_dec,
-                                              mode_procurement.description as mode_procurement_description 
-                                              FROM ITEM 
-                                              left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                                              left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
-                                              where item.tranche = '$tranche' 
-                                              and item.expense_id = '$expense->id' 
-                                              and (item.status = 'approve' or item.status = 'fixed') 
-                                              order by item.description asc");
+                if(isset($_GET['section'])){
+                    $section_id = $_GET['section'];
+                    $items = queryItem("CALL sectionReport('$tranche','$expense->id','$section_id')");
+                } else {
+                    $items = queryItem("SELECT 
+                              item.*,
+                              qty.unique_id as qty_unique_id,
+                              qty.jan as qty_jan,
+                              qty.feb as qty_feb,
+                              qty.mar as qty_mar,
+                              qty.apr as qty_apr,
+                              qty.may as qty_may,
+                              qty.jun as qty_jun,
+                              qty.jul as qty_jul,
+                              qty.aug as qty_aug,
+                              qty.sep as qty_sep,
+                              qty.oct as qty_oct,
+                              qty.nov as qty_nov,
+                              qty.dec as qty_dec,
+                              mode_procurement.description as mode_procurement_description 
+                              FROM ITEM 
+                              left join mode_procurement on mode_procurement.id = item.mode_procurement 
+                              left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
+                              where item.tranche = '$tranche' 
+                              and item.expense_id = '$expense->id' 
+                              and (item.status = 'approve' or item.status = 'fixed') 
+                              order by item.description asc");
+                }
+
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);

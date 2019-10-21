@@ -18,11 +18,13 @@ use App\Charge;
 use App\Designation;
 use App\Division;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PpmpController extends Controller
 {
     public function index($expense_id,Request $request){
         $keyword = "";
+        $item_to_filter = "";
         if($request->isMethod('post')){
             if($request->item_save){ //if ang button ge saved
                 $item_to_filter = $this->ppmpUpdate($request);
@@ -55,7 +57,6 @@ class PpmpController extends Controller
             $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->get();
         }
 
-
         $all_item = Item::where(function($q){
             $q->where('item.status','=','approve')
                 ->orWhere('item.status','=','fixed');
@@ -63,8 +64,7 @@ class PpmpController extends Controller
         $encoded = Item::where('userid','=',Auth::user()->username)->where(function($q){
             $q->where('item.status','=','approve')
                 ->orWhere('item.status','=','fixed');
-        })
-            ->count();
+        })->count();
 
         $mode_procurement = ModeProcurement::get();
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
@@ -84,8 +84,31 @@ class PpmpController extends Controller
             "end_user_designation" => $end_user_designation,
             "head" => $head,
             "item_search" => $keyword,
-            "expense_id" => $expense_id
+            "expense_id" => $expense_id,
+            "request" => $request
         ]);
+    }
+
+    public static function MyPagination($expense_title,$items,$request){
+        // Get current page form url e.x. &page=1
+        $currentPage = LengthAwarePaginator::resolveCurrentPage();
+
+        // Create a new Laravel collection from the array data
+        $itemCollection = collect($items);
+
+        // Define how many items we want to be visible in each page
+        $perPage = 50;
+
+        // Slice the collection to get the items to display in current page
+        $currentPageItems = $itemCollection->slice(($currentPage * $perPage) - $perPage, $perPage)->all();
+
+        // Create our paginator and pass it to the view
+        $paginatedItems= new LengthAwarePaginator($currentPageItems , count($itemCollection), $perPage);
+
+        // set url path for generated links
+        $paginatedItems->setPath($request->url());
+
+        return $paginatedItems;
     }
 
     public function ppmpUpdate(Request $request){
@@ -119,11 +142,12 @@ class PpmpController extends Controller
                 $request->get('dec'.$value)
                 )
             {
+                $unique_id = $request->get('qty_unique_id'.$value);
                 if(
-                    $qty =  Qty::where(function($q) use ($value){
-                            $q->where('qty.item_id','=',$value)
-                                ->orWhere('qty.unique_id','=',$value);
-                            })
+                    $qty =  Qty::where(function($q) use ($value,$unique_id){
+                                $q->where('qty.item_id','=',$value)
+                                    ->orWhere('qty.unique_id','=',$unique_id);
+                                })
                             ->where('created_by','=',Auth::user()->username)
                             ->where('section','=',Auth::user()->section)
                             ->where('division','=',Auth::user()->division)
@@ -178,9 +202,9 @@ class PpmpController extends Controller
                 $item->tranche = $request->get('tranche'.$value);
                 $item->description = $request->get('description'.$value);
                 $item->unit_measurement = $request->get('unit_measurement'.$value);
+                $item->qty = $request->get('qty'.$value);
                 $item->unit_cost = $request->get('unit_cost'.$value);
                 $item->estimated_budget = $estimated_budget;
-                $item->status = $item->status;
                 $item->save();
             } else {
                 $item = new Item();
@@ -192,17 +216,18 @@ class PpmpController extends Controller
                 $item->tranche = $request->get('tranche'.$value);
                 $item->description = $request->get('description'.$value);
                 $item->unit_measurement = $request->get('unit_measurement'.$value);
+                $item->qty = $request->get('qty'.$value);
                 $item->unit_cost = $request->get('unit_cost'.$value);
                 $item->estimated_budget = $estimated_budget;
                 $item->status = 'approve';
                 $item->save();
             }
 
+            $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);
 
         }
         //return Redirect::back()->with('success', 'Successfully updated item!');
-        $request->session()->put('success', 'Successfully updated item!');
 
         return $item_to_filter;
     }
