@@ -274,7 +274,7 @@
                             <tr>
                                 <th>Item Description/General Specification</th>
                                 <th>Unit Cost</th>
-                                <th>Unit<br>Measu<br>rement</th>
+                                <th>Unit<br>Issue</th>
                                 <th>QTY</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
