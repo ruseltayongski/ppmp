@@ -2,7 +2,7 @@
     <!-- Profile Image -->
     <div class="box box-success">
         <div class="box-body box-profile">
-            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmp','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" alt="User profile picture">
+            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmpv2','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" alt="User profile picture">
 
             <h3 class="profile-username text-center">{{ strtoupper($information->fname.' '.$information->lname) }}</h3>
 
