@@ -30,7 +30,7 @@
         if(Auth::user()->username == $item->userid){
             $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
-        if($item->status == 'fixed'){
+        if($item->status == 'fixed' && !Auth::user()->user_priv){
             $description = [
                 "readonly" => "readonly"
             ];
@@ -56,7 +56,7 @@
                     "</td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='".$description['readonly']."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost'>
+                        <input type='text' id='".$description['readonly']."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost' ".$description['readonly']." >
                         <span class='tooltiptext'>Unit Cost</span>
                         </div>
                     </td>
