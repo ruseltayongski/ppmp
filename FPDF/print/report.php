@@ -16,7 +16,7 @@ function conn()
 
 function queryExpense($division){
     $pdo = conn();
-    $query = "SELECT * FROM EXPENSE where division = ? ORDER BY ID ASC";
+    $query = "SELECT * FROM EXPENSE ORDER BY ID ASC";
 
     try
     {

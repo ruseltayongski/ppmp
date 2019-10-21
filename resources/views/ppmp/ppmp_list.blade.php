@@ -349,8 +349,7 @@
                                                 ->where(function($q){
                                                     $q->where('item.status','=','approve')
                                                         ->orWhere('item.status','=','fixed');
-                                                })
-                                                ->where('item.division','=',Auth::user()->division);
+                                                });
                                             if(isset($item_search)){
                                                 $items = $items->where("item.description","like","%$item_search%");
                                             }
@@ -418,8 +417,7 @@
                                                 ->where(function($q){
                                                     $q->where('item.status','=','approve')
                                                         ->orWhere('item.status','=','fixed');
-                                                })
-                                                ->where('item.division','=',Auth::user()->division);
+                                                });
                                                 if(isset($item_search)){
                                                     $items = $items->where("item.description","like","%$item_search%");
                                                 }
@@ -479,8 +477,7 @@
                                         ->where(function($q){
                                             $q->where('item.status','=','approve')
                                                 ->orWhere('item.status','=','fixed');
-                                        })
-                                        ->where('item.division','=',Auth::user()->division);
+                                        });
                                         if(isset($item_search)){
                                             $items = $items->where("item.description","like","%$item_search%");
                                         }

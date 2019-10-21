@@ -48,13 +48,13 @@ class PpmpController extends Controller
                         })
                         ->pluck('expense_id')->toArray();
                 }
-                $expenses = Expense::where('division','=',Auth::user()->division)->whereIn("id",$item)->get();
+                $expenses = Expense::whereIn("id",$item)->get();
             } else {
-                $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->get();
+                $expenses = Expense::where("id","=",$expense_id)->get();
             }
 
         } else {
-            $expenses = Expense::where('division','=',Auth::user()->division)->where("id","=",$expense_id)->get();
+            $expenses = Expense::where("id","=",$expense_id)->get();
         }
 
         $all_item = Item::where(function($q){
