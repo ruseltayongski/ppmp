@@ -30,7 +30,7 @@
         if(Auth::user()->username == $item->userid){
             $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
-        if($item->status == 'fixed' && !Auth::user()->user_priv){
+        if($item->status == 'fixed'){
             $description = [
                 "readonly" => "readonly"
             ];
@@ -39,6 +39,7 @@
                 "readonly" => ""
             ];
         }
+        Auth::user()->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
         $data = "<tr class='$item->id'>
                     <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
@@ -56,7 +57,7 @@
                     "</td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='".$description['readonly']."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost' ".$description['readonly']." >
+                        <input type='text' id='".$unit_cost_lock."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost' ".$unit_cost_lock." >
                         <span class='tooltiptext'>Unit Cost</span>
                         </div>
                     </td>
@@ -370,7 +371,8 @@
                                             });
                                             echo "</tbody>";
                                             echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());
-                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
+                                            if($expense->id != 1)
+                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($grand_total);
                                         } //display if first have value
                                         if(!isset($flag[$display_first])){

@@ -16,7 +16,7 @@ class ExpenseController extends Controller
     }
     public function code(){
 
-        $id = 122;
+       /* $id = 122;
         $expense = Expense::find($id);
         $expense->code = json_encode([
             'Cebu Province' => [
@@ -150,40 +150,7 @@ class ExpenseController extends Controller
 
 
 
-        return $id;
-
-
-
-
-
-
-
-
-
-        /*$expense = Expense::find(1);
-        $expense->code = json_encode([
-            'A. CONSUMABLES:' => [
-                "1. COMMON-USE/REGULAR/STANDARD OFFICE SUPPLIES:",
-                "2. TRAINING SUPPLIES:",
-                "3. EQUIPMENT CONSUMABLES",
-            ],
-            'B. NON-CONSUMABLE:' => [
-
-            ],
-            'C. OTHER COMMON-USE OFFICE SUPPLIES SPECIFICALLY USED ONLY BY CONCERNED SECTION' => [
-
-            ]
-        ]);
-
-
-        $expense->save();
         return $id;*/
-
-
-
-
-
-
 
         /*$code = json_encode([
             'A. CONSUMABLES:' => [
@@ -212,6 +179,36 @@ class ExpenseController extends Controller
             }
             $index1++;
         }*/
+
+        $expense = Expense::find(153);
+        $expense->description = "Expense1";
+
+        $expense->code = json_encode([
+            'A. Second Expense A:' => [
+                "1. Third Expense 1",
+                "2. Third Expense 2",
+                "3. Third Expense 3",
+                "4. Fourth Expense 4",
+                "5. Fifth Expense 5"
+            ],
+            'B. Second Expense B:' => [
+
+            ],
+            'C. Second Expense C:' => [
+
+            ],
+            'D. Second Expense D:' => [
+
+            ],
+            'E. Second Expense E:' => [
+
+            ]
+        ]);
+
+        $expense->save();
+
+
+        return "Successfully updated code!";
 
     }
 }
