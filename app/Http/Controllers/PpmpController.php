@@ -31,8 +31,8 @@ class PpmpController extends Controller
             }
             $keyword = $request->item_search;
             if($keyword){
-                $item = Item::where('division','=',Auth::user()->division)
-                    ->where("description","like","%$keyword%")
+                $item = Item::
+                    where("description","like","%$keyword%")
                     ->where(function($q){
                         $q->where('item.status','=','approve')
                             ->orWhere('item.status','=','fixed');
