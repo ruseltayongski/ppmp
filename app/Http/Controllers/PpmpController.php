@@ -24,7 +24,7 @@ class PpmpController extends Controller
 {
     public function index($expense_id,Request $request){
         $keyword = "";
-        $item_to_filter = "";
+        $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post')){
             if($request->item_save){ //if ang button ge saved
                 $item_to_filter = $this->ppmpUpdate($request);
