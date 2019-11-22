@@ -69,79 +69,79 @@
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='no-border' name='qty$item->id' style='width: 20px' value='$item->qty' placeholder='QTY'>
+                        <input type='text' id='no-border' name='qty$item->id' style='width: 20px' placeholder='qty' value='$item->qty' >
                         <span class='tooltiptext'>QTY</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' value='$item->qty_jan' placeholder='Jan'>
+                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' step='.01' value='$item->qty_jan' placeholder='Jan'>
                         <span class='tooltiptext'>January</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' value='$item->qty_feb' placeholder='Feb'>
+                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' step='.01' value='$item->qty_feb' placeholder='Feb'>
                         <span class='tooltiptext'>February</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' value='$item->qty_mar' placeholder='Mar'>
+                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' step='.01' value='$item->qty_mar' placeholder='Mar'>
                         <span class='tooltiptext'>March</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' value='$item->qty_apr' placeholder='Apr'>
+                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' step='.01' value='$item->qty_apr' placeholder='Apr'>
                         <span class='tooltiptext'>April</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' value='$item->qty_may' placeholder='May'>
+                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' step='.01' value='$item->qty_may' placeholder='May'>
                         <span class='tooltiptext'>May</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' value='$item->qty_jun' placeholder='Jun'>
+                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' step='.01' value='$item->qty_jun' placeholder='Jun'>
                         <span class='tooltiptext'>June</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' value='$item->qty_jul' placeholder='Jul'>
+                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' step='.01' value='$item->qty_jul' placeholder='Jul'>
                         <span class='tooltiptext'>July</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' value='$item->qty_aug' placeholder='Aug'>
+                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' step='.01' value='$item->qty_aug' placeholder='Aug'>
                         <span class='tooltiptext'>August</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' value='$item->qty_sep' placeholder='Sep'>
+                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' step='.01' value='$item->qty_sep' placeholder='Sep'>
                         <span class='tooltiptext'>September</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' value='$item->qty_oct' placeholder='Oct'>
+                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' step='.01' value='$item->qty_oct' placeholder='Oct'>
                         <span class='tooltiptext'>October</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' value='$item->qty_nov' placeholder='Nov'>
+                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' step='.01' value='$item->qty_nov' placeholder='Nov'>
                         <span class='tooltiptext'>November</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='dec$item->id' style='width: 40px' value='$item->qty_dec' placeholder='Dec'>
+                        <input type='number' id='no-border' name='dec$item->id' style='width: 40px' step='.01' value='$item->qty_dec' placeholder='Dec'>
                         <span class='tooltiptext'>December</span>
                         </div>
                     </td>
@@ -273,7 +273,7 @@
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
                             <tr>
-                                <th>Item Description/General Specification</th>
+                                <th>Item Description/General Specification></th>
                                 <th>Unit Cost</th>
                                 <th>Unit<br>Issue</th>
                                 <th>QTY</th>
@@ -322,7 +322,7 @@
                                             }
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
-                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
+                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.fname,'.',personal_information.lname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
                                                 "qty.unique_id as qty_unique_id",
                                                 "qty.jan as qty_jan",
                                                 "qty.feb as qty_feb",
@@ -792,73 +792,73 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Jan' name='jan"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>Estimated Budget</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Feb' name='feb"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>February</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Mar' name='mar"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>March</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Apr' name='apr"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>April</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='May' name='may"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='May' name='may"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>May</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Jun' name='jun"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>June</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Jul' name='jul"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>July</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Aug' name='aug"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>August</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Sep' name='sep"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>September</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Oct' name='oct"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>October</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Nov' name='nov"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>November</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' style='width: 40px'>" +
+                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>December</span>"+
                 "</div>" +
                 "</td>"+
