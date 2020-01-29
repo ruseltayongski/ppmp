@@ -63,7 +63,8 @@
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                 </div><!-- /.col -->
             </div>
-            <strong class="center"><a href="{{ asset('public/ppmp.xlsx') }}" download>PPMP FORMAT EXCEL</a></strong>
+            <strong class="center"><a href="{{ asset('public/ppmp.xlsx') }}" download>PPMP FORMAT EXCEL</a></strong><br>
+            <strong class="center"><a href="{{ asset('public/PPMP Fund Realignment Form.docx') }}" download>PPMP Fund Realignment</a></strong>
         </div><!-- /.login-box-body -->
 
     </form>
