@@ -20,7 +20,7 @@
             <div class="row">
                 <section class="col-lg-12">
                     <div class="form-group">
-                        <form action="{{ asset('item/import') }}" class="form-horizontal" method="post" enctype="multipart/form-data">
+                        <form action="{{ asset('item/import/msd') }}" class="form-horizontal" method="post" enctype="multipart/form-data">
                             {{ csrf_field() }}
                             <label for="exampleInputFile">File input</label>
                             <input type="file" id="exampleInputFile" name="import_file"><br>

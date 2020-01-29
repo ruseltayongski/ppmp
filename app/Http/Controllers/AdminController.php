@@ -34,7 +34,7 @@ class AdminController extends Controller
                         \DB::raw("SUM(COALESCE(qty.sep,0)) as sep"),
                         \DB::raw("SUM(COALESCE(qty.oct,0)) as oct"),
                         \DB::raw("SUM(COALESCE(qty.nov,0)) as nov"),
-                        \DB::raw("SUM(COALESCE(qty.dec,0)) as dece")
+                        \DB::raw("SUM(COALESCE(qty.dece,0)) as dece")
                     )
                     ->join('ppmpv2.qty',function($join){
                         $join->on("qty.item_id","=","item.id");

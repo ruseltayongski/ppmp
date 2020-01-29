@@ -32,7 +32,6 @@ Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
 Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@index');
-Route::post('ppmp/import','ExcelController@importItem');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
 Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
@@ -49,7 +48,8 @@ Route::get('expense/code','ExpenseController@code');
 //excel
 Route::get('excel/import','ExcelController@excelImport');
 Route::post('expense/import','ExcelController@importExpense');
-Route::post('item/import','ExcelController@importItem');
+Route::post('item/import/msd','ExcelController@importItem_MSD');
+Route::post('item/import/lhsd','ExcelController@importItem_LHSD');
 
 //reset user section in ICTU
 Route::get('section/reset','AdminController@resetSection');

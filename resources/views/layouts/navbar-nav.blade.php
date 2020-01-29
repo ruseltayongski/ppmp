@@ -74,8 +74,8 @@
                     </ul>
                 </li>
                 <li><a href="{{ url('expense/list') }}"><i class="fa fa-rub"></i> Expense</a></li>
-                <li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>
                 -->
+                <li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>
                 <li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>
                 @endif
             @endif

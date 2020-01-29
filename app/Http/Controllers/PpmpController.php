@@ -19,6 +19,7 @@ use App\Designation;
 use App\Division;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\CreatedLogs;
 
 class PpmpController extends Controller
 {
@@ -113,91 +114,129 @@ class PpmpController extends Controller
 
     public function ppmpUpdate(Request $request){
         $item_to_filter = "";
+        $created_by = Auth::user()->username;
+        $section = Auth::user()->section;
+        $division = Auth::user()->division;
+        $now = date('Y-m-d');
+
+        $qty_query_update = '';
+        $qty_query_add = "INSERT INTO ppmpv2.qty(item_id,unique_id,created_by,division,section,jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dece,created_at) VALUES";
+
         foreach($request->get('item_id') as $value){
-            $qty_all = $request->get('jan'.$value)+
-                $request->get('feb'.$value)+
-                $request->get('mar'.$value)+
-                $request->get('apr'.$value)+
-                $request->get('may'.$value)+
-                $request->get('jun'.$value)+
-                $request->get('jul'.$value)+
-                $request->get('aug'.$value)+
-                $request->get('sep'.$value)+
-                $request->get('oct'.$value)+
-                $request->get('nov'.$value)+
-                $request->get('dec'.$value);
+
+            $jan=$request->get('jan'.$value);
+            $feb=$request->get('feb'.$value);
+            $mar=$request->get('mar'.$value);
+            $apr=$request->get('apr'.$value);
+            $may=$request->get('may'.$value);
+            $jun=$request->get('jun'.$value);
+            $jul=$request->get('jul'.$value);
+            $aug=$request->get('aug'.$value);
+            $sep=$request->get('sep'.$value);
+            $oct=$request->get('oct'.$value);
+            $nov=$request->get('nov'.$value);
+            $dece=$request->get('dece'.$value);
+
+            $qty_all = $jan+$feb+$mar+$apr+$may+$jun+$jul+$aug+$sep+$oct+$nov+$dece;
             $estimated_budget = $request->get('unit_cost'.$value) * $qty_all;
+
             if(
-                $request->get('jan'.$value) != '' ||
-                $request->get('feb'.$value) != '' ||
-                $request->get('mar'.$value) != '' ||
-                $request->get('apr'.$value) != '' ||
-                $request->get('may'.$value) != '' ||
-                $request->get('jun'.$value) != '' ||
-                $request->get('jul'.$value) != '' ||
-                $request->get('aug'.$value) != '' ||
-                $request->get('sep'.$value) != '' ||
-                $request->get('oct'.$value) != '' ||
-                $request->get('nov'.$value) != '' ||
-                $request->get('dec'.$value)
+                $jan != '' ||
+                $feb != '' ||
+                $mar != '' ||
+                $apr != '' ||
+                $may != '' ||
+                $jun != '' ||
+                $jul != '' ||
+                $aug != '' ||
+                $sep != '' ||
+                $oct != '' ||
+                $nov != '' ||
+                $dece != ''
                 )
             {
                 $unique_id = $request->get('qty_unique_id'.$value);
+                $item_id = $value;
                 if(
                     $qty =  Qty::where(function($q) use ($value,$unique_id){
                                 $q->where('qty.item_id','=',$value)
                                     ->orWhere('qty.unique_id','=',$unique_id);
                                 })
-                            ->where('created_by','=',Auth::user()->username)
-                            ->where('section','=',Auth::user()->section)
-                            ->where('division','=',Auth::user()->division)
+                            ->where('section','=',$section)
+                            ->where('division','=',$division)
                             ->first()
-                ){
-                    $qty->item_id = $value;
-                    $qty->jan = $request->get('jan'.$value);
-                    $qty->feb = $request->get('feb'.$value);
-                    $qty->mar = $request->get('mar'.$value);
-                    $qty->apr = $request->get('apr'.$value);
-                    $qty->may = $request->get('may'.$value);
-                    $qty->jun = $request->get('jun'.$value);
-                    $qty->jul = $request->get('jul'.$value);
-                    $qty->aug = $request->get('aug'.$value);
-                    $qty->sep = $request->get('sep'.$value);
-                    $qty->oct = $request->get('oct'.$value);
-                    $qty->nov = $request->get('nov'.$value);
-                    $qty->dec = $request->get('dec'.$value);
-                    $qty->save();
+                    && !empty($unique_id)
+                ){ //update
+
+                    $created_logs = new CreatedLogs();
+                    $created_logs->item_id = $value;
+                    $created_logs->created_by = $created_by;
+                    $created_logs->description = "UPDATE";
+                    $created_logs->save();
+
+                    $qty_id = $qty->id;
+                    $qty_query_update .= "UPDATE ppmpv2.qty SET 
+                                                  item_id = '$item_id',
+                                                  created_by = '$created_by',
+                                                  division = '$division',
+                                                  section = '$section',
+                                                  jan = '$jan',
+                                                  feb = '$feb',
+                                                  mar = '$mar',
+                                                  apr = '$apr',
+                                                  may = '$may',
+                                                  jun = '$jun',
+                                                  jul = '$jul',
+                                                  aug = '$aug',
+                                                  sep = '$sep',
+                                                  oct = '$oct',
+                                                  nov = '$nov',
+                                                  dece = '$dece',
+                                                  updated_at = '$now' 
+                                                  WHERE id = '$qty_id';";
+
                 } else {
                     //ADD NEW
-                    $qty = new Qty();
-                    $qty->item_id = $value;
-                    $qty->unique_id = $value;
-                    $qty->created_by = Auth::user()->username;
-                    $qty->division = Auth::user()->division;
-                    $qty->section = Auth::user()->section;
-                    $qty->jan = $request->get('jan'.$value);
-                    $qty->feb = $request->get('feb'.$value);
-                    $qty->mar = $request->get('mar'.$value);
-                    $qty->apr = $request->get('apr'.$value);
-                    $qty->may = $request->get('may'.$value);
-                    $qty->jun = $request->get('jun'.$value);
-                    $qty->jul = $request->get('jul'.$value);
-                    $qty->aug = $request->get('aug'.$value);
-                    $qty->sep = $request->get('sep'.$value);
-                    $qty->oct = $request->get('oct'.$value);
-                    $qty->nov = $request->get('nov'.$value);
-                    $qty->dec = $request->get('dec'.$value);
-                    $qty->save();
+                    $created_logs = new CreatedLogs();
+                    $created_logs->item_id = $value;
+                    $created_logs->unique_id = $value;
+                    $created_logs->created_by = $created_by;
+                    $created_logs->description = "ADD";
+                    $created_logs->save();
+
+                    $qty_query_add .= "(
+                                          '$item_id',
+                                          '$unique_id',
+                                          '$created_by',
+                                          '$division',
+                                          '$section',
+                                          '$jan',
+                                          '$feb',
+                                          '$mar',
+                                          '$apr',
+                                          '$may',
+                                          '$jun',
+                                          '$jul',
+                                          '$aug',
+                                          '$sep',
+                                          '$oct',
+                                          '$nov',
+                                          '$dece',
+                                          '$now'
+                                      ),";
+
+
                 }
-            }
+
+            } //end check if month is not empty
 
             if($item = Item::where("id","=",$value)
                 ->orWhere("unique_id","=",$value)
                 ->first()){
                 $item->unique_id = $value;
                 $item->userid = $request->get('userid'.$value);
-                $item->division = Auth::user()->division;
-                $item->section = Auth::user()->section;
+                $item->division = $division;
+                $item->section = $section;
                 $item->expense_id = $request->get('expense_id'.$value);
                 $item->tranche = $request->get('tranche'.$value);
                 $item->description = $request->get('description'.$value);
@@ -210,8 +249,8 @@ class PpmpController extends Controller
                 $item = new Item();
                 $item->unique_id = $value;
                 $item->userid = $request->get('userid'.$value);
-                $item->division = Auth::user()->division;
-                $item->section = Auth::user()->section;
+                $item->division = $division;
+                $item->section = $section;
                 $item->expense_id = $request->get('expense_id'.$value);
                 $item->tranche = $request->get('tranche'.$value);
                 $item->description = $request->get('description'.$value);
@@ -226,8 +265,11 @@ class PpmpController extends Controller
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);
 
+
+
         }
-        //return Redirect::back()->with('success', 'Successfully updated item!');
+
+        \DB::select(substr_replace($qty_query_add ,"",-1));
 
         return $item_to_filter;
     }
