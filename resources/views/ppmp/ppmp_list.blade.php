@@ -340,10 +340,7 @@
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                 ->leftJoin('qty',function($join){
                                                     $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                    $join->on(function($join2){
-                                                        $join2->on('qty.item_id','=','item.id');
-                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                    });
+                                                    $join->on('qty.item_id','=','item.id');
                                                 })
                                                 ->where('item.expense_id','=',$expense->id)
                                                 ->where('item.tranche','=',$tranche)
@@ -409,10 +406,7 @@
                                                 ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                                 ->leftJoin('qty',function($join){
                                                     $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                    $join->on(function($join2){
-                                                        $join2->on('qty.item_id','=','item.id');
-                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                    });
+                                                    $join->on('qty.item_id','=','item.id');
                                                 })
                                                 ->where('item.expense_id','=',$expense->id)
                                                 ->where('item.tranche','=',$tranche)
@@ -470,10 +464,7 @@
                                         ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
                                         ->leftJoin('qty',function($join){
                                             $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                            $join->on(function($join2){
-                                                $join2->on('qty.item_id','=','item.id');
-                                                $join2->orOn('qty.unique_id','=','item.unique_id');
-                                            });
+                                            $join->on('qty.item_id','=','item.id');
                                         })
                                         ->where('item.expense_id','=',$expense->id)
                                         ->where(function($q){
@@ -597,13 +588,13 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-foursquare" href="#">
                             <i class="fa fa-file-pdf-o"></i> Region
                         </a>
-                        <a class="btn btn-block btn-social btn-facebook">
+                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Division
                         </a>
-                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username.'&section='.Auth::user()->section }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-google" href="#">
                             <i class="fa fa-file-pdf-o"></i> Section
                         </a>
                     </div>

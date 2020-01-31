@@ -62,7 +62,7 @@ $pdf->Row(array("Project, Programs and Activities(PAPs)"));
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(
     17, //1
-    107.6, //2
+    80, //2
     10, //3
     10, //4
     15.2, //5
@@ -82,24 +82,24 @@ $pdf->TableTitle([
 ],'TLR');
 $pdf->SetWidths(array(
     17, //1
-    107.6, //2
+    80, //2
     10, //3
     10, //4
     15.2, //5
     15.2, //6
     19, //7
-    8, //8
-    8, //9
-    8, //10
-    8, //11
-    8, //12
-    8, //13
-    8, //14
-    8, //15
-    8, //16
-    8, //17
-    8, //18
-    8 //19
+    10, //8
+    10, //9
+    10, //10
+    10, //11
+    10, //12
+    10, //13
+    10, //14
+    10, //15
+    10, //16
+    10, //17
+    10, //18
+    10 //19
 ));
 $pdf->TableTitle([
     "", //1
@@ -158,10 +158,7 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
 
-                if(isset($_GET['section'])){
-                    $section_id = $_GET['section'];
-                    $items = queryItem("CALL sectionReport('$tranche','$expense->id','$section_id')");
-                } else {
+                if(isset($_GET['region'])) {
                     $items = queryItem("SELECT 
                               item.*,
                               qty.unique_id as qty_unique_id,
@@ -176,15 +173,22 @@ foreach($expenses as $expense){
                               qty.sep as qty_sep,
                               qty.oct as qty_oct,
                               qty.nov as qty_nov,
-                              qty.dec as qty_dec,
+                              qty.dece as qty_dece,
                               mode_procurement.description as mode_procurement_description 
                               FROM ITEM 
                               left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                              left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
+                              left join qty on qty.created_by = '$userid' and qty.item_id = item.id 
                               where item.tranche = '$tranche' 
                               and item.expense_id = '$expense->id' 
                               and (item.status = 'approve' or item.status = 'fixed') 
                               order by item.description asc");
+                }
+                else if(isset($_GET['division'])){
+                    $division_id = $_GET['division'];
+                    $items = queryItem("CALL divisionReport('$tranche','$expense->id','$division_id')");
+                } else {
+                    $section_id = $_GET['section'];
+                    $items = queryItem("CALL sectionReport('$tranche','$expense->id','$section_id')");
                 }
 
 
@@ -203,7 +207,8 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first];
                 $pdf->displayExpense($display_first);
 
-                $items = queryItem("SELECT
+                if(isset($_GET['region'])) {
+                    $items = queryItem("SELECT
                                             item.*,
                                             qty.unique_id as qty_unique_id,
                                             qty.jan as qty_jan,
@@ -217,15 +222,23 @@ foreach($expenses as $expense){
                                             qty.sep as qty_sep,
                                             qty.oct as qty_oct,
                                             qty.nov as qty_nov,
-                                            qty.dec as qty_dec,
+                                            qty.dece as qty_dece,
                                             mode_procurement.description as mode_procurement_description 
                                             FROM ITEM 
                                             left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                                            left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
+                                            left join qty on qty.created_by = '$userid' and qty.item_id = item.id
                                             where item.tranche = '$tranche' 
                                             and item.expense_id = '$expense->id' 
                                             and (item.status = 'approve' or item.status = 'fixed') 
                                             order by item.description asc");
+                }
+                else if(isset($_GET['division'])){
+                    $division_id = $_GET['division'];
+                    $items = queryItem("CALL divisionReport('$tranche','$expense->id','$division_id')");
+                } else {
+                    $section_id = $_GET['section'];
+                    $items = queryItem("CALL sectionReport('$tranche','$expense->id','$section_id')");
+                }
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -246,7 +259,8 @@ foreach($expenses as $expense){
         $pdf->SetFont('Arial','B',7);
         $pdf->displayExpense($expense->description); //display expense if no value from first
 
-        $items = queryItem("SELECT
+        if(isset($_GET['region'])) {
+            $items = queryItem("SELECT
                                     item.*,
                                     qty.unique_id as qty_unique_id,
                                     qty.jan as qty_jan,
@@ -260,14 +274,23 @@ foreach($expenses as $expense){
                                     qty.sep as qty_sep,
                                     qty.oct as qty_oct,
                                     qty.nov as qty_nov,
-                                    qty.dec as qty_dec,
+                                    qty.dece as qty_dece,
                                     mode_procurement.description as mode_procurement_description 
                                     FROM ITEM 
                                     left join mode_procurement on mode_procurement.id = item.mode_procurement
-                                    left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
+                                    left join qty on qty.created_by = '$userid' and qty.item_id = item.id
                                     where item.expense_id = '$expense->id' 
                                     and (item.status = 'approve' or item.status = 'fixed') 
                                     order by item.description asc");
+        }
+        else if(isset($_GET['division'])){
+            $division_id = $_GET['division'];
+            $items = queryItem("CALL divisionReportNoTranche('$expense->id','$division_id')");
+        } else {
+            $section_id = $_GET['section'];
+
+        }
+
 
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);

@@ -212,6 +212,9 @@ class PDF_MC_Table extends FPDF
             //Draw the border
             $this->Rect($x,$y,$w,$h);
             //Print the text
+            if(is_numeric($data[$i])){
+                $this->SetFont('Arial','',6);
+            }
             $this->MultiCell($w,5,$data[$i],0,$a);
             //Put the position to the right of the cell
             $this->SetXY($x+$w,$y);
@@ -230,21 +233,21 @@ class PDF_MC_Table extends FPDF
             "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
             $item->unit_measurement,
             $item->qty,
-            $item->unit_cost,
-            number_format((float)$item->estimated_budget, 2, '.', ''),
+            number_format((float)$item->unit_cost, 2, '.', ','),
+            number_format((float)$item->estimated_budget, 2, '.', ','),
             ' ', //consult pako pu
-            $item->qty_jan,
-            $item->qty_feb,
-            $item->qty_mar,
-            $item->qty_apr,
-            $item->qty_may,
-            $item->qty_jun,
-            $item->qty_jul,
-            $item->qty_aug,
-            $item->qty_sep,
-            $item->qty_oct,
-            $item->qty_nov,
-            $item->qty_dec,
+            number_format((float)$item->qty_jan, 2, '.', ','),
+            number_format((float)$item->qty_feb, 2, '.', ','),
+            number_format((float)$item->qty_mar, 2, '.', ','),
+            number_format((float)$item->qty_apr, 2, '.', ','),
+            number_format((float)$item->qty_may, 2, '.', ','),
+            number_format((float)$item->qty_jun, 2, '.', ','),
+            number_format((float)$item->qty_jul, 2, '.', ','),
+            number_format((float)$item->qty_aug, 2, '.', ','),
+            number_format((float)$item->qty_sep, 2, '.', ','),
+            number_format((float)$item->qty_oct, 2, '.', ','),
+            number_format((float)$item->qty_nov, 2, '.', ','),
+            number_format((float)$item->qty_dece, 2, '.', ','),
         ]);
     }
 
