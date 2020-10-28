@@ -323,7 +323,10 @@
                         </div>
                     </div>
                     <!-- /.box-header -->
-                    <?php $grand_total = 0; ?>
+                    <?php
+                        $grand_total = 0;
+                        $section_id = Auth::user()->section;
+                    ?>
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
@@ -349,7 +352,6 @@
                                 <th></th>
                             </tr>
                             <?php
-                            $section_id = Auth::user()->section;
                             foreach($expenses as $expense)
                             {
                                 $count_first = 0;
@@ -510,7 +512,7 @@
                                                     echo $string;
                                                 ?>
                                             </span>
-                                            <span class="info-box-number">{{ \App\Item::where("expense_id",$expense->id)->count() }}</span>
+                                            <span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id')")) }}</span>
                                         </div>
                                         <!-- /.info-box-content -->
                                     </div>

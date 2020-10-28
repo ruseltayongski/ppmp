@@ -224,7 +224,7 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayItem($item){
-        $mode_procurement = $item->mode_procurement_description;
+        $mode_procurement = $item->mode_procurement;
         if(preg_match_all('/\b(\w)/',strtoupper(str_replace(',',' ',$mode_procurement)),$m)) {
             $mode_procurement = implode('',$m[1]);
         }
@@ -236,18 +236,18 @@ class PDF_MC_Table extends FPDF
             number_format((float)$item->unit_cost, 2, '.', ','),
             number_format((float)$item->estimated_budget, 2, '.', ','),
             ' ', //consult pako pu
-            number_format((float)$item->qty_jan, 2, '.', ','),
-            number_format((float)$item->qty_feb, 2, '.', ','),
-            number_format((float)$item->qty_mar, 2, '.', ','),
-            number_format((float)$item->qty_apr, 2, '.', ','),
-            number_format((float)$item->qty_may, 2, '.', ','),
-            number_format((float)$item->qty_jun, 2, '.', ','),
-            number_format((float)$item->qty_jul, 2, '.', ','),
-            number_format((float)$item->qty_aug, 2, '.', ','),
-            number_format((float)$item->qty_sep, 2, '.', ','),
-            number_format((float)$item->qty_oct, 2, '.', ','),
-            number_format((float)$item->qty_nov, 2, '.', ','),
-            number_format((float)$item->qty_dece, 2, '.', ','),
+            number_format((float)$item->jan, 2, '.', ','),
+            number_format((float)$item->feb, 2, '.', ','),
+            number_format((float)$item->mar, 2, '.', ','),
+            number_format((float)$item->apr, 2, '.', ','),
+            number_format((float)$item->may, 2, '.', ','),
+            number_format((float)$item->jun, 2, '.', ','),
+            number_format((float)$item->jul, 2, '.', ','),
+            number_format((float)$item->aug, 2, '.', ','),
+            number_format((float)$item->sep, 2, '.', ','),
+            number_format((float)$item->oct, 2, '.', ','),
+            number_format((float)$item->nov, 2, '.', ','),
+            number_format((float)$item->dece, 2, '.', ','),
         ]);
     }
 

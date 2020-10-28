@@ -126,6 +126,7 @@ $pdf->TableTitle([
 $grand_total = 0;
 $expenses = queryExpense($_GET['division']);
 $userid = $_GET['userid'];
+$section_id = $_GET['section'];
 foreach($expenses as $expense){
     $count_first = 0;
     $count_second = 0;
@@ -159,34 +160,10 @@ foreach($expenses as $expense){
                 $expense_total = 0;
 
                 if(isset($_GET['section'])){
-                    $section_id = $_GET['section'];
-                    $items = queryItem("CALL sectionReport('$tranche','$expense->id','$section_id')");
+                    $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
                 } else {
-                    $items = queryItem("SELECT 
-                              item.*,
-                              qty.unique_id as qty_unique_id,
-                              qty.jan as qty_jan,
-                              qty.feb as qty_feb,
-                              qty.mar as qty_mar,
-                              qty.apr as qty_apr,
-                              qty.may as qty_may,
-                              qty.jun as qty_jun,
-                              qty.jul as qty_jul,
-                              qty.aug as qty_aug,
-                              qty.sep as qty_sep,
-                              qty.oct as qty_oct,
-                              qty.nov as qty_nov,
-                              qty.dece as qty_dec,
-                              mode_procurement.description as mode_procurement_description 
-                              FROM ITEM 
-                              left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                              left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id) 
-                              where item.tranche = '$tranche' 
-                              and item.expense_id = '$expense->id' 
-                              and (item.status = 'approve' or item.status = 'fixed') 
-                              order by item.description asc");
+                    $items = '';
                 }
-
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -203,29 +180,12 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first];
                 $pdf->displayExpense($display_first);
 
-                $items = queryItem("SELECT
-                                            item.*,
-                                            qty.unique_id as qty_unique_id,
-                                            qty.jan as qty_jan,
-                                            qty.feb as qty_feb,
-                                            qty.mar as qty_mar,
-                                            qty.apr as qty_apr,
-                                            qty.may as qty_may,
-                                            qty.jun as qty_jun,
-                                            qty.jul as qty_jul,
-                                            qty.aug as qty_aug,
-                                            qty.sep as qty_sep,
-                                            qty.oct as qty_oct,
-                                            qty.nov as qty_nov,
-                                            qty.dece as qty_dec,
-                                            mode_procurement.description as mode_procurement_description 
-                                            FROM ITEM 
-                                            left join mode_procurement on mode_procurement.id = item.mode_procurement 
-                                            left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
-                                            where item.tranche = '$tranche' 
-                                            and item.expense_id = '$expense->id' 
-                                            and (item.status = 'approve' or item.status = 'fixed') 
-                                            order by item.description asc");
+                if($tranche == '1-C'){
+                    $items = queryItem("call tranche_one_c('$expense->id','$tranche','$section_id')");
+                }
+                else{
+                    $items = queryItem("call main_tranche('$expense->id','$tranche')");
+                }
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -246,28 +206,7 @@ foreach($expenses as $expense){
         $pdf->SetFont('Arial','B',7);
         $pdf->displayExpense($expense->description); //display expense if no value from first
 
-        $items = queryItem("SELECT
-                                    item.*,
-                                    qty.unique_id as qty_unique_id,
-                                    qty.jan as qty_jan,
-                                    qty.feb as qty_feb,
-                                    qty.mar as qty_mar,
-                                    qty.apr as qty_apr,
-                                    qty.may as qty_may,
-                                    qty.jun as qty_jun,
-                                    qty.jul as qty_jul,
-                                    qty.aug as qty_aug,
-                                    qty.sep as qty_sep,
-                                    qty.oct as qty_oct,
-                                    qty.nov as qty_nov,
-                                    qty.dece as qty_dec,
-                                    mode_procurement.description as mode_procurement_description 
-                                    FROM ITEM 
-                                    left join mode_procurement on mode_procurement.id = item.mode_procurement
-                                    left join qty on qty.created_by = '$userid' and (qty.item_id = item.id or qty.unique_id = item.unique_id)
-                                    where item.expense_id = '$expense->id' 
-                                    and (item.status = 'approve' or item.status = 'fixed') 
-                                    order by item.description asc");
+        $items = queryItem("call normal_tranche('$expense->id','$section_id')");
 
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);
