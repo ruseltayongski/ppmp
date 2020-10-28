@@ -176,7 +176,7 @@ foreach($expenses as $expense){
                               qty.sep as qty_sep,
                               qty.oct as qty_oct,
                               qty.nov as qty_nov,
-                              qty.dec as qty_dec,
+                              qty.dece as qty_dec,
                               mode_procurement.description as mode_procurement_description 
                               FROM ITEM 
                               left join mode_procurement on mode_procurement.id = item.mode_procurement 
@@ -217,7 +217,7 @@ foreach($expenses as $expense){
                                             qty.sep as qty_sep,
                                             qty.oct as qty_oct,
                                             qty.nov as qty_nov,
-                                            qty.dec as qty_dec,
+                                            qty.dece as qty_dec,
                                             mode_procurement.description as mode_procurement_description 
                                             FROM ITEM 
                                             left join mode_procurement on mode_procurement.id = item.mode_procurement 
@@ -260,7 +260,7 @@ foreach($expenses as $expense){
                                     qty.sep as qty_sep,
                                     qty.oct as qty_oct,
                                     qty.nov as qty_nov,
-                                    qty.dec as qty_dec,
+                                    qty.dece as qty_dec,
                                     mode_procurement.description as mode_procurement_description 
                                     FROM ITEM 
                                     left join mode_procurement on mode_procurement.id = item.mode_procurement

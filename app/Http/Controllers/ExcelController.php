@@ -34,8 +34,8 @@ class ExcelController extends Controller
         $data = Excel::load($path)->get();
 
 
-        $pdo = \DB::connection()->getPdo();
-        $qty_query = "INSERT INTO ppmpv2.qty(item_id,created_by,division,section,jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dece,created_at, updated_at) VALUES";
+        /*$pdo = \DB::connection()->getPdo();
+        $qty_query = "INSERT INTO ppmpv2.qty(item_id,created_by,division,section,jan,feb,mar,apr,may,jun,jul,aug,sep,oct,nov,dece,created_at, updated_at) VALUES";*/
 
         if($data->count()){
             foreach ($data as $key => $value) {
@@ -44,15 +44,13 @@ class ExcelController extends Controller
                 $item->expense_id = $value->expense_id;
                 $item->tranche = $value->tranche;
                 $item->description = $value->description;
-                $item->unit_measurement = $value->unit_of_issue;
-                $item->qty = $value->qty;
-                $item->unit_cost = $value->unit_cost;
-                $item->estimated_budget = $value->estimated_budget;
                 $item->mode_procurement = $value->mode_procurement;
-                $item->status = 'approve';
+                $item->unit_measurement = $value->unit_of_issue;
+                $item->unit_cost = $value->unit_cost;
+                $item->status = 'fixed';
                 $item->save();
 
-                if(!empty($value->msd_chief)){
+                /*if(!empty($value->msd_chief)){
                     $item_id = $item->id; $created_by = "0864"; $division = "6"; $section = "39"; $jan = $value->jan; $feb = $value->feb; $mar = $value->mar; $apr = $value->apr; $may = $value->may; $jun = $value->jun; $jul = $value->jul; $aug = $value->aug; $sep = $value->sep; $oct = $value->oct; $nov = $value->nov; $dec = $value->dec;
                     $qty_query .= "('" . $item_id . "','" . $created_by . "','" . $division . "','" . $section . "','" . $jan . "','" . $feb . "','" . $mar . "','" . $apr . "','" . $may . "','" . $jun . "','" . $jul . "','" . $aug . "','" . $sep . "','" . $oct . "','" . $nov . "','" . $dec . "',NOW(),NOW()),";
                 }
@@ -156,13 +154,13 @@ class ExcelController extends Controller
                     //PLANNING // bethel pielago
                     $item_id = $item->id; $created_by = "201800276"; $division = "6"; $section = "38"; $jan = $value->jan; $feb = $value->feb; $mar = $value->mar; $apr = $value->apr; $may = $value->may; $jun = $value->jun; $jul = $value->jul; $aug = $value->aug; $sep = $value->sep; $oct = $value->oct; $nov = $value->nov; $dec = $value->dec;
                     $qty_query .= "('" . $item_id . "','" . $created_by . "','" . $division . "','" . $section . "','" . $jan . "','" . $feb . "','" . $mar . "','" . $apr . "','" . $may . "','" . $jun . "','" . $jul . "','" . $aug . "','" . $sep . "','" . $oct . "','" . $nov . "','" . $dec . "',NOW(),NOW()),";
-                }
+                }*/
 
             }
 
-            $qty_query .= "('','','','','','','','','','','','','','','','',NOW(),NOW())";
+            /*$qty_query .= "('','','','','','','','','','','','','','','','',NOW(),NOW())";
             $st = $pdo->prepare($qty_query);
-            $st->execute();
+            $st->execute();*/
 
         }
         return Redirect::back()->with('itemAdd', 'Successfully added item!');

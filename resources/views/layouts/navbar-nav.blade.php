@@ -62,7 +62,9 @@
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
             <li><a href="{{ url('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
+            -->
 
             @if(Session::get('charge_menu'))
                 @if(Auth::user()->user_priv)
@@ -82,7 +84,9 @@
             <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
+            <!--
             <li class="active"><a href="#trackDoc" data-toggle="modal"><i class="fa fa-commenting-o"></i> Feedback</a></li>
+            -->
         </ul>
     </div><!--/.nav-collapse -->
 </div>

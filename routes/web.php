@@ -25,7 +25,7 @@ Route::get('admin/home','AdminController@home');
 Route::get('admin/privileged','MaintenanceController@adminPrivilage');
 
 //user
-Route::get('user/home','UserController@home');
+Route::get('user/home','PpmpController@index');
 Route::post('user/division/update','MaintenanceController@updateDivisionPost');
 Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');

@@ -1,185 +1,3 @@
-<?php
-    use App\Item;
-    function displayHeader($title){
-        return "<tr>
-                <td>
-                    <strong>
-                        ".$title."
-                    </strong>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>";
-    }
-    function displayItem($item,$expense_title){
-        $status = "<span class='label label-success'>".$item->encoded_by_name."</span>";
-        if(Auth::user()->username == $item->userid){
-            $status = "<span class='badge bg-red' data-id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
-        }
-        if($item->status == 'fixed' && !Auth::user()->user_priv){
-            $description = [
-                "readonly" => "readonly"
-            ];
-        } else {
-            $description = [
-                "readonly" => ""
-            ];
-        }
-        Auth::user()->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
-        $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
-        $data = "<tr class='$item->id'>
-                    <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
-                    <input type='hidden' id='no-border' name='qty_unique_id$item->id' value='$item->qty_unique_id'>
-                    <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
-                    <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
-                    <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
-                    <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
-                    $expense_title_display
-                    <td >".
-                        "<div class='tooltip_top' style='width: 100%;'>".
-                        "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='".$description['readonly']."' class='item-description' placeholder='Item Description' ".$description['readonly']." >"."</div>".
-                        "<span class='tooltiptext'>Item Description</span>
-                        </div>".
-                    "</td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='text' id='".$unit_cost_lock."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' placeholder='Unit Cost' ".$unit_cost_lock." >
-                        <span class='tooltiptext'>Unit Cost</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='text' id='no-border' name='unit_measurement$item->id' style='width: 50px' value='$item->unit_measurement' placeholder='Unit Measurement'>
-                        <span class='tooltiptext'>Unit Measurement</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='text' id='no-border' name='qty$item->id' style='width: 20px' placeholder='qty' value='$item->qty' >
-                        <span class='tooltiptext'>QTY</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' step='.01' value='$item->qty_jan' placeholder='Jan'>
-                        <span class='tooltiptext'>January</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' step='.01' value='$item->qty_feb' placeholder='Feb'>
-                        <span class='tooltiptext'>February</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' step='.01' value='$item->qty_mar' placeholder='Mar'>
-                        <span class='tooltiptext'>March</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' step='.01' value='$item->qty_apr' placeholder='Apr'>
-                        <span class='tooltiptext'>April</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' step='.01' value='$item->qty_may' placeholder='May'>
-                        <span class='tooltiptext'>May</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' step='.01' value='$item->qty_jun' placeholder='Jun'>
-                        <span class='tooltiptext'>June</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' step='.01' value='$item->qty_jul' placeholder='Jul'>
-                        <span class='tooltiptext'>July</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' step='.01' value='$item->qty_aug' placeholder='Aug'>
-                        <span class='tooltiptext'>August</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' step='.01' value='$item->qty_sep' placeholder='Sep'>
-                        <span class='tooltiptext'>September</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' step='.01' value='$item->qty_oct' placeholder='Oct'>
-                        <span class='tooltiptext'>October</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' step='.01' value='$item->qty_nov' placeholder='Nov'>
-                        <span class='tooltiptext'>November</span>
-                        </div>
-                    </td>
-                    <td>
-                        <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='dec$item->id' style='width: 40px' step='.01' value='$item->qty_dec' placeholder='Dec'>
-                        <span class='tooltiptext'>December</span>
-                        </div>
-                    </td>
-                    <td>
-                        $status
-                    </td>
-                </tr>";
-
-        return $data;
-    }
-    function expenseTotal($total){
-        return "<tr>
-                <td colspan='6'>
-                    <strong class='pull-right' >
-                        Total: <span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span>
-                    </strong>
-                </td>
-            </tr>";
-    }
-    function addItem($expense_title,$expense,$tranche,$expense_description){
-        return "<tr>
-            <td colspan='17'>
-                <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
-            </td>
-        </tr>";
-    }
-    function paginateItem($expense_title,$item){
-        return "<tr>
-            <td colspan='17'>
-                <div class='div_paginator'>
-                    <div class='pagination_$expense_title'>
-                        $item
-                    </div>
-                </div>
-            </td>
-        </tr>";
-    }
-?>
 @extends('layouts.app')
 
 @section('content')
@@ -251,13 +69,250 @@
 
     </style>
     <title>PPMP|LIST</title>
-    <form action="{{ asset('ppmp/list/search') }}" method="POST" class="item_submit">
+    <?php
+    use App\Item;
+    function displayHeader($title){
+        return "<tr>
+                <td>
+                    <strong>
+                        ".$title."
+                    </strong>
+                </td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>";
+    }
+
+    function displayItem($item,$expense_title){
+        $user = Auth::user();
+        if($item->status == 'fixed' && !$user->user_priv){
+            $description = [
+                "readonly" => "readonly"
+            ];
+            $status = "<span class='badge bg-green'> Fixed Item</span>";
+        } else {
+            $description = [
+                "readonly" => ""
+            ];
+            $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+        }
+
+        $user->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
+
+        $jan = $item->jan;
+        $feb = $item->feb;
+        $mar = $item->mar;
+        $apr = $item->apr;
+        $may = $item->may;
+        $jun = $item->jun;
+        $jul = $item->jul;
+        $aug = $item->aug;
+        $sep = $item->sep;
+        $oct = $item->oct;
+        $nov = $item->nov;
+        $dece = $item->dece;
+        if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
+            $item_daily = \App\ItemDaily::where("item_id",$item->id)
+                ->where("expense_id",$item->expense_id)
+                ->where("tranche",$item->tranche)
+                ->where("section_id",$user->section)
+                ->orderBy("id","desc")
+                ->first();
+            if($item_daily){
+                $jan = $item_daily->jan;
+                $feb = $item_daily->feb;
+                $mar = $item_daily->mar;
+                $apr = $item_daily->apr;
+                $may = $item_daily->may;
+                $jun = $item_daily->jun;
+                $jul = $item_daily->jul;
+                $aug = $item_daily->aug;
+                $sep = $item_daily->sep;
+                $oct = $item_daily->oct;
+                $nov = $item_daily->nov;
+                $dece = $item_daily->dece;
+            }
+        }
+
+        $qty = $jan+$feb+$mar+$apr+$may+$jun+$jul+$aug+$sep+$oct+$nov+$dece;
+        $estimated_budget = $qty * $item->unit_cost;
+
+        $data = "<tr class='$item->unique_id'>
+                    <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
+                    <input type='hidden' id='no-border' name='unique_id$item->id' value='$item->unique_id'>
+                    <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
+                    <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
+                    <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
+                    <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
+                    $expense_title_display
+                    <td >".
+                        "<div class='tooltip_top' style='width: 100%;'>".
+                            "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='".$description['readonly']."' class='item-description' placeholder='Item Description' ".$description['readonly']." >"."</div>".
+                            "<span class='tooltiptext'>Item Description</span>
+                         </div>".
+                    "</td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='text' id='".$description['readonly']."' name='unit_measurement$item->id' style='width: 50px' value='$item->unit_measurement' ".$description['readonly']." >
+                        <span class='tooltiptext'>Unit of Issue</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='text' id='readonly' name='qty$item->id' style='width: 60px' placeholder='qty' value='$qty' readonly>
+                        <span class='tooltiptext'>QTY</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='text' id='".$description['readonly']."' name='unit_cost$item->id' style='width: 60px' value='$item->unit_cost' ".$description['readonly']." >
+                        <span class='tooltiptext'>Unit Cost</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='text' id='readonly' name='estimated_budget$item->id' style='width: 60px' value='$estimated_budget' readonly>
+                        <span class='tooltiptext'>Estimated Budget</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='text' id='".$description['readonly']."' name='mode_procurement$item->id' style='width: 90px;font-size: 8pt;' value='$item->mode_procurement' placeholder='Mode Procurement' ".$description['readonly'].">
+                        <span class='tooltiptext'>Mode Procurement</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' step='.01' value='$jan' placeholder='Jan'>
+                        <span class='tooltiptext'>January</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' step='.01' value='$feb' placeholder='Feb'>
+                        <span class='tooltiptext'>February</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top'>
+                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' step='.01' value='$mar' placeholder='Mar'>
+                        <span class='tooltiptext'>March</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' step='.01' value='$apr' placeholder='Apr'>
+                        <span class='tooltiptext'>April</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' step='.01' value='$may' placeholder='May'>
+                        <span class='tooltiptext'>May</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' step='.01' value='$jun' placeholder='Jun'>
+                        <span class='tooltiptext'>June</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top'>
+                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' step='.01' value='$jul' placeholder='Jul'>
+                        <span class='tooltiptext'>July</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' step='.01' value='$aug' placeholder='Aug'>
+                        <span class='tooltiptext'>August</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' step='.01' value='$sep' placeholder='Sep'>
+                        <span class='tooltiptext'>September</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top'>
+                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' step='.01' value='$oct' placeholder='Oct'>
+                        <span class='tooltiptext'>October</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' step='.01' value='$nov' placeholder='Nov'>
+                        <span class='tooltiptext'>November</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class='tooltip_top' >
+                        <input type='number' id='no-border' name='dece$item->id' style='width: 40px' step='.01' value='$dece' placeholder='Dec'>
+                        <span class='tooltiptext'>December</span>
+                        </div>
+                    </td>
+                    <td>
+                        $status
+                    </td>
+                </tr>";
+
+        return $data;
+    }
+    function expenseTotal($total){
+        return "<tr>
+                <td colspan='6'>
+                    <strong class='pull-right' >
+                        Total: <span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span>
+                    </strong>
+                </td>
+            </tr>";
+    }
+    function addItem($expense_title,$expense,$tranche,$expense_description){
+        return "<tr>
+            <td colspan='19'>
+                <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
+            </td>
+        </tr>";
+    }
+    function paginateItem($expense_title,$item){
+        return "<tr>
+            <td colspan='17'>
+                <div class='div_paginator'>
+                    <div class='pagination_$expense_title'>
+                        $item
+                    </div>
+                </div>
+            </td>
+        </tr>";
+    }
+    ?>
+    <form action="{{ asset('ppmp/list/search') }}" method="POST" class="item_submit" onsubmit="itemChecker()">
         {{ csrf_field() }}
+        <input type="hidden" class="item_save" name="item_save">
         <div class="row" style="margin-bottom: 60px;">
             <div class="col-md-12">
                 <div class="box box-primary">
                     <div class="box-header">
-                        <h3 class="box-title">{{ isset($expenses) && count($expenses) > 0 ? 'PPMP' : 'Item not found! please select expense' }}</h3>
+                        <h3 class="box-title">PPMP</h3>
                         <div class="box-tools">
                             <div class="input-group input-group-sm" style="width: 150px;">
                                 <input type="text" style="width: 300px;" id="item_search" name="item_search" value="{{ $item_search }}" class="form-control pull-right" placeholder="Search">
@@ -273,10 +328,12 @@
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
                             <tr>
-                                <th>Item Description/General Specification></th>
-                                <th>Unit Cost</th>
+                                <th>Item Description/General Specification</th>
                                 <th>Unit<br>Issue</th>
                                 <th>QTY</th>
+                                <th>Unit Cost</th>
+                                <th width="5%">Estimated Budget</th>
+                                <th width="5%">Mode Procurement</th>
                                 <th>Jan</th>
                                 <th>Feb</th>
                                 <th>Mar</th>
@@ -289,9 +346,10 @@
                                 <th>Oct</th>
                                 <th>Nov</th>
                                 <th>Dec</th>
-                                <th>Encoded By/<br>Status</th>
+                                <th></th>
                             </tr>
                             <?php
+                            $section_id = Auth::user()->section;
                             foreach($expenses as $expense)
                             {
                                 $count_first = 0;
@@ -300,7 +358,7 @@
                                 $expense_code = json_decode($expense->code,true);
                                 if(isset($expense_code)){
                                     foreach($expense_code as $display_first => $first){
-                                        foreach($first as $display_second){
+                                        foreach($first as $display_second){ //main tranche expense
                                             $count_second++;
                                             if(isset($flag[$expense->description])){
                                                 $title_header_expense = "";
@@ -322,46 +380,14 @@
                                             }
                                             $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                                             echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
-                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.fname,'.',personal_information.lname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                                "qty.unique_id as qty_unique_id",
-                                                "qty.jan as qty_jan",
-                                                "qty.feb as qty_feb",
-                                                "qty.mar as qty_mar",
-                                                "qty.apr as qty_apr",
-                                                "qty.may as qty_may",
-                                                "qty.jun as qty_jun",
-                                                "qty.jul as qty_jul",
-                                                "qty.aug as qty_aug",
-                                                "qty.sep as qty_sep",
-                                                "qty.oct as qty_oct",
-                                                "qty.nov as qty_nov",
-                                                "qty.dece as qty_dec")
-                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                ->leftJoin('qty',function($join){
-                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                    $join->on(function($join2){
-                                                        $join2->on('qty.item_id','=','item.id');
-                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                    });
-                                                })
-                                                ->where('item.expense_id','=',$expense->id)
-                                                ->where('item.tranche','=',$tranche)
-                                                ->where(function($q){
-                                                    $q->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','fixed');
-                                                });
-                                            if(isset($item_search)){
-                                                $items = $items->where("item.description","like","%$item_search%");
-                                            }
-                                            $items = $items->orderBy("item.description","ASC")->get();
+                                            $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                             $item_collection = [];
                                             foreach($items as $item){
                                                 $item_collection[] = displayItem($item,$title_header_second);
                                                 //echo displayItem($item,$title_header_second);
-                                                $qty = $item->qty_jan+$item->qty_feb+$item->qty_mar+$item->qty_apr+$item->qty_may+$item->qty_jun+$item->qty_jul+$item->qty_aug+$item->qty_sep+$item->qty_oct+$item->qty_nov+$item->qty_dec;
+                                                $qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
                                                 $estimated_budget = $item->unit_cost * $qty;
                                                 $grand_total += $estimated_budget;
                                             }
@@ -371,11 +397,10 @@
                                             });
                                             echo "</tbody>";
                                             echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());
-                                            if($expense->id != 1)
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
+                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
                                             echo expenseTotal($grand_total);
-                                        } //display if first have value
-                                        if(!isset($flag[$display_first])){
+                                        } // end of maine tranche expense
+                                        if(!isset($flag[$display_first])){ // sub tranche expense
                                             if(isset($flag[$expense->description])){
                                                 $title_header_expense = "";
                                             } else {
@@ -391,39 +416,12 @@
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                                "qty.unique_id as qty_unique_id",
-                                                "qty.jan as qty_jan",
-                                                "qty.feb as qty_feb",
-                                                "qty.mar as qty_mar",
-                                                "qty.apr as qty_apr",
-                                                "qty.may as qty_may",
-                                                "qty.jun as qty_jun",
-                                                "qty.jul as qty_jul",
-                                                "qty.aug as qty_aug",
-                                                "qty.sep as qty_sep",
-                                                "qty.oct as qty_oct",
-                                                "qty.nov as qty_nov",
-                                                "qty.dece as qty_dec")
-                                                ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                                ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                                ->leftJoin('qty',function($join){
-                                                    $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                                    $join->on(function($join2){
-                                                        $join2->on('qty.item_id','=','item.id');
-                                                        $join2->orOn('qty.unique_id','=','item.unique_id');
-                                                    });
-                                                })
-                                                ->where('item.expense_id','=',$expense->id)
-                                                ->where('item.tranche','=',$tranche)
-                                                ->where(function($q){
-                                                    $q->where('item.status','=','approve')
-                                                        ->orWhere('item.status','=','fixed');
-                                                });
-                                                if(isset($item_search)){
-                                                    $items = $items->where("item.description","like","%$item_search%");
-                                                }
-                                                $items = $items->get();
+                                            if($tranche == '1-C'){
+                                                $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
+                                            }
+                                            else{
+                                                $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
+                                            }
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
                                             $item_collection = [];
@@ -439,7 +437,6 @@
                                             });
                                             echo "</tbody>";
                                             echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());
-                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
                                             if($tranche != "1-B")
                                                 echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
 
@@ -448,47 +445,17 @@
                                             }
                                         } // display if first is null
                                         $count_first++;
-                                    }
-                                } else {
+                                    } // end sub tranche expense
+                                }
+                                else { // normal expense
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
-                                    $items = Item::select('item.*',DB::raw("upper(concat(personal_information.lname,' ',personal_information.fname)) as encoded_by_name"),"mode_procurement.description as mode_pro_desc",
-                                        "qty.unique_id as qty_unique_id",
-                                        "qty.jan as qty_jan",
-                                        "qty.feb as qty_feb",
-                                        "qty.mar as qty_mar",
-                                        "qty.apr as qty_apr",
-                                        "qty.may as qty_may",
-                                        "qty.jun as qty_jun",
-                                        "qty.jul as qty_jul",
-                                        "qty.aug as qty_aug",
-                                        "qty.sep as qty_sep",
-                                        "qty.oct as qty_oct",
-                                        "qty.nov as qty_nov",
-                                        "qty.dece as qty_dec")
-                                        ->leftJoin('pis.personal_information','personal_information.userid','=','item.userid')
-                                        ->leftJoin('mode_procurement','mode_procurement.id','=','item.mode_procurement')
-                                        ->leftJoin('qty',function($join){
-                                            $join->on('qty.created_by','=',DB::raw("'".Auth::user()->username."'"));
-                                            $join->on(function($join2){
-                                                $join2->on('qty.item_id','=','item.id');
-                                                $join2->orOn('qty.unique_id','=','item.unique_id');
-                                            });
-                                        })
-                                        ->where('item.expense_id','=',$expense->id)
-                                        ->where(function($q){
-                                            $q->where('item.status','=','approve')
-                                                ->orWhere('item.status','=','fixed');
-                                        });
-                                        if(isset($item_search)){
-                                            $items = $items->where("item.description","like","%$item_search%");
-                                        }
-                                        $items = $items->get();
+
+                                    $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id')");
 
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     $item_collection = [];
                                     foreach($items as $item){
-                                        //echo displayItem($item,$expense->description);
                                         $item_collection[] = displayItem($item,$expense->description);
                                         if(is_numeric($item->estimated_budget)){
                                             $expense_total += $item->estimated_budget;
@@ -507,7 +474,7 @@
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
                                     }
-                                }
+                                } // end normal expense
                             }
                             ?>
                         </table>
@@ -618,18 +585,14 @@
             <div class="container">
                 <div class="col-md-6">
                     @if(isset($expenses) && count($expenses) > 0)
-                    <button class="btn btn-app item_save" onclick="itemChecker()" name="item_save" type="submit">
-                        <i class="fa fa-save"></i> Save
-                    </button>
+                        <button class="btn btn-app" onclick="itemChecker()" type="submit">
+                            <i class="fa fa-save"></i> Save
+                        </button>
                     @endif
-                    <!--
-                    <a type="button" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" class="btn btn-app">
-                        <i class="fa fa-file-pdf-o"></i> Generate PDF
-                    </a>
-                    -->
                     <a type="button" data-toggle="modal" data-target="#modal-info" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
+                        <!--
                     <a class="btn btn-app">
                         <span class="badge bg-blue">{{ count($all_item) }}</span>
                         <i class="fa fa-object-group"></i> Items
@@ -638,13 +601,16 @@
                         <span class="badge bg-green">{{ $encoded }}</span>
                         <i class="fa fa-keyboard-o"></i> Encoded
                     </a>
+                    -->
                 </div>
                 @if(isset($expenses) && count($expenses) > 0)
+                <!--
                 <div class="col-md-6" >
                     <h1>
-                        Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{  \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>
+                        Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>
                     </h1>
                 </div>
+                -->
                 @endif
             </div>
         </footer>
@@ -672,7 +638,6 @@
                     currentCategory = "";
                 $.each( items, function( index, item ) {
                     that._renderItemData( ul, item );
-                    console.log(item);
                     return index < 10;
                 });
             }
@@ -692,6 +657,7 @@
         function itemChecker(){
             $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/".$expense_id ?>");
             $(".item_save").val(true);
+            console.log($(".item_save").val());
             var item_array = [];
 
             $(".item_submit :input.item-check").each(function(){
@@ -710,7 +676,7 @@
                     result_display += "<li style='margin-left: 20px;'>"+sorted_arr[i]+"</li>";
                 }
             }
-            result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
+            /*result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
             if (results === undefined || results.length == 0) {
                 //success
             }
@@ -720,12 +686,8 @@
                     title: "Checker",
                     msg: result_display
                 });
-                /*Lobibox.window({
-                    title: 'Checker',
-                    content: result_display
-                });*/
                 event.preventDefault();
-            }
+            }*/
 
         }
 
@@ -740,7 +702,7 @@
             return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
                 var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16).charCodeAt(0);
-            });
+            })+"<?php echo date('Y-').Auth::user()->id.date('mdHis'); ?>";
         }
 
         function AddRow(element){
@@ -751,7 +713,7 @@
             var item_unique_row = uuidv4()+userid;
             var encoded_by = "<?php echo Auth::user()->lname.' '.Auth::user()->fname ?>";
 
-            item_status = "<span class='badge bg-red' data-id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+            item_status = "<span class='badge bg-red' data-unique_id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
             var mode_procurement = <?php echo $mode_procurement; ?>;
             var mode_procurement_display = "<select name='mode_procurement"+item_unique_row+"' style='width: 100%'>";
             mode_procurement_display += "<option value=''></option>";
@@ -761,15 +723,28 @@
             mode_procurement_display += "</select>";
             var new_row = "<tr class='"+item_unique_row+"'>" +
                 "<input type='hidden' name='item_id[]' value='"+item_unique_row+"' ></td>" +
+                "<input type='hidden' name='unique_id"+item_unique_row+"' value='"+item_unique_row+"' ></td>" +
                 "<input type='hidden' name='userid"+item_unique_row+"' value='"+userid+"' ></td>" +
                 "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
                 "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
                 "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
                 "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
-                "<td width='35%' style='padding-left: 3%'>" +
+                "<td width='35%' style='padding-left: 4%'>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
                 "<input type='text' class='item-description item-check' placeholder='item-description' name='description"+item_unique_row+"' style='width: 100%'>" +
                 "<span class='tooltiptext'>Item Description</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' name='unit_measurement"+item_unique_row+"' style='width: 50px'>" +
+                "<span class='tooltiptext'>Unit Measurement</span>"+
+                "</div>" +
+                "</td>"+
+                "<td>" +
+                "<div class='tooltip_top' style='width: 100%;'>"+
+                "<input type='text' placeholder='qty' name='qty"+item_unique_row+"' style='width: 60px'>" +
+                "<span class='tooltiptext'>QTY</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
@@ -780,14 +755,14 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='text' placeholder='Unit' name='unit_measurement"+item_unique_row+"' style='width: 40px'>" +
-                "<span class='tooltiptext'>Unit Measurement</span>"+
+                "<input type='text' placeholder='Estimated Budget' name='estimated_budget"+item_unique_row+"' style='width: 60px'>" +
+                "<span class='tooltiptext'>Estimated Budget</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='text' placeholder='QTY' name='qty"+item_unique_row+"' style='width: 20px'>" +
-                "<span class='tooltiptext'>QTY</span>"+
+                "<input type='text' placeholder='Mode Procurement' name='mode_procurement"+item_unique_row+"' style='width: 90px;font-size: 8pt;'>" +
+                "<span class='tooltiptext'>Mode Procurement</span>"+
                 "</div>" +
                 "</td>"+
                 "<td>" +
@@ -858,7 +833,7 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='number' placeholder='Dec' name='dec"+item_unique_row+"' step='.01' style='width: 40px'>" +
+                "<input type='number' placeholder='Dec' name='dece"+item_unique_row+"' step='.01' style='width: 40px'>" +
                 "<span class='tooltiptext'>December</span>"+
                 "</div>" +
                 "</td>"+
@@ -909,15 +884,16 @@
         }
 
         function deleteItem(element){
+            console.log(element.data('unique_id'));
             Lobibox.confirm({
                 title: 'Confirmation',
                 msg: "Are you sure you want to delete this "+element.data('item_description')+" ?",
                 callback: function ($this, type, ev) {
                     if(type == 'yes'){
-                        $("."+element.data('id')).remove();
+                        $("."+element.data('unique_id')).remove();
                         var url = "<?php echo asset('ppmp/delete') ?>";
                         var json = {
-                            "id" : element.data('id'),
+                            "unique_id" : element.data('unique_id'),
                             "_token" : "<?php echo csrf_token(); ?>",
                         };
                         $.post(url,json,function(result){

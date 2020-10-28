@@ -64,7 +64,9 @@
                 </div><!-- /.col -->
             </div>
             <strong class="center"><a href="{{ asset('public/ppmp.xlsx') }}" download>PPMP FORMAT EXCEL</a></strong><br>
+            <!--
             <strong class="center"><a href="{{ asset('public/PPMP Fund Realignment Form.docx') }}" download>PPMP FUND REALIGNMENT</a></strong>
+            -->
         </div><!-- /.login-box-body -->
 
     </form>
