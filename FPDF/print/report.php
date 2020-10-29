@@ -14,14 +14,14 @@ function conn()
     return $pdo;
 }
 
-function queryExpense($division){
+function queryExpense(){
     $pdo = conn();
     $query = "SELECT * FROM EXPENSE ORDER BY ID ASC";
 
     try
     {
         $st = $pdo->prepare($query);
-        $st->execute(array($division));
+        $st->execute();
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -124,9 +124,16 @@ $pdf->TableTitle([
 ],'BLR');
 
 $grand_total = 0;
-$expenses = queryExpense($_GET['division']);
+$expenses = queryExpense();
 $userid = $_GET['userid'];
-$section_id = $_GET['section'];
+
+if(isset($_GET['section']))
+    $section_id = $_GET['section'];
+if(isset($_GET['region']))
+    $region = $_GET['region'];
+if(isset($_GET['division']))
+    $division_id = $_GET['division'];
+
 foreach($expenses as $expense){
     $count_first = 0;
     $count_second = 0;
@@ -159,11 +166,7 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
 
-                if(isset($_GET['section'])){
-                    $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
-                } else {
-                    $items = '';
-                }
+                $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -180,12 +183,33 @@ foreach($expenses as $expense){
                 $tranche = $expense->id."-".$alphabet[$count_first];
                 $pdf->displayExpense($display_first);
 
-                if($tranche == '1-C'){
-                    $items = queryItem("call tranche_one_c('$expense->id','$tranche','$section_id')");
+
+                if(isset($_GET['section'])){
+                    if($tranche == '1-C'){
+                        $items = queryItem("call tranche_one_c('$expense->id','$tranche','$section_id')");
+                    }
+                    else{
+                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
+                    }
                 }
-                else{
-                    $items = queryItem("call main_tranche('$expense->id','$tranche')");
+                elseif(isset($_GET['region'])) {
+                    if($tranche == '1-C'){
+                        $items = queryItem("call tranche_one_c_region('$expense->id','$tranche')");
+                    }
+                    else{
+                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
+                    }
                 }
+                elseif(isset($_GET['division'])) {
+                    if($tranche == '1-C'){
+                        $items = queryItem("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
+                    }
+                    else{
+                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
+                    }
+                }
+
+
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -206,7 +230,15 @@ foreach($expenses as $expense){
         $pdf->SetFont('Arial','B',7);
         $pdf->displayExpense($expense->description); //display expense if no value from first
 
-        $items = queryItem("call normal_tranche('$expense->id','$section_id')");
+        if(isset($_GET['section'])){
+            $items = queryItem("call normal_tranche('$expense->id','$section_id')");
+        }
+        elseif(isset($_GET['region'])) {
+            $items = queryItem("call normal_tranche_region('$expense->id')");
+        }
+        elseif(isset($_GET['division'])) {
+            $items = queryItem("call normal_tranche_division('$expense->id','$division_id')");
+        }
 
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);

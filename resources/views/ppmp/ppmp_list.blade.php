@@ -99,6 +99,47 @@
             </tr>";
     }
 
+    function estimatedBudget($item,$section_id){
+        $jan = $item->jan;
+        $feb = $item->feb;
+        $mar = $item->mar;
+        $apr = $item->apr;
+        $may = $item->may;
+        $jun = $item->jun;
+        $jul = $item->jul;
+        $aug = $item->aug;
+        $sep = $item->sep;
+        $oct = $item->oct;
+        $nov = $item->nov;
+        $dece = $item->dece;
+        if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
+            $item_daily = \App\ItemDaily::where("item_id",$item->id)
+                ->where("expense_id",$item->expense_id)
+                ->where("tranche",$item->tranche)
+                ->where("section_id",$section_id)
+                ->orderBy("id","desc")
+                ->first();
+            if($item_daily){
+                $jan = $item_daily->jan;
+                $feb = $item_daily->feb;
+                $mar = $item_daily->mar;
+                $apr = $item_daily->apr;
+                $may = $item_daily->may;
+                $jun = $item_daily->jun;
+                $jul = $item_daily->jul;
+                $aug = $item_daily->aug;
+                $sep = $item_daily->sep;
+                $oct = $item_daily->oct;
+                $nov = $item_daily->nov;
+                $dece = $item_daily->dece;
+            }
+        }
+
+        $qty = $jan+$feb+$mar+$apr+$may+$jun+$jul+$aug+$sep+$oct+$nov+$dece;
+        $estimated_budget = $qty * $item->unit_cost;
+        return $estimated_budget;
+    }
+
     function displayItem($item,$expense_title){
         $user = Auth::user();
         if($item->status == 'fixed' && !$user->user_priv){
@@ -279,11 +320,12 @@
     }
     function expenseTotal($total){
         return "<tr>
-                <td colspan='6'>
+                <td colspan='4'>
                     <strong class='pull-right' >
-                        Total: <span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span>
+                        Total:
                     </strong>
                 </td>
+                <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
             </tr>";
     }
     function addItem($expense_title,$expense,$tranche,$expense_description){
@@ -324,8 +366,8 @@
                     </div>
                     <!-- /.box-header -->
                     <?php
-                        $grand_total = 0;
                         $section_id = Auth::user()->section;
+                        $division_id = Auth::user()->division;
                     ?>
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
@@ -386,21 +428,19 @@
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                             $item_collection = [];
+                                            $sub_total = 0;
                                             foreach($items as $item){
                                                 $item_collection[] = displayItem($item,$title_header_second);
-                                                //echo displayItem($item,$title_header_second);
-                                                $qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
-                                                $estimated_budget = $item->unit_cost * $qty;
-                                                $grand_total += $estimated_budget;
+                                                $estimated_budget = estimatedBudget($item,$section_id);
+                                                $sub_total += $estimated_budget;
                                             }
                                             $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
                                             $item_collection->getCollection()->transform(function ($value) {
                                                 echo $value;
                                             });
                                             echo "</tbody>";
+                                            echo expenseTotal($sub_total);
                                             echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());
-                                            //echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$expense->id,$tranche,$display_second);
-                                            echo expenseTotal($grand_total);
                                         } // end of maine tranche expense
                                         if(!isset($flag[$display_first])){ // sub tranche expense
                                             if(isset($flag[$expense->description])){
@@ -427,24 +467,22 @@
 
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
                                             $item_collection = [];
+                                            $sub_total = 0;
                                             foreach($items as $item){
-                                                //echo displayItem($item,$display_first);
                                                 $item_collection[] = displayItem($item,$title_header_second);
-                                                $expense_total += $item->estimated_budget;
-                                                $grand_total += $expense_total;
+                                                $estimated_budget = estimatedBudget($item,$section_id);
+                                                $sub_total += $estimated_budget;
                                             }
                                             $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
                                             $item_collection->getCollection()->transform(function ($value) {
                                                 echo $value;
                                             });
                                             echo "</tbody>";
+                                            echo expenseTotal($sub_total);
                                             echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());
                                             if($tranche != "1-B")
                                                 echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
 
-                                            if($expense_total != 0){
-                                                echo expenseTotal($expense_total);
-                                            }
                                         } // display if first is null
                                         $count_first++;
                                     } // end sub tranche expense
@@ -457,20 +495,18 @@
 
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     $item_collection = [];
+                                    $sub_total = 0;
                                     foreach($items as $item){
                                         $item_collection[] = displayItem($item,$expense->description);
-                                        if(is_numeric($item->estimated_budget)){
-                                            $expense_total += $item->estimated_budget;
-                                        }
-                                        if(is_numeric($expense_total)){
-                                            $grand_total += 0;
-                                        }
+                                        $estimated_budget = estimatedBudget($item,$section_id);
+                                        $sub_total += $estimated_budget;
                                     }
                                     $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
                                     $item_collection->getCollection()->transform(function ($value) {
                                         echo $value;
                                     });
                                     echo "</tbody>";
+                                    echo expenseTotal($sub_total);
                                     echo paginateItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$item_collection->links());
                                     echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
@@ -566,13 +602,13 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&userid='.Auth::user()->username.'&region=true' }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Region
                         </a>
-                        <a class="btn btn-block btn-social btn-facebook">
+                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Division
                         </a>
-                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username.'&section='.Auth::user()->section }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&userid='.Auth::user()->username.'&section='.Auth::user()->section }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Section
                         </a>
                     </div>
@@ -605,15 +641,11 @@
                     </a>
                     -->
                 </div>
-                @if(isset($expenses) && count($expenses) > 0)
-                <!--
                 <div class="col-md-6" >
                     <h1>
                         Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>
                     </h1>
                 </div>
-                -->
-                @endif
             </div>
         </footer>
     </form>
@@ -745,7 +777,7 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='text' placeholder='qty' name='qty"+item_unique_row+"' style='width: 60px'>" +
+                "<input type='text' placeholder='qty' id='readonly' name='qty"+item_unique_row+"' style='width: 60px' readonly>" +
                 "<span class='tooltiptext'>QTY</span>"+
                 "</div>" +
                 "</td>"+
@@ -757,7 +789,7 @@
                 "</td>"+
                 "<td>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+
-                "<input type='text' placeholder='Estimated Budget' name='estimated_budget"+item_unique_row+"' style='width: 60px'>" +
+                "<input type='text' id='readonly' placeholder='Estimated Budget' name='estimated_budget"+item_unique_row+"' style='width: 60px' readonly>" +
                 "<span class='tooltiptext'>Estimated Budget</span>"+
                 "</div>" +
                 "</td>"+

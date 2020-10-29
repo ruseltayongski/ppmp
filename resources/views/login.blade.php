@@ -23,7 +23,7 @@
     <div class="login-logo">
         <img src="{{ asset('public/img/doh.png') }}" style="width: 30%" />
         <br />
-        <a href="#" style="font-weight:bolder;"><label style="font-size: 17pt;">PPMP 2.0</label></a>
+        <a href="#" style="font-weight:bolder;"><label style="font-size: 17pt;">PPMP v2.0</label></a>
     </div><!-- /.login-logo -->
     <form role="form" method="POST" action="">
         {{ csrf_field() }}
@@ -63,7 +63,7 @@
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                 </div><!-- /.col -->
             </div>
-            <strong class="center"><a href="{{ asset('public/ppmp.xlsx') }}" download>PPMP FORMAT EXCEL</a></strong><br>
+            <strong class="center"><a href="{{ asset('public/ppmp_guide.xlsx') }}" download>PPMP GUIDE</a></strong><br>
             <!--
             <strong class="center"><a href="{{ asset('public/PPMP Fund Realignment Form.docx') }}" download>PPMP FUND REALIGNMENT</a></strong>
             -->
