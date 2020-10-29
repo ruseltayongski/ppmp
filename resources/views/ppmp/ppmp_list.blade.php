@@ -458,7 +458,7 @@
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            if($tranche == '1-C'){
+                                            if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
                                                 $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
                                             }
                                             else{
@@ -468,6 +468,7 @@
                                             echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
                                             $item_collection = [];
                                             $sub_total = 0;
+                                            $title_header_second = '';
                                             foreach($items as $item){
                                                 $item_collection[] = displayItem($item,$title_header_second);
                                                 $estimated_budget = estimatedBudget($item,$section_id);
