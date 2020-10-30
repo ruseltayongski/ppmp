@@ -116,16 +116,25 @@ class PpmpController extends Controller
             $oct = $request->get('oct'.$value);
             $nov = $request->get('nov'.$value);
             $dece = $request->get('dece'.$value);
-            $unit_cost = $request->get('unit_cost'.$value);;
+            $unit_cost = $request->get('unit_cost'.$value);
             $mode_procurement = $request->get('mode_procurement'.$value);
 
 
-            if($expense_id == 1 and ( $tranche == "1-A-1" or $tranche == "1-A-2" or $tranche == "1-A-3" or $tranche == "1-B" )){
-                $item_id = $value;
+            $item = Item::where("description",$description)
+                ->first();
+
+            if(!$item){
+                $item = new Item();
+                $item->expense_id = $expense_id;
+                $item->userid = $encoded_by;
+                $item->division = $division_id;
+                $item->section = $section_id;
+                $item->tranche = $tranche;
+                $item->description = $description;
+                $item->status = 'fixed';
+                $item->save();
             }
-            else{
-                $item_id = null;
-            }
+
 
             $item_daily = ItemDaily::
                 where(function($q) use($value,$unique_id){
@@ -152,35 +161,39 @@ class PpmpController extends Controller
                 ->where("oct",$oct)
                 ->where("nov",$nov)
                 ->where("dece",$dece)
+                ->orderBy("id","desc")
                 ->first();
 
-            if(!$item_daily)
-                $item_daily = new ItemDaily();
+            $item_id = $item->id;
 
-            $item_daily->item_id = $item_id;
-            $item_daily->unique_id = $unique_id;
-            $item_daily->expense_id = $expense_id;
-            $item_daily->userid = $encoded_by;
-            $item_daily->division_id = $division_id;
-            $item_daily->section_id = $section_id;
-            $item_daily->tranche = $tranche;
-            $item_daily->description = $description;
-            $item_daily->unit_measurement = $unit_measurement;
-            $item_daily->unit_cost = $unit_cost;
-            $item_daily->mode_procurement = $mode_procurement;
-            $item_daily->jan = $jan;
-            $item_daily->feb = $feb;
-            $item_daily->mar = $mar;
-            $item_daily->apr = $apr;
-            $item_daily->may = $may;
-            $item_daily->jun = $jun;
-            $item_daily->jul = $jul;
-            $item_daily->aug = $aug;
-            $item_daily->sep = $sep;
-            $item_daily->oct = $oct;
-            $item_daily->nov = $nov;
-            $item_daily->dece = $dece;
-            $item_daily->save();
+            if(!$item_daily)
+            {
+                $item_daily = new ItemDaily();
+                $item_daily->item_id = $item_id;
+                $item_daily->unique_id = $unique_id;
+                $item_daily->expense_id = $expense_id;
+                $item_daily->userid = $encoded_by;
+                $item_daily->division_id = $division_id;
+                $item_daily->section_id = $section_id;
+                $item_daily->tranche = $tranche;
+                $item_daily->description = $description;
+                $item_daily->unit_measurement = $unit_measurement;
+                $item_daily->unit_cost = $unit_cost;
+                $item_daily->mode_procurement = $mode_procurement;
+                $item_daily->jan = $jan;
+                $item_daily->feb = $feb;
+                $item_daily->mar = $mar;
+                $item_daily->apr = $apr;
+                $item_daily->may = $may;
+                $item_daily->jun = $jun;
+                $item_daily->jul = $jul;
+                $item_daily->aug = $aug;
+                $item_daily->sep = $sep;
+                $item_daily->oct = $oct;
+                $item_daily->nov = $nov;
+                $item_daily->dece = $dece;
+                $item_daily->save();
+            }
 
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);

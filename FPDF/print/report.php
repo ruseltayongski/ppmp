@@ -185,7 +185,7 @@ foreach($expenses as $expense){
 
 
                 if(isset($_GET['section'])){
-                    if($tranche == '1-C'){
+                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
                         $items = queryItem("call tranche_one_c('$expense->id','$tranche','$section_id')");
                     }
                     else{
@@ -193,7 +193,7 @@ foreach($expenses as $expense){
                     }
                 }
                 elseif(isset($_GET['region'])) {
-                    if($tranche == '1-C'){
+                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
                         $items = queryItem("call tranche_one_c_region('$expense->id','$tranche')");
                     }
                     else{
@@ -201,7 +201,7 @@ foreach($expenses as $expense){
                     }
                 }
                 elseif(isset($_GET['division'])) {
-                    if($tranche == '1-C'){
+                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
                         $items = queryItem("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
                     }
                     else{

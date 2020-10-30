@@ -224,10 +224,6 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayItem($item){
-        $mode_procurement = $item->mode_procurement;
-        if(preg_match_all('/\b(\w)/',strtoupper(str_replace(',',' ',$mode_procurement)),$m)) {
-            $mode_procurement = implode('',$m[1]);
-        }
         $this->Item([
             $item->code,
             "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
@@ -235,7 +231,7 @@ class PDF_MC_Table extends FPDF
             $item->qty,
             number_format((float)$item->unit_cost, 2, '.', ','),
             number_format((float)$item->estimated_budget, 2, '.', ','),
-            ' ', //consult pako pu
+            $item->id,
             number_format((float)$item->jan, 2, '.', ','),
             number_format((float)$item->feb, 2, '.', ','),
             number_format((float)$item->mar, 2, '.', ','),

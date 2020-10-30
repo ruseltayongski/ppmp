@@ -70,7 +70,7 @@
     </style>
     <title>PPMP|LIST</title>
     <?php
-    use App\Item;
+
     function displayHeader($title){
         return "<tr>
                 <td>
@@ -99,19 +99,7 @@
             </tr>";
     }
 
-    function estimatedBudget($item,$section_id){
-        $jan = $item->jan;
-        $feb = $item->feb;
-        $mar = $item->mar;
-        $apr = $item->apr;
-        $may = $item->may;
-        $jun = $item->jun;
-        $jul = $item->jul;
-        $aug = $item->aug;
-        $sep = $item->sep;
-        $oct = $item->oct;
-        $nov = $item->nov;
-        $dece = $item->dece;
+    function setItem($item,$section_id){
         if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
                 ->where("expense_id",$item->expense_id)
@@ -120,28 +108,30 @@
                 ->orderBy("id","desc")
                 ->first();
             if($item_daily){
-                $jan = $item_daily->jan;
-                $feb = $item_daily->feb;
-                $mar = $item_daily->mar;
-                $apr = $item_daily->apr;
-                $may = $item_daily->may;
-                $jun = $item_daily->jun;
-                $jul = $item_daily->jul;
-                $aug = $item_daily->aug;
-                $sep = $item_daily->sep;
-                $oct = $item_daily->oct;
-                $nov = $item_daily->nov;
-                $dece = $item_daily->dece;
+                $item->jan = $item_daily->jan;
+                $item->feb = $item_daily->feb;
+                $item->mar = $item_daily->mar;
+                $item->apr = $item_daily->apr;
+                $item->may = $item_daily->may;
+                $item->jun = $item_daily->jun;
+                $item->jul = $item_daily->jul;
+                $item->aug = $item_daily->aug;
+                $item->sep = $item_daily->sep;
+                $item->oct = $item_daily->oct;
+                $item->nov = $item_daily->nov;
+                $item->dece = $item_daily->dece;
             }
         }
 
-        $qty = $jan+$feb+$mar+$apr+$may+$jun+$jul+$aug+$sep+$oct+$nov+$dece;
-        $estimated_budget = $qty * $item->unit_cost;
-        return $estimated_budget;
+        $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
+        $item->estimated_budget = $item->qty * $item->unit_cost;
+
+        return $item;
     }
 
     function displayItem($item,$expense_title){
         $user = Auth::user();
+        setItem($item,$user->section_id);
         if($item->status == 'fixed' && !$user->user_priv){
             $description = [
                 "readonly" => "readonly"
@@ -156,44 +146,6 @@
 
         $user->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
-
-        $jan = $item->jan;
-        $feb = $item->feb;
-        $mar = $item->mar;
-        $apr = $item->apr;
-        $may = $item->may;
-        $jun = $item->jun;
-        $jul = $item->jul;
-        $aug = $item->aug;
-        $sep = $item->sep;
-        $oct = $item->oct;
-        $nov = $item->nov;
-        $dece = $item->dece;
-        if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
-            $item_daily = \App\ItemDaily::where("item_id",$item->id)
-                ->where("expense_id",$item->expense_id)
-                ->where("tranche",$item->tranche)
-                ->where("section_id",$user->section)
-                ->orderBy("id","desc")
-                ->first();
-            if($item_daily){
-                $jan = $item_daily->jan;
-                $feb = $item_daily->feb;
-                $mar = $item_daily->mar;
-                $apr = $item_daily->apr;
-                $may = $item_daily->may;
-                $jun = $item_daily->jun;
-                $jul = $item_daily->jul;
-                $aug = $item_daily->aug;
-                $sep = $item_daily->sep;
-                $oct = $item_daily->oct;
-                $nov = $item_daily->nov;
-                $dece = $item_daily->dece;
-            }
-        }
-
-        $qty = $jan+$feb+$mar+$apr+$may+$jun+$jul+$aug+$sep+$oct+$nov+$dece;
-        $estimated_budget = $qty * $item->unit_cost;
 
         $data = "<tr class='$item->unique_id'>
                     <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
@@ -217,7 +169,7 @@
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='readonly' name='qty$item->id' style='width: 60px' placeholder='qty' value='$qty' readonly>
+                        <input type='text' id='readonly' name='qty$item->id' style='width: 60px' placeholder='qty' value='$item->qty' readonly>
                         <span class='tooltiptext'>QTY</span>
                         </div>
                     </td>
@@ -229,7 +181,7 @@
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='text' id='readonly' name='estimated_budget$item->id' style='width: 60px' value='$estimated_budget' readonly>
+                        <input type='text' id='readonly' name='estimated_budget$item->id' style='width: 60px' value='$item->estimated_budget' readonly>
                         <span class='tooltiptext'>Estimated Budget</span>
                         </div>
                     </td>
@@ -241,73 +193,73 @@
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' step='.01' value='$jan' placeholder='Jan'>
+                        <input type='number' id='no-border' name='jan$item->id' style='width: 40px' value='$item->jan' placeholder='Jan'>
                         <span class='tooltiptext'>January</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' step='.01' value='$feb' placeholder='Feb'>
+                        <input type='number' id='no-border' name='feb$item->id' style='width: 40px' value='$item->feb' placeholder='Feb'>
                         <span class='tooltiptext'>February</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' step='.01' value='$mar' placeholder='Mar'>
+                        <input type='number' id='no-border' name='mar$item->id' style='width: 40px' value='$item->mar' placeholder='Mar'>
                         <span class='tooltiptext'>March</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' step='.01' value='$apr' placeholder='Apr'>
+                        <input type='number' id='no-border' name='apr$item->id' style='width: 40px' value='$item->apr' placeholder='Apr'>
                         <span class='tooltiptext'>April</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' step='.01' value='$may' placeholder='May'>
+                        <input type='number' id='no-border' name='may$item->id' style='width: 40px' value='$item->may' placeholder='May'>
                         <span class='tooltiptext'>May</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' step='.01' value='$jun' placeholder='Jun'>
+                        <input type='number' id='no-border' name='jun$item->id' style='width: 40px' value='$item->jun' placeholder='Jun'>
                         <span class='tooltiptext'>June</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' step='.01' value='$jul' placeholder='Jul'>
+                        <input type='number' id='no-border' name='jul$item->id' style='width: 40px' value='$item->jul' placeholder='Jul'>
                         <span class='tooltiptext'>July</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' step='.01' value='$aug' placeholder='Aug'>
+                        <input type='number' id='no-border' name='aug$item->id' style='width: 40px' value='$item->aug' placeholder='Aug'>
                         <span class='tooltiptext'>August</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' step='.01' value='$sep' placeholder='Sep'>
+                        <input type='number' id='no-border' name='sep$item->id' style='width: 40px' value='$item->sep' placeholder='Sep'>
                         <span class='tooltiptext'>September</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top'>
-                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' step='.01' value='$oct' placeholder='Oct'>
+                        <input type='number' id='no-border' name='oct$item->id' style='width: 40px' value='$item->oct' placeholder='Oct'>
                         <span class='tooltiptext'>October</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' step='.01' value='$nov' placeholder='Nov'>
+                        <input type='number' id='no-border' name='nov$item->id' style='width: 40px' value='$item->nov' placeholder='Nov'>
                         <span class='tooltiptext'>November</span>
                         </div>
                     </td>
                     <td>
                         <div class='tooltip_top' >
-                        <input type='number' id='no-border' name='dece$item->id' style='width: 40px' step='.01' value='$dece' placeholder='Dec'>
+                        <input type='number' id='no-border' name='dece$item->id' style='width: 40px' value='$item->dece' placeholder='Dec'>
                         <span class='tooltiptext'>December</span>
                         </div>
                     </td>
@@ -431,7 +383,7 @@
                                             $sub_total = 0;
                                             foreach($items as $item){
                                                 $item_collection[] = displayItem($item,$title_header_second);
-                                                $estimated_budget = estimatedBudget($item,$section_id);
+                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
                                             $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
@@ -471,7 +423,7 @@
                                             $title_header_second = '';
                                             foreach($items as $item){
                                                 $item_collection[] = displayItem($item,$title_header_second);
-                                                $estimated_budget = estimatedBudget($item,$section_id);
+                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
                                             $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
@@ -499,7 +451,7 @@
                                     $sub_total = 0;
                                     foreach($items as $item){
                                         $item_collection[] = displayItem($item,$expense->description);
-                                        $estimated_budget = estimatedBudget($item,$section_id);
+                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                         $sub_total += $estimated_budget;
                                     }
                                     $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
@@ -564,35 +516,6 @@
             </div>
         </div>
 
-        <div class="modal fade" id="modal-default">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        <h4 class="modal-title">Generate PDF</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label>Select Items</label>
-                            <select class="form-control select2" id="filter_item" multiple="multiple" data-placeholder="Select a items." style="width: 100%;">
-                                @foreach($all_item as $item)
-                                    <option value="{{ $item->id }}">{{ $item->description }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                        <a href="#" onclick="filterItems()" type="button" class="btn btn-primary">Filter Items </a>
-                        <a href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division.'&userid='.Auth::user()->username }}" target="_blank" type="button" class="btn btn-success">All Items</a>
-                    </div>
-                </div>
-                <!-- /.modal-content -->
-            </div>
-            <!-- /.modal-dialog -->
-        </div>
 
         <div class="modal modal-default fade" id="modal-info">
             <div class="modal-dialog modal-sm">
