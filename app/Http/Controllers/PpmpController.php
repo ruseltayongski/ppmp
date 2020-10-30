@@ -313,7 +313,7 @@ class PpmpController extends Controller
 
         foreach($items as $item){
             ItemDaily::find($item->dece)->update([
-               "item_id" => $item->dece
+               "item_id" => $item->id
             ]);
         }
 
