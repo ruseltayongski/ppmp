@@ -69,3 +69,6 @@ Route::post('pap/edit','PapController@PapEdit');
 Route::post('pap/delete','PapController@PapDelete');
 Route::post('pap/edit_save','PapController@PapEditSave');
 
+//
+Route::get('migrating/item','PpmpController@migratingItem');
+
