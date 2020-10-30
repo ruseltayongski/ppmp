@@ -309,9 +309,15 @@ class PpmpController extends Controller
 
 
     public function migratingItem(){
-        $item = Item::whereBetween("id",["1411","1482"])->get();
+        $items = Item::whereBetween("id",["1411","1482"])->get();
 
-        return $item;
+        foreach($items as $item){
+            ItemDaily::find($item->dece)->update([
+               "item_id" => $item->dece
+            ]);
+        }
+
+        return "Successfully Updated!";
     }
 
 }
