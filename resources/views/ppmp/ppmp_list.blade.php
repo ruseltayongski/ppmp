@@ -559,10 +559,6 @@
                         <span class="badge bg-blue">{{ count($all_item) }}</span>
                         <i class="fa fa-object-group"></i> Items
                     </a>
-                    <a class="btn btn-app">
-                        <span class="badge bg-green">{{ $encoded }}</span>
-                        <i class="fa fa-keyboard-o"></i> Encoded
-                    </a>
                     -->
                 </div>
                 <div class="col-md-6" >

@@ -61,10 +61,6 @@ class PpmpController extends Controller
         }
 
         $all_item = Item::get();
-        $encoded = Item::where('userid','=',Auth::user()->username)->where(function($q){
-            $q->where('item.status','=','approve')
-                ->orWhere('item.status','=','fixed');
-        })->count();
 
         $mode_procurement = ModeProcurement::get();
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
@@ -78,7 +74,6 @@ class PpmpController extends Controller
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
-            "encoded" => $encoded,
             "mode_procurement" => $mode_procurement,
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
