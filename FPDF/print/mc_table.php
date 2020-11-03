@@ -224,26 +224,28 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayItem($item){
+        $item_body = queryItem("call get_body('$item->id')")[0];
+        $item_body->estimated_budget = $item_body->qty * $item_body->unit_cost;
         $this->Item([
             $item->code,
             "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
             $item->unit_measurement,
-            $item->qty,
-            number_format((float)$item->unit_cost, 2, '.', ','),
-            number_format((float)$item->estimated_budget, 2, '.', ','),
-            $item->id,
-            number_format((float)$item->jan, 2, '.', ','),
-            number_format((float)$item->feb, 2, '.', ','),
-            number_format((float)$item->mar, 2, '.', ','),
-            number_format((float)$item->apr, 2, '.', ','),
-            number_format((float)$item->may, 2, '.', ','),
-            number_format((float)$item->jun, 2, '.', ','),
-            number_format((float)$item->jul, 2, '.', ','),
-            number_format((float)$item->aug, 2, '.', ','),
-            number_format((float)$item->sep, 2, '.', ','),
-            number_format((float)$item->oct, 2, '.', ','),
-            number_format((float)$item->nov, 2, '.', ','),
-            number_format((float)$item->dece, 2, '.', ','),
+            $item_body->qty,
+            number_format((float)$item_body->unit_cost, 2, '.', ','),
+            number_format((float)$item_body->estimated_budget, 2, '.', ','),
+            $item->mode_procurement,
+            $item_body->jan,
+            $item_body->feb,
+            $item_body->mar,
+            $item_body->apr,
+            $item_body->may,
+            $item_body->jun,
+            $item_body->jul,
+            $item_body->aug,
+            $item_body->sep,
+            $item_body->oct,
+            $item_body->nov,
+            $item_body->dece,
         ]);
     }
 
@@ -253,7 +255,7 @@ class PDF_MC_Table extends FPDF
             "",
             "",
             "",
-            "Total:",
+            "Sub Total:",
             $total,
             "",
             "",
