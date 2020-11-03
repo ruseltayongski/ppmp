@@ -192,17 +192,17 @@ foreach($expenses as $expense){
                         $items = queryItem("call main_tranche('$expense->id','$tranche')");
                     }
                 }
-                elseif(isset($_GET['region'])) {
+                elseif(isset($_GET['division'])) {
                     if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call tranche_one_c_region('$expense->id','$tranche')");
+                        $items = queryItem("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
                     }
                     else{
                         $items = queryItem("call main_tranche('$expense->id','$tranche')");
                     }
                 }
-                elseif(isset($_GET['division'])) {
+                elseif(isset($_GET['region'])) {
                     if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
+                        $items = queryItem("call tranche_one_c_region('$expense->id','$tranche')");
                     }
                     else{
                         $items = queryItem("call main_tranche('$expense->id','$tranche')");
@@ -233,11 +233,11 @@ foreach($expenses as $expense){
         if(isset($_GET['section'])){
             $items = queryItem("call normal_tranche('$expense->id','$section_id')");
         }
-        elseif(isset($_GET['region'])) {
-            $items = queryItem("call normal_tranche_region('$expense->id')");
-        }
         elseif(isset($_GET['division'])) {
             $items = queryItem("call normal_tranche_division('$expense->id','$division_id')");
+        }
+        elseif(isset($_GET['region'])) {
+            $items = queryItem("call normal_tranche_region1('$expense->id')");
         }
 
         foreach($items as $item){

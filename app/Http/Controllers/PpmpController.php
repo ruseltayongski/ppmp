@@ -60,10 +60,7 @@ class PpmpController extends Controller
             $expenses = Expense::where("id","=",$expense_id)->get();
         }
 
-        $all_item = Item::where(function($q){
-            $q->where('item.status','=','approve')
-                ->orWhere('item.status','=','fixed');
-        })->get();
+        $all_item = Item::get();
         $encoded = Item::where('userid','=',Auth::user()->username)->where(function($q){
             $q->where('item.status','=','approve')
                 ->orWhere('item.status','=','fixed');

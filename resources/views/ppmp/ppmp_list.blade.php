@@ -274,7 +274,7 @@
         return "<tr>
                 <td colspan='4'>
                     <strong class='pull-right' >
-                        Total:
+                        Sub Total:
                     </strong>
                 </td>
                 <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
