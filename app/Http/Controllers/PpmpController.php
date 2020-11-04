@@ -112,9 +112,11 @@ class PpmpController extends Controller
             $mode_procurement = $request->get('mode_procurement'.$value);
 
 
-            $item = Item::where("description",$description)
-                ->first();
+            /*if($tranche != "1-A-1" or $tranche != "1-A-2" or $tranche != "1-A-3" or $tranche == "1-B"){
 
+            }*/
+            $item = Item::where("description","=",$description)
+                ->first();
             if(!$item){
                 $item = new Item();
                 $item->expense_id = $expense_id;
@@ -126,6 +128,7 @@ class PpmpController extends Controller
                 $item->status = 'fixed';
                 $item->save();
             }
+
 
 
             $item_daily = ItemDaily::

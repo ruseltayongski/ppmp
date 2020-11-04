@@ -153,7 +153,7 @@
                     $expense_title_display
                     <td >".
                         "<div class='tooltip_top' style='width: 100%;'>".
-                            "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='$item->description' id='".$description['readonly']."' class='item-description' placeholder='Item Description' ".$description['readonly']." >"."</div>".
+                            "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='".htmlspecialchars($item->description, ENT_QUOTES)."' id='".$description['readonly']."' class='item-description' placeholder='Item Description' ".$description['readonly']." >"."</div>".
                             "<span class='tooltiptext'>Item Description</span>
                          </div>".
                     "</td>
@@ -378,17 +378,18 @@
                                             $item_collection = [];
                                             $sub_total = 0;
                                             foreach($items as $item){
-                                                $item_collection[] = displayItem($item,$title_header_second);
+                                                //$item_collection[] = displayItem($item,$title_header_second);
+                                                echo displayItem($item,$title_header_second);
                                                 $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
-                                            $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
+                                            /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
                                             $item_collection->getCollection()->transform(function ($value) {
                                                 echo $value;
                                             });
+                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());*/
                                             echo "</tbody>";
                                             echo expenseTotal($sub_total);
-                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());
                                         } // end of maine tranche expense
                                         if(!isset($flag[$display_first])){ // sub tranche expense
                                             if(isset($flag[$expense->description])){
@@ -418,17 +419,18 @@
                                             $sub_total = 0;
                                             $title_header_second = '';
                                             foreach($items as $item){
-                                                $item_collection[] = displayItem($item,$title_header_second);
+                                                //$item_collection[] = displayItem($item,$title_header_second);
+                                                echo displayItem($item,$title_header_second);
                                                 $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
-                                            $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
+                                            /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
                                             $item_collection->getCollection()->transform(function ($value) {
                                                 echo $value;
                                             });
+                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());*/
                                             echo "</tbody>";
                                             echo expenseTotal($sub_total);
-                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());
                                             if($tranche != "1-B")
                                                 echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
 
@@ -446,17 +448,18 @@
                                     $item_collection = [];
                                     $sub_total = 0;
                                     foreach($items as $item){
-                                        $item_collection[] = displayItem($item,$expense->description);
+                                        //$item_collection[] = displayItem($item,$expense->description);
+                                        echo displayItem($item,$expense->description);
                                         $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                         $sub_total += $estimated_budget;
                                     }
-                                    $item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
+                                    /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
                                     $item_collection->getCollection()->transform(function ($value) {
                                         echo $value;
                                     });
+                                    echo paginateItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$item_collection->links());*/
                                     echo "</tbody>";
                                     echo expenseTotal($sub_total);
-                                    echo paginateItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$item_collection->links());
                                     echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                     if($expense_total != 0){
                                         echo expenseTotal($expense_total);
