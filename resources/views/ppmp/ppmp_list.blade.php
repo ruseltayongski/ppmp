@@ -546,7 +546,6 @@
             <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
-
         <footer id="footer">
             <div class="container">
                 <div class="col-md-6">
@@ -558,12 +557,6 @@
                     <a type="button" data-toggle="modal" data-target="#modal-info" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
-                        <!--
-                    <a class="btn btn-app">
-                        <span class="badge bg-blue">{{ count($all_item) }}</span>
-                        <i class="fa fa-object-group"></i> Items
-                    </a>
-                    -->
                 </div>
                 <div class="col-md-6" >
                     <h1>

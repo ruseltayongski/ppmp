@@ -66,54 +66,24 @@
             width:100%;
         }
 
-        #loader {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            z-index: 1;
-            width: 150px;
-            height: 150px;
-            margin: -75px 0 0 -75px;
-            border: 16px solid #f3f3f3;
-            border-radius: 50%;
-            border-top: 16px solid #00CC99;
-            -webkit-animation: spin 2s linear infinite;
-            animation: spin 2s linear infinite;
-        }
-
-        @-webkit-keyframes spin {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Add animation to "page content" */
-        .animate-bottom {
-            position: relative;
-            -webkit-animation-name: animatebottom;
-            -webkit-animation-duration: 1s;
-            animation-name: animatebottom;
-            animation-duration: 1s
-        }
-
-        @-webkit-keyframes animatebottom {
-            from { bottom:-100px; opacity:0 }
-            to { bottom:0px; opacity:1 }
-        }
-
-        @keyframes animatebottom {
-            from{ bottom:-100px; opacity:0 }
-            to{ bottom:0; opacity:1 }
-        }
-
-        #myDiv {
+        #myBtn {
             display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 30px;
+            z-index: 99;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            background-color: rgba(38, 125, 61, 0.92);
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            border-radius: 4px;
         }
-
+        #myBtn:hover {
+            background-color: #555;
+        }
     </style>
 </head>
     <body>
@@ -153,9 +123,11 @@
     </nav>
     <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home'), true) ? 'container-fluid' : 'container' }}">
         <div class="loading"></div>
+        @include('modal')
         @yield('content')
         <div class="clearfix"></div>
     </div> <!-- /container -->
+    <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa fa-arrow-up"></i> Go Top</button>
 
     <!-- /.content-wrapper -->
 
@@ -199,7 +171,6 @@
     <script src="{{ asset('public/plugin/Lobibox new/js/Lobibox.js') }}"></script>
 
     <script>
-        $('#modal-announcement').modal('show');
         @if(session()->has('success'))
         Lobibox.notify('success', {
             title: '',
@@ -209,6 +180,28 @@
         });
         <?php Session::forget('success'); ?>
         @endif
+
+        $('#modal-announcement').modal('show');
+        //Get the button
+        var mybutton = document.getElementById("myBtn");
+
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {scrollFunction()};
+
+        function scrollFunction() {
+            if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+                mybutton.style.display = "block";
+            } else {
+                mybutton.style.display = "none";
+            }
+        }
+
+        // When the user clicks on the button, scroll to the top of the document
+        function topFunction() {
+            $('body,html').animate({
+                scrollTop : 0 // Scroll to top of body
+            }, 500);
+        }
     </script>
 
 
