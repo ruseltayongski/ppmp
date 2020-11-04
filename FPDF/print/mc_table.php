@@ -224,7 +224,7 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayItem($item){
-        $item_body = queryItem("call get_body('$item->id')")[0];
+        $item_body = queryItem("call get_body_region('$item->id')")[0];
         $item_body->estimated_budget = $item_body->qty * $item_body->unit_cost;
         $this->Item([
             $item->code,

@@ -116,8 +116,7 @@
 
     </style>
 </head>
-    <body {{--onload="myFunction()"--}}>
-    {{--<div style="display:none;" id="myDiv" class="animate-bottom">--}}
+    <body>
     <nav class="navbar navbar-default navbar-static-top">
         <div class="header" style="background-color:#2F4054;padding:10px;">
             <div class="col-md-4">
@@ -169,8 +168,6 @@
             </div>
         </footer>
     @endif
-   {{-- </div>
-    <div id="loader"></div>--}}
 
     <!-- jQuery 3 -->
     <script src="{{ asset('public/adminLTE/bower_components/jquery/dist/jquery.min.js') }}"></script>
@@ -201,16 +198,29 @@
     <!-- lobibox -->
     <script src="{{ asset('public/plugin/Lobibox new/js/Lobibox.js') }}"></script>
 
-    @if( in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search'), true) )
+    <script>
+        $('#modal-announcement').modal('show');
+        @if(session()->has('success'))
+        Lobibox.notify('success', {
+            title: '',
+            msg: "<?php echo session()->get('success'); ?>",
+            size: 'mini',
+            rounded: true
+        });
+        <?php Session::forget('success'); ?>
+        @endif
+    </script>
+
+
     <!-- page specific plugin scripts ACE-->
     <script src="{{ asset('public/assets/js/jquery-2.1.4.min.js') }}"></script>
     <!-- page specific plugin scripts -->
     <script src="{{ asset('public/assets/js/jquery-ui.min.js') }}"></script>
-    @endif
     <!-- iCheck 1.0.1 -->
     <script src="{{ asset('public/adminLTE/plugins/iCheck/icheck.min.js') }}"></script>
     <!-- Select2 -->
     <script src="{{ asset('public/adminLTE/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
+
 
 
     @section('js')
@@ -219,14 +229,3 @@
 
     </body>
 </html>
-<script>
-    @if(session()->has('success'))
-        Lobibox.notify('success', {
-            title: '',
-            msg: "<?php echo session()->get('success'); ?>",
-            size: 'mini',
-            rounded: true
-        });
-        <?php Session::forget('success'); ?>
-    @endif
-</script>

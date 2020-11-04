@@ -101,13 +101,9 @@
 
     function setItem($item,$section_id){
         if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
-            $item_daily = \App\ItemDaily::where("item_id",$item->id)
-                ->where("expense_id",$item->expense_id)
-                ->where("tranche",$item->tranche)
-                ->where("section_id",$section_id)
-                ->orderBy("id","desc")
-                ->first();
+            $item_daily = \DB::connection('mysql')->select("call get_body_section('$item->id','$section_id')")[0];
             if($item_daily){
+                $item->qty = $item_daily->qty;
                 $item->jan = $item_daily->jan;
                 $item->feb = $item_daily->feb;
                 $item->mar = $item_daily->mar;
@@ -123,7 +119,7 @@
             }
         }
 
-        $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
+        //$item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
         $item->estimated_budget = $item->qty * $item->unit_cost;
 
         return $item;
@@ -131,7 +127,7 @@
 
     function displayItem($item,$expense_title){
         $user = Auth::user();
-        setItem($item,$user->section_id);
+        setItem($item,$user->section);
         if($item->status == 'fixed' && !$user->user_priv){
             $description = [
                 "readonly" => "readonly"
