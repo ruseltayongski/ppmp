@@ -116,6 +116,8 @@ class PpmpController extends Controller
 
             }*/
             $item = Item::where("description","=",$description)
+                ->where("expense_id","=",$expense_id)
+                ->where("tranche","=",$tranche)
                 ->first();
             if(!$item){
                 $item = new Item();
