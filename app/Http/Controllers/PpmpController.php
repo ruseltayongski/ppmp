@@ -163,32 +163,32 @@ class PpmpController extends Controller
 
             if(!$item_daily)
             {
-                $item_daily = new ItemDaily();
-                $item_daily->item_id = $item_id;
-                $item_daily->unique_id = $unique_id;
-                $item_daily->expense_id = $expense_id;
-                $item_daily->userid = $encoded_by;
-                $item_daily->division_id = $division_id;
-                $item_daily->section_id = $section_id;
-                $item_daily->tranche = $tranche;
-                $item_daily->description = $description;
-                $item_daily->unit_measurement = $unit_measurement;
-                $item_daily->unit_cost = $unit_cost;
-                $item_daily->mode_procurement = $mode_procurement;
-                $item_daily->jan = $jan;
-                $item_daily->feb = $feb;
-                $item_daily->mar = $mar;
-                $item_daily->apr = $apr;
-                $item_daily->may = $may;
-                $item_daily->jun = $jun;
-                $item_daily->jul = $jul;
-                $item_daily->aug = $aug;
-                $item_daily->sep = $sep;
-                $item_daily->oct = $oct;
-                $item_daily->nov = $nov;
-                $item_daily->dece = $dece;
-                $item_daily->save();
             }
+            $item_daily = new ItemDaily();
+            $item_daily->item_id = $item_id;
+            $item_daily->unique_id = $unique_id;
+            $item_daily->expense_id = $expense_id;
+            $item_daily->userid = $encoded_by;
+            $item_daily->division_id = $division_id;
+            $item_daily->section_id = $section_id;
+            $item_daily->tranche = $tranche;
+            $item_daily->description = $description;
+            $item_daily->unit_measurement = $unit_measurement;
+            $item_daily->unit_cost = $unit_cost;
+            $item_daily->mode_procurement = $mode_procurement;
+            $item_daily->jan = $jan;
+            $item_daily->feb = $feb;
+            $item_daily->mar = $mar;
+            $item_daily->apr = $apr;
+            $item_daily->may = $may;
+            $item_daily->jun = $jun;
+            $item_daily->jul = $jul;
+            $item_daily->aug = $aug;
+            $item_daily->sep = $sep;
+            $item_daily->oct = $oct;
+            $item_daily->nov = $nov;
+            $item_daily->dece = $dece;
+            $item_daily->save();
 
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);
