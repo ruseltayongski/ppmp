@@ -112,9 +112,6 @@ class PpmpController extends Controller
             $mode_procurement = $request->get('mode_procurement'.$value);
 
 
-            /*if($tranche != "1-A-1" or $tranche != "1-A-2" or $tranche != "1-A-3" or $tranche == "1-B"){
-
-            }*/
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)

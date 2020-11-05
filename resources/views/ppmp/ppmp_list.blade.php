@@ -100,7 +100,7 @@
     }
 
     function setItem($item,$section_id){
-        if($item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
+        if( $item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
                 ->where("expense_id",$item->expense_id)
                 ->where("tranche",$item->tranche)
@@ -596,10 +596,15 @@
 
         var item_filter = [];
         var item_description = [];
+        var item_fixed = [];
         $.each(<?php echo $all_item; ?>,function(x,data){
             item_filter.push({ label:data.description, id:data.id });
             item_description.push(data.description);
+            if(data.expense_id == 1 && ( data.tranche == "1-A-1" || data.tranche == "1-A-2" || data.tranche == "1-A-3" || data.tranche == "1-B") ) {
+                item_fixed.push(data.description);
+            }
         });
+
         $(".item-description").catcomplete({
             delay: 0,
             source: item_filter
@@ -608,17 +613,35 @@
         function itemChecker(){
             $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/".$expense_id ?>");
             $(".item_save").val(true);
-            console.log($(".item_save").val());
-            var item_array = [];
 
+
+            var item_array = [];
+            var item_fixed_checker = false;
+
+            var result_display = "<div class=''> THIS ITEM: </div>";
             $(".item_submit :input.item-check").each(function(){
                 var input = $(this).val();
                 item_array.push(input);
+                if(item_fixed.includes(input)){
+                    result_display += "<li style='margin-left: 20px;'>"+input+"</li>";
+                    item_fixed_checker = true;
+                }
             });
+            result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
+            if(item_fixed_checker){
+                Lobibox.alert('error',
+                    {
+                        title: "ERROR",
+                        msg: result_display
+                    });
+                event.preventDefault();
+            }
 
-            var merge_item = item_description.concat(item_array);
+
+            /*var merge_item = item_description.concat(item_array);
 
             var sorted_arr = merge_item.slice().sort();
+            console.log(sorted_arr);
             var results = [];
             var result_display = "Duplicate List:<ul>";
             for (var i = 0; i < sorted_arr.length - 1; i++) {
@@ -627,7 +650,8 @@
                     result_display += "<li style='margin-left: 20px;'>"+sorted_arr[i]+"</li>";
                 }
             }
-            /*result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
+
+            result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
             if (results === undefined || results.length == 0) {
                 //success
             }
@@ -639,6 +663,7 @@
                 });
                 event.preventDefault();
             }*/
+
 
         }
 
