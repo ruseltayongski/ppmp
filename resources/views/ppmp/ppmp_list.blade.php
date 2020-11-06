@@ -125,7 +125,7 @@
         }
 
         $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
-        $item->estimated_budget = $item->qty * $item->unit_cost;
+        $item->estimated_budget = $item->qty * str_replace(',', '',$item->unit_cost);
 
         return $item;
     }
@@ -158,7 +158,7 @@
                     $expense_title_display
                     <td >".
                         "<div class='tooltip_top' style='width: 100%;'>".
-                            "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='".htmlspecialchars($item->description, ENT_QUOTES)."' id='".$description['readonly']."' class='item-description' placeholder='Item Description' ".$description['readonly']." >"."</div>".
+                            "<div style='padding-left: 10%;'>"."<input type='text' name='description$item->id' style='width: 100%' value='".htmlspecialchars($item->description, ENT_QUOTES)."' id='".$description['readonly']."' class='item-description item-check' placeholder='Item Description' ".$description['readonly']." >"."</div>".
                             "<span class='tooltiptext'>Item Description</span>
                          </div>".
                     "</td>
@@ -610,6 +610,7 @@
             source: item_filter
         });
 
+
         function itemChecker(){
             $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/".$expense_id ?>");
             $(".item_save").val(true);
@@ -617,9 +618,11 @@
 
             var item_array = [];
             var item_fixed_checker = false;
+            var item_expense_check = false;
 
             var result_display = "<div class=''> THIS ITEM: </div>";
             $(".item_submit :input.item-check").each(function(){
+                console.log(input);
                 var input = $(this).val();
                 item_array.push(input);
                 if(item_fixed.includes(input)){
@@ -627,13 +630,30 @@
                     item_fixed_checker = true;
                 }
             });
-            result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
             if(item_fixed_checker){
+                result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
                 Lobibox.alert('error',
                     {
                         title: "ERROR",
                         msg: result_display
                     });
+                event.preventDefault();
+            }
+
+            for (var i = 0; i < item_array.length - 1; i++) {
+                if (item_array[i + 1] == item_array[i]) {
+                    item_expense_check = true;
+                    result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
+                }
+            }
+
+            if(item_expense_check){
+                result_display += "<div class=''> already existed on this EXPENSE</div>";
+                Lobibox.alert('error',
+                {
+                    title: "ERROR",
+                    msg: result_display
+                });
                 event.preventDefault();
             }
 

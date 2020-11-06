@@ -225,7 +225,8 @@ class PDF_MC_Table extends FPDF
 
     function displayItem($item){
         $item_body = queryItem("call get_body_region('$item->id')")[0];
-        $item_body->estimated_budget = $item_body->qty * $item_body->unit_cost;
+        $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;
+        $item_body->estimated_budget = $item_body->qty * str_replace(',', '',$item_body->unit_cost);
         $this->Item([
             $item->code,
             "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
