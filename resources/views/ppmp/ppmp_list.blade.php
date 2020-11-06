@@ -612,9 +612,9 @@
 
 
         function itemChecker(){
-            $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/".$expense_id ?>");
+            var expense_id = "<?php echo $expense_id; ?>";
+            $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);
             $(".item_save").val(true);
-
 
             var item_array = [];
             var item_fixed_checker = false;
@@ -630,7 +630,8 @@
                     item_fixed_checker = true;
                 }
             });
-            if(item_fixed_checker){
+            if(item_fixed_checker && expense_id != 1){
+                console.log("item_fixed_checker");
                 result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
                 Lobibox.alert('error',
                     {
@@ -646,8 +647,8 @@
                     result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
                 }
             }
-
             if(item_expense_check){
+                console.log("item_expense_checker");
                 result_display += "<div class=''> already existed on this EXPENSE</div>";
                 Lobibox.alert('error',
                 {
