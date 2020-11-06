@@ -202,14 +202,12 @@ foreach($expenses as $expense){
                 }
                 elseif(isset($_GET['region'])) {
                     if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call tranche_one_c_region('$expense->id','$tranche')");
+                        $items = queryItem("call sub_tranche_region('$expense->id','$tranche')");
                     }
                     else{
                         $items = queryItem("call main_tranche('$expense->id','$tranche')");
                     }
                 }
-
-
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -237,7 +235,7 @@ foreach($expenses as $expense){
             $items = queryItem("call normal_tranche_division('$expense->id','$division_id')");
         }
         elseif(isset($_GET['region'])) {
-            $items = queryItem("call normal_tranche_region1('$expense->id')");
+            $items = queryItem("call normal_tranche_region('$expense->id')");
         }
 
         foreach($items as $item){
