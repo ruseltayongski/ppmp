@@ -91,7 +91,7 @@ class PpmpController extends Controller
         $section_id = Auth::user()->section;
 
         foreach($request->get('item_id') as $value){
-            /*$unique_id = $request->get('unique_id'.$value);
+            $unique_id = $request->get('unique_id'.$value);
             $expense_id = $request->get('expense_id'.$value);
             $tranche = $request->get('tranche'.$value);
             $description = $request->get('description'.$value);
@@ -190,7 +190,7 @@ class PpmpController extends Controller
             }
 
             $request->session()->put('success', 'Successfully updated item!');
-            $item_to_filter = $request->get("description".$value);*/
+            $item_to_filter = $request->get("description".$value);
         }
 
         return $item_to_filter;
