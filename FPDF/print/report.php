@@ -162,7 +162,7 @@ foreach($expenses as $expense){
                     $flag[$display_second] = true;
                 }
                 $pdf->SetFont('Arial','B',7);
-                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second.'=1');
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
 
@@ -177,38 +177,24 @@ foreach($expenses as $expense){
                 $pdf->SetFont('Arial','B',7);
                 $pdf->expenseTotal($expense_total);
             } //display if first have value
+
             if(!isset($flag[$display_first])){
-                $expense_total = 0;
                 $pdf->SetFont('Arial','B',7);
+                $title_header_expense1 = '';
+                if(!isset($flag[$expense->description])){
+                    $title_header_expense1 = $expense->description;
+                    $flag[$expense->description] = true;
+                }
+
+                $flag[$display_first] = true;
+                $title_header_expense1 .= "\n\t\t\t\t\t\t\t".$display_first;
+                $pdf->displayExpense($title_header_expense1);
+
+                $expense_total = 0;
                 $tranche = $expense->id."-".$alphabet[$count_first];
-                $pdf->displayExpense($display_first);
-
-
-                if(isset($_GET['section'])){
-                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call tranche_one_c('$expense->id','$tranche','$section_id')");
-                    }
-                    else{
-                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
-                    }
+                if(isset($_GET['region'])) {
+                    $items = queryItem("call main_tranche('$expense->id','$tranche')");
                 }
-                elseif(isset($_GET['division'])) {
-                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
-                    }
-                    else{
-                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
-                    }
-                }
-                elseif(isset($_GET['region'])) {
-                    if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                        $items = queryItem("call sub_tranche_region('$expense->id','$tranche')");
-                    }
-                    else{
-                        $items = queryItem("call main_tranche('$expense->id','$tranche')");
-                    }
-                }
-
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
                     $pdf->displayItem($item);
@@ -219,22 +205,16 @@ foreach($expenses as $expense){
                     $pdf->SetFont('Arial','B',7);
                     $pdf->expenseTotal($expense_total);
                 }
+            }
 
-            } // display if first is null
             $count_first++;
         }
     } else {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
-        $pdf->displayExpense($expense->description); //display expense if no value from first
+        $pdf->displayExpense($expense->description.'=3'); //display expense if no value from first
 
-        if(isset($_GET['section'])){
-            $items = queryItem("call normal_tranche('$expense->id','$section_id')");
-        }
-        elseif(isset($_GET['division'])) {
-            $items = queryItem("call normal_tranche_division('$expense->id','$division_id')");
-        }
-        elseif(isset($_GET['region'])) {
+        if(isset($_GET['region'])) {
             $items = queryItem("call normal_tranche_region('$expense->id')");
         }
 
