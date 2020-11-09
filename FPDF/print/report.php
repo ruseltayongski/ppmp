@@ -212,7 +212,7 @@ foreach($expenses as $expense){
     } else {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
-        $pdf->displayExpense($expense->description.'=3'); //display expense if no value from first
+        $pdf->displayExpense($expense->description); //display expense if no value from first
 
         if(isset($_GET['region'])) {
             $items = queryItem("call normal_tranche_region('$expense->id')");
