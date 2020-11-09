@@ -123,16 +123,11 @@ $pdf->TableTitle([
     "Dec", //19
 ],'BLR');
 
-$grand_total = 0;
 $expenses = queryExpense();
-$userid = $_GET['userid'];
 
-if(isset($_GET['section']))
-    $section_id = $_GET['section'];
-if(isset($_GET['region']))
-    $region = $_GET['region'];
-if(isset($_GET['division']))
-    $division_id = $_GET['division'];
+$generate_level = $_GET['generate_level'];
+$division_id = $_GET['division_id'];
+$section_id = $_GET['section_id'];
 
 foreach($expenses as $expense){
     $count_first = 0;
@@ -164,18 +159,14 @@ foreach($expenses as $expense){
                 $pdf->SetFont('Arial','B',7);
                 $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
-                $expense_total = 0;
-
                 $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
-                    $pdf->displayItem($item);
-                    $expense_total += $item->estimated_budget;
-                    $grand_total += $expense_total;
+                    $pdf->displayItem($item,$generate_level,$division_id,$section_id);
                 }
                 $pdf->SetFont('Arial','B',7);
-                $pdf->expenseTotal($expense_total);
+                $pdf->expenseTotal(number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ','));
             } //display if first have value
 
             if(!isset($flag[$display_first])){
@@ -192,14 +183,12 @@ foreach($expenses as $expense){
 
                 $expense_total = 0;
                 $tranche = $expense->id."-".$alphabet[$count_first];
-                if(isset($_GET['region'])) {
-                    $items = queryItem("call main_tranche('$expense->id','$tranche')");
-                }
+                $items = queryItem("call main_tranche('$expense->id','$tranche')");
+
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
-                    $pdf->displayItem($item);
+                    $pdf->displayItem($item,$generate_level,$division_id,$section_id);
                     $expense_total += $item->estimated_budget;
-                    $grand_total += $expense_total;
                 }
                 if($expense_total != 0){
                     $pdf->SetFont('Arial','B',7);
@@ -214,17 +203,14 @@ foreach($expenses as $expense){
         $pdf->SetFont('Arial','B',7);
         $pdf->displayExpense($expense->description); //display expense if no value from first
 
-        if(isset($_GET['region'])) {
-            $items = queryItem("call normal_tranche_region('$expense->id')");
-        }
+        $items = queryItem("call normal_tranche_region('$expense->id')");
 
         foreach($items as $item){
             $pdf->SetFont('Arial','',7);
-            $pdf->displayItem($item);
+            $pdf->displayItem($item,$generate_level,$division_id,$section_id);
             if($item->estimated_budget){
                 $expense_total += $item->estimated_budget;
             }
-            $grand_total += $expense_total;
         }
         if($expense_total != 0){
             $pdf->SetFont('Arial','B',7);
@@ -236,8 +222,9 @@ foreach($expenses as $expense){
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);
-$pdf->SetWidths(array(160,20));
-$pdf->TableFooter(array("TOTAL BUDGET",$grand_total));
+$pdf->SetX(30);
+$pdf->SetWidths(array(134,100));
+$pdf->TableFooter(array("GRAND TOTAL",number_format((float)$pdf->grand_total, 2, '.', ',')));
 $pdf->Ln(3);
 $pdf->SetFont('Arial','',6);
 $pdf->SetWidths(array(12,160));

@@ -5,6 +5,8 @@ class PDF_MC_Table extends FPDF
 {
     var $widths;
     var $aligns;
+    public $grand_total;
+    public $sub_total = [];
 
     // Page header
     function Header()
@@ -23,11 +25,15 @@ class PDF_MC_Table extends FPDF
             $this->setXY(3,14);
             $this->Cell(290,8,'CENTRAL VISAYAS CENTER for HEALTH DEVELOPMENT',0,0,'C');
 
-            $this->SetFont('Arial','BU',10);
-            $this->setXY(3,25);
+            $this->SetFont('Arial','B',12);
+            $this->setXY(3,22);
             $this->Cell(290,8,'PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)',0,0,'C');
-            $this->setXY(3,30);
+            $this->SetFont('Arial','B',10);
+            $this->setXY(3,27);
             $this->Cell(290,8,'CY '.date('Y'),0,0,'C');
+            $this->SetFont('Arial','B',8);
+            $this->setXY(3,32);
+            $this->Cell(290,8,'PER '.strtoupper($_GET['generate_level']),0,0,'C');
 
             $this->ln(10);
         }
@@ -223,10 +229,24 @@ class PDF_MC_Table extends FPDF
         $this->Ln($h);
     }
 
-    function displayItem($item){
-        $item_body = queryItem("call get_body_region('$item->id')")[0];
+    function displayItem($item,$generate_level,$division_id,$section_id){
+        if($generate_level == 'region')
+            $item_body = queryItem("call get_body_region('$item->id')")[0];
+        elseif($generate_level == 'division')
+            $item_body = queryItem("call get_body_division('$item->id','$division_id')")[0];
+        elseif($generate_level == 'section')
+            $item_body = queryItem("call get_body_section('$item->id','$section_id')")[0];
+
         $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;
         $item_body->estimated_budget = $item_body->qty * str_replace(',', '',$item_body->unit_cost);
+
+        $sub_total = 0;
+        if(isset($this->sub_total[$item->expense_id.$item->tranche]))
+            $sub_total = $this->sub_total[$item->expense_id.$item->tranche];
+
+        $this->sub_total[$item->expense_id.$item->tranche] = $item_body->estimated_budget + $sub_total;
+        $this->grand_total += $item_body->estimated_budget;
+
         $this->Item([
             $item->code,
             "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
@@ -250,14 +270,15 @@ class PDF_MC_Table extends FPDF
         ]);
     }
 
-    function expenseTotal($total){
+
+    function expenseTotal($sub_total){
         $this->Expense([
             "",
             "",
             "",
             "",
             "Sub Total:",
-            $total,
+            $sub_total,
             "",
             "",
             "",
