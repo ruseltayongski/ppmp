@@ -190,10 +190,8 @@ foreach($expenses as $expense){
                     $pdf->displayItem($item,$generate_level,$division_id,$section_id);
                     $expense_total += $item->estimated_budget;
                 }
-                if($expense_total != 0){
-                    $pdf->SetFont('Arial','B',7);
-                    $pdf->expenseTotal($expense_total);
-                }
+                $pdf->SetFont('Arial','B',7);
+                $pdf->expenseTotal(number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ','));
             }
 
             $count_first++;
@@ -212,10 +210,11 @@ foreach($expenses as $expense){
                 $expense_total += $item->estimated_budget;
             }
         }
-        if($expense_total != 0){
-            $pdf->SetFont('Arial','B',7);
-            $pdf->expenseTotal($expense_total);
-        }
+        $pdf->SetFont('Arial','B',7);
+        $sub_total = 0;
+        if(isset($pdf->sub_total[$expense->id]))
+            $sub_total = $pdf->sub_total[$expense->id];
+        $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
 
     }
 }
