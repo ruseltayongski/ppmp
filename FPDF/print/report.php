@@ -191,7 +191,10 @@ foreach($expenses as $expense){
                     $expense_total += $item->estimated_budget;
                 }
                 $pdf->SetFont('Arial','B',7);
-                $pdf->expenseTotal(number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ','));
+                $sub_total = 0;
+                if(isset($pdf->sub_total[$expense->id.$tranche]))
+                    $sub_total = $pdf->sub_total[$expense->id.$tranche];
+                $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
             }
 
             $count_first++;
