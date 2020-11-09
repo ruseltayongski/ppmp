@@ -554,9 +554,11 @@
                             <i class="fa fa-save"></i> Save
                         </button>
                     @endif
+                    <!--
                     <a type="button" data-toggle="modal" data-target="#modal-info" class="btn btn-app">
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
+                    -->
                 </div>
                 <div class="col-md-6" >
                     <h1>
