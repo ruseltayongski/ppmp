@@ -162,7 +162,7 @@ foreach($expenses as $expense){
                     $flag[$display_second] = true;
                 }
                 $pdf->SetFont('Arial','B',7);
-                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second.'=1');
+                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $expense_total = 0;
 
