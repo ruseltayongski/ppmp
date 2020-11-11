@@ -558,11 +558,13 @@
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
                 </div>
+                <!--
                 <div class="col-md-6" >
                     <h1>
                         Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>
                     </h1>
                 </div>
+                -->
             </div>
         </footer>
     </form>
