@@ -247,27 +247,29 @@ class PDF_MC_Table extends FPDF
         $this->sub_total[$item->expense_id.$item->tranche] = $item_body->estimated_budget + $sub_total;
         $this->grand_total += $item_body->estimated_budget;
 
-        $this->Item([
-            $item->code,
-            "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
-            $item->unit_measurement,
-            $item_body->qty,
-            number_format((float)$item_body->unit_cost, 2, '.', ','),
-            number_format((float)$item_body->estimated_budget, 2, '.', ','),
-            $item->mode_procurement,
-            $item_body->jan,
-            $item_body->feb,
-            $item_body->mar,
-            $item_body->apr,
-            $item_body->may,
-            $item_body->jun,
-            $item_body->jul,
-            $item_body->aug,
-            $item_body->sep,
-            $item_body->oct,
-            $item_body->nov,
-            $item_body->dece,
-        ]);
+        if($item_body->qty > 0)
+            $this->Item([
+                $item->code,
+                "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
+                $item->unit_measurement,
+                $item_body->qty,
+                number_format((float)$item_body->unit_cost, 2, '.', ','),
+                number_format((float)$item_body->estimated_budget, 2, '.', ','),
+                $item->mode_procurement,
+                $item_body->jan,
+                $item_body->feb,
+                $item_body->mar,
+                $item_body->apr,
+                $item_body->may,
+                $item_body->jun,
+                $item_body->jul,
+                $item_body->aug,
+                $item_body->sep,
+                $item_body->oct,
+                $item_body->nov,
+                $item_body->dece,
+            ]);
+
     }
 
 
