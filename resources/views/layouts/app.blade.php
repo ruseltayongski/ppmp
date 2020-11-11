@@ -89,10 +89,10 @@
     <body>
     <nav class="navbar navbar-default navbar-static-top">
         <div class="header" style="background-color:#2F4054;padding:10px;">
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <strong class="title-info">Welcome,</strong> <strong class="title-desc">{{ strtoupper(Auth::user()->lname.', '.Auth::user()->fname) }}</strong>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <center>
                     <strong class="title-info">Section:</strong>
                     <strong class="title-desc">
@@ -107,7 +107,22 @@
                     </strong>
                 </center>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
+                <center>
+                    <strong class="title-info">Division:</strong>
+                    <strong class="title-desc">
+                        <?php
+                            $division = \App\Division::find(Auth::user()->division);
+                            if(isset($division)){
+                                echo $division->description;
+                            } else {
+                                echo 'NO DIVISION';
+                            }
+                        ?>
+                    </strong>
+                </center>
+            </div>
+            <div class="col-md-3">
                 <div class="pull-right">
                     <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }}</strong>
                 </div>
