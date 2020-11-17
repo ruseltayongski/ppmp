@@ -33,7 +33,10 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'CY '.date('Y'),0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
-            $this->Cell(290,8,'PER '.strtoupper($_GET['generate_level']),0,0,'C');
+            if(isset($_GET['section_name']))
+                $this->Cell(290,8,'PER '.$_GET['section_name'],0,0,'C');
+            else
+                $this->Cell(290,8,'PER '.strtoupper($_GET['generate_level']),0,0,'C');
 
             $this->ln(10);
         }
@@ -234,7 +237,7 @@ class PDF_MC_Table extends FPDF
             $item_body = queryItem("call get_body_region('$item->id')")[0];
         elseif($generate_level == 'division')
             $item_body = queryItem("call get_body_division('$item->id','$division_id')")[0];
-        elseif($generate_level == 'section')
+        elseif($generate_level == 'section' || $generate_level == 'select_section')
             $item_body = queryItem("call get_body_section('$item->id','$section_id')")[0];
 
         $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;

@@ -531,14 +531,20 @@
                     </div>
                     <div class="modal-body text-center">
                         <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Region
+                            <i class="fa fa-file-pdf-o"></i> Per Region
                         </a>
                         <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Division
+                            <i class="fa fa-file-pdf-o"></i> Per Division
                         </a>
                         <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Section
+                            <i class="fa fa-file-pdf-o"></i> Per Section
                         </a>
+                        <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
+                        @foreach($section as $sec)
+                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description }}" target="_blank">
+                                <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
+                            </a>
+                        @endforeach
                     </div>
                 </div>
                 <!-- /.modal-content -->
