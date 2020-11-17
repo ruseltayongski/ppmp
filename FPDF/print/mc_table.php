@@ -34,7 +34,7 @@ class PDF_MC_Table extends FPDF
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
-                $this->Cell(290,8,'PER '.$_GET['section_name'],0,0,'C');
+                $this->Cell(290,8,$_GET['section_name'],0,0,'C');
             else
                 $this->Cell(290,8,'PER '.strtoupper($_GET['generate_level']),0,0,'C');
 
