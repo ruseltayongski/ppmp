@@ -254,7 +254,7 @@ class PDF_MC_Table extends FPDF
             $this->Item([
                 $item->code,
                 "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,
-                $item->unit_measurement,
+                $item_body->unit_measurement,
                 $item_body->qty,
                 number_format((float)$item_body->unit_cost, 2, '.', ','),
                 number_format((float)$item_body->estimated_budget, 2, '.', ','),
