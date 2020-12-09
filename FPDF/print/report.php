@@ -237,7 +237,7 @@ $pdf->TableFooter(array("Prepared By:","Submitted By:"));
 $pdf->Ln(3);
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(15,160,100));
-$pdf->TableFooter(array("",$_GET['end_user_name'],"ELIZABETH TABASA, CPA,MBA,CEO VI"));
+$pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
 
 $pdf->SetWidths(array(12,165,100));
 $pdf->SetFont('Arial','',7);
