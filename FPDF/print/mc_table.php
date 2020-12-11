@@ -258,7 +258,7 @@ class PDF_MC_Table extends FPDF
                 $item_body->qty,
                 number_format((float)$item_body->unit_cost, 2, '.', ','),
                 number_format((float)$item_body->estimated_budget, 2, '.', ','),
-                $item->mode_procurement,
+                $item_body->mode_procurement,
                 $item_body->jan,
                 $item_body->feb,
                 $item_body->mar,

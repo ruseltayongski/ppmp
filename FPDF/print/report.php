@@ -55,7 +55,11 @@ $pdf->SetLeftMargin(3);
 $pdf->setX(3);
 $pdf->SetFont('Arial','',7);
 $pdf->SetWidths(array(290));
-$pdf->Row(array("END-USER/UNIT : "));
+$pdf->Row(array("END-USER/UNIT : MSD"));
+$charge_to_msd = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
+$charge_to_lhsd = "Public Health Management";
+$charge_to_rd = "Public Health Management";
+$charge_to_rled = "";
 $pdf->Row(array("Charged to : "));
 $pdf->Row(array("Project, Programs and Activities(PAPs)"));
 
