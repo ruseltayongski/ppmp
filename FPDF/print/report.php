@@ -46,8 +46,46 @@ function queryItem($sql){
     return $row;
 }
 
+function queryDivision($division_id){
+    $pdo = conn();
+    $query = "SELECT * FROM dts.division where id = ?";
+
+    try
+    {
+        $st = $pdo->prepare($query);
+        $st->execute(array($division_id));
+        $row = $st->fetch(PDO::FETCH_OBJ);
+    }catch(PDOException $ex){
+        echo $ex->getMessage();
+        exit();
+    }
+    return $row;
+}
+
 
 require('mc_table.php');
+
+$expenses = queryExpense();
+
+$generate_level = $_GET['generate_level'];
+$division_id = $_GET['division_id'];
+$section_id = $_GET['section_id'];
+
+if($division_id == 6){
+    $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
+} else {
+    $charge_to = "Public Health Management";
+}
+
+$division_name = queryDivision($division_id)->description;
+if($division_id == 6){
+    $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
+}
+else{
+    $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
+}
+
+
 $pdf=new PDF_MC_Table('L','mm','a4');
 $pdf->AliasNbPages();
 $pdf->AddPage();
@@ -55,12 +93,9 @@ $pdf->SetLeftMargin(3);
 $pdf->setX(3);
 $pdf->SetFont('Arial','',7);
 $pdf->SetWidths(array(290));
-$pdf->Row(array("END-USER/UNIT : MSD"));
-$charge_to_msd = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
-$charge_to_lhsd = "Public Health Management";
-$charge_to_rd = "Public Health Management";
-$charge_to_rled = "";
-$pdf->Row(array("Charged to : "));
+$pdf->Row(array("END-USER/UNIT : ".$division_name));
+
+$pdf->Row(array("Charged to : ".$charge_to));
 $pdf->Row(array("Project, Programs and Activities(PAPs)"));
 
 $pdf->SetFont('Arial','B',7);
@@ -126,12 +161,6 @@ $pdf->TableTitle([
     "Nov", //18
     "Dec", //19
 ],'BLR');
-
-$expenses = queryExpense();
-
-$generate_level = $_GET['generate_level'];
-$division_id = $_GET['division_id'];
-$section_id = $_GET['section_id'];
 
 foreach($expenses as $expense){
     $count_first = 0;
@@ -235,17 +264,34 @@ $pdf->Ln(3);
 $pdf->SetFont('Arial','',6);
 $pdf->SetWidths(array(12,160));
 $pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project being proposed shall be submitted as part of the PPMP"));
-$pdf->Ln(3);
-$pdf->SetWidths(array(160,100));
-$pdf->TableFooter(array("Prepared By:","Submitted By:"));
-$pdf->Ln(3);
-$pdf->SetFont('Arial','B',7);
-$pdf->SetWidths(array(15,160,100));
-$pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
 
-$pdf->SetWidths(array(12,165,100));
-$pdf->SetFont('Arial','',7);
-$pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+if($generate_level == 'section' || $generate_level == 'select_section'){
+    $pdf->Ln(3);
+    $pdf->SetWidths(array(160,100));
+    $pdf->TableFooter(array("Prepared By:","Submitted By:"));
+    $pdf->Ln(3);
+    $pdf->SetFont('Arial','B',7);
+    $pdf->SetWidths(array(15,160,100));
+    $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
+
+    $pdf->SetWidths(array(12,165,100));
+    $pdf->SetFont('Arial','',7);
+    $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+}
+else {
+    $pdf->Ln(3);
+    $pdf->SetWidths(array(20,70,76,73,70));
+    $pdf->TableFooter(array("","Division Head:","Evaluated By:","Recommending Approval:","Approved:"));
+    $pdf->Ln(2);
+    $pdf->SetWidths(array(3,84,65,70,70));
+    $pdf->SetFont('Arial','B',7);
+    $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Jaime S. Bernadaz MD,MGM,CESO III"));
+
+    $pdf->SetWidths(array(3,73,98,66,70));
+    $pdf->SetFont('Arial','',7);
+    $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
+}
+
 
 $pdf->Output();
 ?>
