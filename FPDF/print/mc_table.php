@@ -30,7 +30,7 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)',0,0,'C');
             $this->SetFont('Arial','B',10);
             $this->setXY(3,27);
-            $this->Cell(290,8,'CY '.date('Y'),0,0,'C');
+            $this->Cell(290,8,'CY 2021',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
