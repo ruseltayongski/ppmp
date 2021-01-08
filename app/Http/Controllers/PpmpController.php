@@ -124,7 +124,6 @@ class PpmpController extends Controller
                 $item->section = $section_id;
                 $item->tranche = $tranche;
                 $item->description = $description;
-                $item->status = 'fixed';
                 $item->save();
             }
 
