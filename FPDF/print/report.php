@@ -279,7 +279,10 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
 
     $pdf->SetWidths(array(12,165,100));
     $pdf->SetFont('Arial','',7);
-    $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+    if($division_id == 9 || $division_id == 10)
+        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Director III"));
+    else
+        $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
 }
 else {
     $pdf->Ln(3);
