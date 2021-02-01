@@ -272,7 +272,10 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
     $pdf->Ln(3);
     $pdf->SetFont('Arial','B',7);
     $pdf->SetWidths(array(15,160,100));
-    $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
+    if($division_id == 9)
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE"));
+    else
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
 
     $pdf->SetWidths(array(12,165,100));
     $pdf->SetFont('Arial','',7);
