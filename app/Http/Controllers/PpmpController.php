@@ -24,7 +24,21 @@ use App\CreatedLogs;
 
 class PpmpController extends Controller
 {
-    public function index($expense_id = null,Request $request){
+    public function index(){
+        $expenses = Expense::get();
+        return view("ppmp.dashboard",[
+            "expenses" => $expenses
+        ]);
+    }
+
+    public function divisionCheck(){
+        $expenses = Expense::get();
+        return view('ppmp.division_check',[
+            "expenses" => $expenses
+        ]);
+    }
+
+    public function ppmpList($expense_id = null,Request $request){
         $keyword = "";
         $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post') || $request->item_id[0] ){

@@ -136,7 +136,7 @@
         </div>
         @include('layouts.navbar-nav')
     </nav>
-    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home'), true) ? 'container-fluid' : 'container' }}">
+    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home','division/check'), true) ? 'container-fluid' : 'container' }}">
         <div class="loading"></div>
         @include('modal')
         @yield('content')
@@ -196,7 +196,7 @@
         <?php Session::forget('success'); ?>
         @endif
 
-        $('#modal-announcement').modal('show');
+        //$('#modal-announcement').modal('show');
         //Get the button
         var mybutton = document.getElementById("myBtn");
 

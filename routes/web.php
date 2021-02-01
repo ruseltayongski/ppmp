@@ -31,7 +31,7 @@ Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
-Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@index');
+Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
 Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
@@ -71,4 +71,6 @@ Route::post('pap/edit_save','PapController@PapEditSave');
 
 //
 Route::get('migrating/item','PpmpController@migratingItem');
+
+Route::get('division/check','PpmpController@divisionCheck');
 

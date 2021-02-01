@@ -61,7 +61,8 @@
 
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li><a href="{{ url('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="{{ asset('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
             -->
