@@ -240,9 +240,17 @@ class PpmpController extends Controller
         } else
             return 'No item found!';*/
 
-        ItemDaily::where("unique_id",$request->unique_id)->update([
-            "status" => 'deactivate'
-        ]);
+        if($request->unique_id){
+            ItemDaily::where("unique_id",$request->unique_id)->update([
+                "status" => 'deactivate'
+            ]);
+        }
+        elseif($request->item_id){
+            ItemDaily::where("id",$request->item_id)->update([
+                "status" => 'deactivate'
+            ]);
+        }
+
         return 'Successfully Delete!';
     }
 

@@ -142,13 +142,13 @@
             $description = [
                 "readonly" => ""
             ];
-            $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
+            $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
         $user->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
-        $data = "<tr class='$item->unique_id'>
+        $data = "<tr class='$item->unique_id $item->id'>
                     <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
                     <input type='hidden' id='no-border' name='unique_id$item->id' value='$item->unique_id'>
                     <input type='hidden' id='no-border' name='userid$item->id' value='$item->userid'>
@@ -383,16 +383,10 @@
                                             $item_collection = [];
                                             $sub_total = 0;
                                             foreach($items as $item){
-                                                //$item_collection[] = displayItem($item,$title_header_second);
                                                 echo displayItem($item,$title_header_second);
                                                 $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
-                                            /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
-                                            $item_collection->getCollection()->transform(function ($value) {
-                                                echo $value;
-                                            });
-                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());*/
                                             echo "</tbody>";
                                             echo expenseTotal($sub_total);
                                         } // end of maine tranche expense
@@ -412,7 +406,7 @@
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
+                                            if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C'){
                                                 $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
                                             }
                                             else{
@@ -424,16 +418,10 @@
                                             $sub_total = 0;
                                             $title_header_second = '';
                                             foreach($items as $item){
-                                                //$item_collection[] = displayItem($item,$title_header_second);
                                                 echo displayItem($item,$title_header_second);
                                                 $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                 $sub_total += $estimated_budget;
                                             }
-                                            /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
-                                            $item_collection->getCollection()->transform(function ($value) {
-                                                echo $value;
-                                            });
-                                            echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection->links());*/
                                             echo "</tbody>";
                                             echo expenseTotal($sub_total);
                                             if($tranche != "1-B")
@@ -458,11 +446,6 @@
                                         $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                         $sub_total += $estimated_budget;
                                     }
-                                    /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$expense->description),$item_collection,$request); //paginate item
-                                    $item_collection->getCollection()->transform(function ($value) {
-                                        echo $value;
-                                    });
-                                    echo paginateItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$item_collection->links());*/
                                     echo "</tbody>";
                                     echo expenseTotal($sub_total);
                                     echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
@@ -892,15 +875,21 @@
 
         function deleteItem(element){
             console.log(element.data('unique_id'));
+            console.log(element.data('item_id'));
             Lobibox.confirm({
                 title: 'Confirmation',
                 msg: "Are you sure you want to delete this "+element.data('item_description')+" ?",
                 callback: function ($this, type, ev) {
                     if(type == 'yes'){
-                        $("."+element.data('unique_id')).remove();
+                        if(element.data('unique_id'))
+                            $("."+element.data('unique_id')).remove();
+                        else if(element.data('item_id'))
+                            $("."+element.data('item_id')).remove();
+
                         var url = "<?php echo asset('ppmp/delete') ?>";
                         var json = {
                             "unique_id" : element.data('unique_id'),
+                            "item_id" : element.data('item_id'),
                             "_token" : "<?php echo csrf_token(); ?>",
                         };
                         $.post(url,json,function(result){
