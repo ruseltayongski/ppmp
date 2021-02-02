@@ -286,16 +286,30 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
 }
 else {
     $pdf->Ln(3);
-    $pdf->SetWidths(array(20,70,76,73,70));
-    $pdf->TableFooter(array("","Division Head:","Evaluated By:","Recommending Approval:","Approved:"));
-    $pdf->Ln(2);
-    $pdf->SetWidths(array(3,84,65,70,70));
-    $pdf->SetFont('Arial','B',7);
-    $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Jaime S. Bernadaz MD,MGM,CESO III"));
+    if($division_id == 9 || $division_id == 10){
+        $pdf->SetWidths(array(40,68,77,70));
+        $pdf->TableFooter(array("","Division Head:","Evaluated By:","Approved:"));
+        $pdf->Ln(2);
+        $pdf->SetWidths(array(20,84,65,70));
+        $pdf->SetFont('Arial','B',7);
+        $pdf->TableFooter(array("","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Leonora A. Aniel","Jaime S. Bernadaz MD,MGM,CESO III"));
 
-    $pdf->SetWidths(array(3,73,98,66,70));
-    $pdf->SetFont('Arial','',7);
-    $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
+        $pdf->SetWidths(array(40,52,92,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
+    }
+    else {
+        $pdf->SetWidths(array(20,70,76,73,70));
+        $pdf->TableFooter(array("","Division Head:","Evaluated By:","Recommending Approval:","Approved:"));
+        $pdf->Ln(2);
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','B',7);
+        $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Jaime S. Bernadaz MD,MGM,CESO III"));
+
+        $pdf->SetWidths(array(3,73,98,66,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
+    }
 }
 
 
