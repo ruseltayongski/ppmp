@@ -360,8 +360,8 @@
                                             if(isset($flag[$expense->description])){
                                                 $title_header_expense = "";
                                             } else {
-                                                $title_header_expense = $expense->description;
-                                                $flag[$expense->description] = true;
+                                                $title_header_expense = $expense->description; //Office Supplies
+                                                $flag[$expense->description] = true;           //mga naay tranche
                                             }
                                             if(isset($flag[$display_first])){
                                                 $title_header_first = "";
@@ -406,7 +406,7 @@
                                             $expense_total = 0;
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
-                                            if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C'){
+                                            if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
                                                 $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
                                             }
                                             else{
