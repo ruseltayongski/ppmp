@@ -96,18 +96,18 @@ $pdf->SetWidths(array(290));
 $pdf->Row(array("END-USER/UNIT : ".$division_name));
 
 $pdf->Row(array("Charged to : ".$charge_to));
-$pdf->Row(array("Project, Programs and Activities(PAPs)"));
+$pdf->Row(array("Project, Programs and Activities/(PAPs)"));
 
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(
     17, //1
-    107.6, //2
-    10, //3
+    105.6, //2
+    12, //3
     10, //4
-    15.2, //5
-    15.2, //6
-    19, //7
-    96 //8
+    14.2, //5
+    17.2, //6
+    18, //7
+    95 //8
 ));
 $pdf->TableTitle([
     "CODE", //1
@@ -121,24 +121,24 @@ $pdf->TableTitle([
 ],'TLR');
 $pdf->SetWidths(array(
     17, //1
-    107.6, //2
-    10, //3
+    105.6, //2
+    12, //3
     10, //4
-    15.2, //5
-    15.2, //6
-    19, //7
-    8, //8
-    8, //9
+    14.2, //5
+    17.2, //6
+    18, //7
+    10, //8
+    10, //9
     8, //10
     8, //11
     8, //12
     8, //13
     8, //14
-    8, //15
-    8, //16
-    8, //17
-    8, //18
-    8 //19
+    7, //15
+    7, //16
+    7, //17
+    7, //18
+    7 //19
 ));
 $pdf->TableTitle([
     "", //1
@@ -300,7 +300,7 @@ else {
     }
     else {
         $pdf->SetWidths(array(20,70,76,73,70));
-        $pdf->TableFooter(array("","Division Head:","Evaluated By:","Recommending Approval:","Approved:"));
+        $pdf->TableFooter(array("","Division Chief:","Evaluated By:","Recommending Approval:","Approved:"));
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);

@@ -20,7 +20,7 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'Republic of the Philippines',0,0,'C');
             $this->SetFont('Arial','',8);
             $this->setXY(3,10);
-            $this->Cell(290,8,'DEPARTMENT OF HEALTH',0,0,'C');
+            $this->Cell(290,8,'Department of Health',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,14);
             $this->Cell(290,8,'CENTRAL VISAYAS CENTER for HEALTH DEVELOPMENT',0,0,'C');
@@ -241,7 +241,7 @@ class PDF_MC_Table extends FPDF
             $item_body = queryItem("call get_body_section('$item->id','$section_id')")[0];
 
         $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;
-        $item_body->estimated_budget = $item_body->qty * str_replace(',', '',$item_body->unit_cost);
+        $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '',(int)$item_body->unit_cost));
 
         $sub_total = 0;
         if(isset($this->sub_total[$item->expense_id.$item->tranche]))
