@@ -100,13 +100,13 @@ $pdf->Row(array("Project, Programs and Activities/(PAPs)"));
 
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(
-    12, //1
-    105.6, //2
+    10, //1
+    106.6, //2
     12, //3
-    15, //4
-    14.2, //5
+    14, //4
+    15.2, //5
     17.2, //6
-    18, //7
+    19, //7
     95 //8
 ));
 $pdf->TableTitle([
@@ -120,13 +120,13 @@ $pdf->TableTitle([
     "SCHEDULE / MILESTONE OF ACTIVITIES", //8
 ],'TLR');
 $pdf->SetWidths(array(
-    12, //1
-    105.6, //2
+    10, //1
+    106.6, //2
     12, //3
-    15, //4
-    14.2, //5
+    14, //4
+    15.2, //5
     17.2, //6
-    18, //7
+    19, //7
     13, //8
     12, //9
     7, //10
