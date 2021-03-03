@@ -101,10 +101,10 @@ $pdf->Row(array("Project, Programs and Activities/(PAPs)"));
 $pdf->SetFont('Arial','B',7);
 $pdf->SetWidths(array(
     10, //1
-    106.6, //2
+    105.6, //2
     12, //3
     14, //4
-    15.2, //5
+    16.2, //5
     17.2, //6
     19, //7
     95 //8
@@ -121,10 +121,10 @@ $pdf->TableTitle([
 ],'TLR');
 $pdf->SetWidths(array(
     10, //1
-    106.6, //2
+    105.6, //2
     12, //3
     14, //4
-    15.2, //5
+    16.2, //5
     17.2, //6
     19, //7
     13, //8
