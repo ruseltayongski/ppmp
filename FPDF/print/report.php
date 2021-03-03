@@ -4,7 +4,7 @@ function conn()
 {
     $server = 'localhost';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -103,8 +103,8 @@ $pdf->SetWidths(array(
     10, //1
     105.6, //2
     12, //3
-    14, //4
-    16.2, //5
+    13, //4
+    17.2, //5
     17.2, //6
     19, //7
     95 //8
@@ -123,8 +123,8 @@ $pdf->SetWidths(array(
     10, //1
     105.6, //2
     12, //3
-    14, //4
-    16.2, //5
+    13, //4
+    17.2, //5
     17.2, //6
     19, //7
     13, //8
@@ -259,7 +259,7 @@ foreach($expenses as $expense){
 
         if(isset($pdf->sub_total[$expense->id]))
             $sub_total = $pdf->sub_total[$expense->id];
-            $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
+        $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
     }
 }
 
