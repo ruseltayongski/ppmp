@@ -180,13 +180,13 @@ foreach($expenses as $expense){
                 if(isset($flag[$display_first])){
                     $title_header_first = "";
                 } else {
-                    $title_header_first = "\n\t\t\t\t\t\t\t".$display_first;
+                    $title_header_first = "\n\t\t\t\t\t\t\t".$display_first."\n";
                     $flag[$display_first] = true;
                 }
                 if(isset($flag[$display_second])){
                     $title_header_second = "";
                 } else {
-                    $title_header_second = "\n\t\t\t\t\t\t\t\t\t\t\t\t\t".$display_second;
+                    $title_header_second = "\t\t\t\t\t\t\t\t\t\t\t\t\t".$display_second;
                     $flag[$display_second] = true;
                 }
                 $pdf->SetFont('Arial','B',7);
@@ -211,7 +211,7 @@ foreach($expenses as $expense){
                 }
 
                 $flag[$display_first] = true;
-                $title_header_expense1 .= "\n\t\t\t\t\t\t\t".$display_first;
+                $title_header_expense1 .= "\t\t\t\t\t\t\t".$display_first;
                 $pdf->displayExpense($title_header_expense1);
 
                 $expense_total = 0;
@@ -235,12 +235,20 @@ foreach($expenses as $expense){
     } else {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
-        $pdf->displayExpense($expense->description); //display expense if no value from first
+
+        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45))
+            $pdf->displayExpense($expense->description); //display expense if no value from first
 
         $items = queryItem("call normal_tranche_region('$expense->id')");
 
         foreach($items as $item){
-            $pdf->SetFont('Arial','',7);
+            if($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45){
+                $pdf->SetFont('Arial','b',7);
+                $item->description = $expense->description;
+            } else {
+                $pdf->SetFont('Arial','',7);
+            }
+
             $pdf->displayItem($item,$generate_level,$division_id,$section_id);
             if($item->estimated_budget){
                 $expense_total += $item->estimated_budget;
