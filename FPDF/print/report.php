@@ -248,10 +248,10 @@ foreach($expenses as $expense){
         }
         $pdf->SetFont('Arial','B',7);
         $sub_total = 0;
+
         if(isset($pdf->sub_total[$expense->id]))
             $sub_total = $pdf->sub_total[$expense->id];
-        $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
-
+            $pdf->expenseTotal(number_format((float)$sub_total, 2, '.', ','));
     }
 }
 

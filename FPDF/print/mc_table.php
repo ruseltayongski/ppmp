@@ -1,6 +1,7 @@
 <?php
 require('../fpdf.php');
 
+
 class PDF_MC_Table extends FPDF
 {
     var $widths;
@@ -179,28 +180,30 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayExpense($description){
-        $this->Expense([
-            "",
-            $description,
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-        ]);
+
+                $this->Expense([
+                    "",
+                    $description,
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                ]);
     }
+
 
     function Item($data){
         //Calculate the height of the row
@@ -233,6 +236,7 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayItem($item,$generate_level,$division_id,$section_id){
+
         if($generate_level == 'region')
             $item_body = queryItem("call get_body_region('$item->id')")[0];
         elseif($generate_level == 'division')
@@ -243,14 +247,15 @@ class PDF_MC_Table extends FPDF
         $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;
         $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '',(int)$item_body->unit_cost));
 
-        $sub_total = 0;
-        if(isset($this->sub_total[$item->expense_id.$item->tranche]))
-            $sub_total = $this->sub_total[$item->expense_id.$item->tranche];
+            $sub_total = "0";
+            if (isset($this->sub_total[$item->expense_id . $item->tranche]))
+                $sub_total = $this->sub_total[$item->expense_id . $item->tranche];
+
 
         $this->sub_total[$item->expense_id.$item->tranche] = $item_body->estimated_budget + $sub_total;
         $this->grand_total += $item_body->estimated_budget;
 
-        if($item_body->qty > 0)
+        if((int)$item_body->qty > 0)
             $this->Item([
                 $item->code,
                 "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description,

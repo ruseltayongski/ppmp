@@ -33,8 +33,13 @@ class PpmpController extends Controller
 
     public function divisionCheck(){
         $expenses = Expense::get();
+        $division_id = Auth::user()->division;
+
+        $sections = Section::where('division',"=",$division_id)->get();
+
         return view('ppmp.division_check',[
-            "expenses" => $expenses
+            "expenses" => $expenses,
+            "sections" => $sections
         ]);
     }
 
@@ -204,6 +209,7 @@ class PpmpController extends Controller
 
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);
+            $item_to_filter = $request->get("description".$value);
         }
 
         return $item_to_filter;
@@ -333,6 +339,12 @@ class PpmpController extends Controller
         }
 
         return "Successfully Updated!";
+    }
+
+    public function viewSection(){
+
+
+
     }
 
 }
