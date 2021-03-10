@@ -8,6 +8,7 @@ class PDF_MC_Table extends FPDF
     var $aligns;
     public $grand_total;
     public $sub_total = [];
+    public $sum;
 
     // Page header
     function Header()
@@ -235,32 +236,38 @@ class PDF_MC_Table extends FPDF
         $this->Ln($h);
     }
 
-    function displayItem($item,$generate_level,$division_id,$section_id){
+    function displayItem($item,$generate_level,$division_id,$section_id)
+    {
 
-        if($generate_level == 'region')
+        if ($generate_level == 'region')
             $item_body = queryItem("call get_body_region('$item->id')")[0];
-        elseif($generate_level == 'division')
+        elseif ($generate_level == 'division')
             $item_body = queryItem("call get_body_division('$item->id','$division_id')")[0];
-        elseif($generate_level == 'section' || $generate_level == 'select_section')
+        elseif ($generate_level == 'section' || $generate_level == 'select_section')
             $item_body = queryItem("call get_body_section('$item->id','$section_id')")[0];
 
-        $item_body->qty = $item_body->jan+$item_body->feb+$item_body->mar+$item_body->apr+$item_body->may+$item_body->jun+$item_body->jul+$item_body->aug+$item_body->sep+$item_body->oct+$item_body->nov+$item_body->dece;
-        $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '',(int)$item_body->unit_cost));
+        $item_body->qty = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
+        $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '', (int)$item_body->unit_cost));
+
+        $sum = 0;
+        if($item->expense_id == "1")
+            $sum += $item_body->estimated_budget;
 
         $sub_total = "0";
         if (isset($this->sub_total[$item->expense_id . $item->tranche]))
             $sub_total = $this->sub_total[$item->expense_id . $item->tranche];
 
 
-        $this->sub_total[$item->expense_id.$item->tranche] = $item_body->estimated_budget + $sub_total;
+        $this->sub_total[$item->expense_id . $item->tranche] = $item_body->estimated_budget + $sub_total;
         $this->grand_total += $item_body->estimated_budget;
+  //
 
-        if($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
+        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
             $item->description = $item->description;
         else
-            $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t".$item->description;
+            $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-        if((int)$item_body->qty > 0)
+        if ((int)$item_body->qty > 0)
             $this->Item([
                 $item->code,
                 $item->description,
@@ -282,9 +289,7 @@ class PDF_MC_Table extends FPDF
                 $item_body->nov,
                 $item_body->dece,
             ]);
-
     }
-
 
     function expenseTotal($sub_total, $difference){
         $this->Expense([
@@ -309,6 +314,7 @@ class PDF_MC_Table extends FPDF
             "",
         ]);
     }
+
 
     function CheckPageBreak($h)
     {

@@ -66,7 +66,8 @@
 
         }
 
-        function displayItem($item,$expense_title){
+        function
+        displayItem($item,$expense_title){
             $user = Auth::user();
             setItem($item,$user->section);
 
@@ -153,6 +154,21 @@
                             <th>Unit Cost</th>
                             <th width="5%">Estimated Budget</th>
                             <th width="5%">Mode Procurement</th>
+                            <div class="col">
+                                @foreach($sections as $section)
+                                    {{$section->description}}
+                                @endforeach
+                            </div>
+
+                        </tr>
+
+
+
+
+
+
+
+
 
                             {{--<th>Health Promotion In The Work Places & School Section</th>--}}
                             {{--<th>Health Promotion In The Community Section</th>--}}
@@ -207,14 +223,8 @@
 
                         {{--@endif--}}
 
-                            {{--<div class="row">--}}
-                                {{--@foreach($sections as $section)--}}
-                                    {{--{{$section->description}}--}}
-                                {{--@endforeach--}}
-                                {{--<div class="col-sm-3">--}}
-                            {{--</div>--}}
-                            {{--</div>--}}
-                        </tr>
+
+
 
 
 
@@ -307,18 +317,6 @@
                                             $sub_total += $estimated_budget;
 
 //                                            joy
-
-                                            if( $tranche="49-A"){
-                                                echo $sub_total ="186500";
-                                                if ($expense->id == "17")
-                                                    echo $sub_total ="1041252";
-                                                if($expense->id == "18"){
-                                                    echo $sub_total = "500000";
-                                                    if($expense->id=="19"){
-                                                        echo $sub_total = "1553851";
-                                                    }
-                                                }
-                                            }
                                         }
                                         /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
                                         $item_collection->getCollection()->transform(function ($value) {

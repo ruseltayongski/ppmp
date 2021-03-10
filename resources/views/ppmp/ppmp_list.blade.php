@@ -593,7 +593,7 @@
         $.each(<?php echo $all_item; ?>,function(x,data){
             item_filter.push({ label:data.description, id:data.id });
             item_description.push(data.description);
-            if(data.expense_id == 1 && ( data.tranche == "1-A-1" || data.tranche == "1-A-2" || data.tranche == "1-A-3" || data.tranche == "1-B") ) {
+            if(data.expense_id == 1 && ( data.tranche == "1-A-1" || data.tranche == "1-A-2" || data.tranche == "1-A-3" || data.tranche == "1-B")) {
                 item_fixed.push(data.description);
             }
         });

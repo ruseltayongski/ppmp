@@ -200,8 +200,9 @@ foreach($expenses as $expense){
                 }
                 $pdf->SetFont('Arial','B',7);
 
+                $difference = 0;
                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
-                $difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id.$tranche];
+                //$difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id.$tranche];
                 $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
             } //display if first have value
 
@@ -228,10 +229,21 @@ foreach($expenses as $expense){
                 }
                 $pdf->SetFont('Arial','B',7);
 
+                $sum = 0;
                 $sub_total = 0;
+
                 if(isset($pdf->sub_total[$expense->id.$tranche])){
-                    $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
-                    $difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id.$tranche];
+
+                    if($expense->id.$tranche == "11-C"){
+                        $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
+                        $sum = $pdf->sub_total["11-A-1"] + $pdf->sub_total["11-A-2"] + $pdf->sub_total["11-A-3"] + $pdf->sub_total["11-B"]+ $pdf->sub_total[$expense->id.$tranche];
+                        $difference = $expense->chief_lhsd - $sum;
+                    }
+                    else{
+                        $difference= 0;
+                        $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
+                    }
+
                 }
                 $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
 
@@ -242,8 +254,7 @@ foreach($expenses as $expense){
     } else {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
-
-        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5))
+        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
             $pdf->displayExpense($expense->description); //display expense if no value from first
 
         $items = queryItem("call normal_tranche_region('$expense->id')");
