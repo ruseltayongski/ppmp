@@ -2,10 +2,15 @@
 
 @section('content')
     <title>PPMP|CHECK</title>
+
     <?php
+
         $section_id = Auth::user()->section;
         $division_id = Auth::user()->division;
 
+        function AdekJoyax(){
+            return "<span>Adek c Joyax</span>";
+        }
 
         function displayHeader($title){
             return "<tr class='text-green'>
@@ -42,6 +47,7 @@
                     ->where("division_id",$division_id)
                     ->orderBy("id","desc")
                     ->first();
+
                 if($item_daily){
                     $item->qty = $item_daily->qty;
                     $item->jan = $item_daily->jan;
@@ -56,56 +62,53 @@
                     $item->oct = $item_daily->oct;
                     $item->nov = $item_daily->nov;
                     $item->dece = $item_daily->dece;
+//                  $item->section = $item_daily->section_id;
+
                 }
             }
 
             $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
             $item->estimated_budget = (int)$item->qty * str_replace(',', '',(int)$item->unit_cost);
 
+//            if($item->qty || $item->estimated_budget == 0)
+
             return $item;
 
         }
 
         function
-        displayItem($item,$expense_title){
+        displayItem($item,$expense_title,$encoded_by){
             $user = Auth::user();
             setItem($item,$user->section);
 
-            $data = "<tr>
+
+
+                $data = "<tr>
                         <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
                         <td>$item->unit_measurement</td>
                         <td>$item->qty</td>
                         <td>$item->unit_cost</td>
                         <td>$item->estimated_budget</td>
                         <td>$item->mode_procurement</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                        <td>$item->jan</td>
+                        <td>$item->feb</td>
+                        <td>$item->mar</td>
+                        <td>$item->apr</td>
+                        <td>$item->may</td>
+                        <td>$item->jun</td>
+                        <td>$item->jul</td>
+                        <td>$item->aug</td>
+                        <td>$item->sep</td>
+                        <td>$item->oct</td>
+                        <td>$item->nov</td>
+                        <td>$item->dece</td>
+                        <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$encoded_by'>$encoded_by</span></td>
 
                     </tr>";
 
-            return $data;
+               if($item->qty > 0)
+                return $data;
         }
-
 
 
         function expenseTotal($total){
@@ -118,6 +121,9 @@
                     <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
                 </tr>";
         }
+
+
+
 //        function addItem($expense_title,$expense,$tranche,$expense_description){
 //            return "<tr>
 //                <td colspan='19'>
@@ -125,6 +131,7 @@
 //                </td>
 //            </tr>";
 //        }
+
         function paginateItem($expense_title,$item){
             return "<tr>
                 <td colspan='17'>
@@ -144,92 +151,31 @@
                 <div class="box-body">
                     <table class="table table-striped" style="font-size: 7pt;">
                         {{--@if($division_id == "4")--}}
+
                         <tr>
-                            {{--@foreach($sections as $section)--}}
-                            {{--{{$section->description}}--}}
-                            {{--@endforeach--}}
+
                             <th>Item Description/General Specification</th>
                             <th>Unit<br>Issue</th>
                             <th>QTY</th>
                             <th>Unit Cost</th>
                             <th width="5%">Estimated Budget</th>
                             <th width="5%">Mode Procurement</th>
-                            <div class="col">
-                                @foreach($sections as $section)
-                                    {{$section->description}}
-                                @endforeach
-                            </div>
-
+                            <th>January</th>
+                            <th>February</th>
+                            <th>March</th>
+                            <th>April</th>
+                            <th>May</th>
+                            <th>June</th>
+                            <th>July</th>
+                            <th>August</th>
+                            <th>September</th>
+                            <th>October</th>
+                            <th>November</th>
+                            <th>December</th>
+                            {{--@foreach($sections as $section)--}}
+                                {{--{{$section->description}}--}}
+                            {{--@endforeach--}}
                         </tr>
-
-
-
-
-
-
-
-
-
-                            {{--<th>Health Promotion In The Work Places & School Section</th>--}}
-                            {{--<th>Health Promotion In The Community Section</th>--}}
-                            {{--<th>Health System Development Section</th>--}}
-                            {{--<th>Health Policy Planning, Research & Health Info</th>--}}
-                            {{--<th>Provincial Health Team for Cebu Province</th>--}}
-                            {{--<th>Provincial Health Team for Bohol Province</th>--}}
-                            {{--<th>PDOHO Negros Oriental</th>--}}
-                            {{--<th>Family Health Section</th>--}}
-                            {{--<th>Non-Communicable Disease Section</th>--}}
-                            {{--<th>Communicable Disease Section</th>--}}
-                            {{--<th>Environmental and Occupational Health and Medicine Access Services Section</th>--}}
-                            {{--<th>LHSD Chief</th>--}}
-                            {{--<th>HEMS</th>--}}
-                            {{--<th>PDOHO Cebu North</th>--}}
-                            {{--<th>PDOHO Cebu South</th>--}}
-                            {{--<th>PDOHO Bohol</th>--}}
-                            {{--<th>Reference Laboratory</th>--}}
-                            {{--<th>National Nutrition Office VII</th>--}}
-                            {{--<th>National Voluntary Blood Services Program</th>--}}
-                            {{--<th>Health Promotion and Communication Unit</th>--}}
-                            {{--<th>PDOHO Siquijor</th>--}}
-                            {{--<th>Information and Communication Technology Unit(LHSD)</th>--}}
-                        {{--</tr>--}}
-                            {{--@else--}}
-                            {{--<tr>--}}
-                                {{--<th>Item Description/General Specification</th>--}}
-                                {{--<th>Unit<br>Issue</th>--}}
-                                {{--<th>QTY</th>--}}
-                                {{--<th>Unit Cost</th>--}}
-                                {{--<th width="5%">Estimated Budget</th>--}}
-                                {{--<th width="5%">Mode Procurement</th>--}}
-                                {{--<th>Accounting Section</th>--}}
-                                {{--<th>Budget Section</th>--}}
-                                {{--<th>Health System Development Section</th>--}}
-                                {{--<th>Cashier Section</th>--}}
-                                {{--<th>Personnel Section</th>--}}
-                                {{--<th>General Services Section</th>--}}
-                                {{--<th>Records Section</th>--}}
-                                {{--<th>Supply Section</th>--}}
-                                {{--<th>Legal Section(MSD)</th>--}}
-                                {{--<th>Transport Section</th>--}}
-                                {{--<th>Planning</th>--}}
-                                {{--<th>MSD Chief</th>--}}
-                                {{--<th>Information and Communication Technology Unit(MSD)</th>--}}
-                                {{--<th>Library</th>--}}
-                                {{--<th>Procurement Unit</th>--}}
-                                {{--<th>Dormitory</th>--}}
-                                {{--<th>Commission on Audit</th>--}}
-                                {{--<th>Cold Chain</th>--}}
-                            {{--</tr>--}}
-
-                        {{--@endif--}}
-
-
-
-
-
-
-
-
 
 
                         @foreach($expenses as $expense)
@@ -271,7 +217,8 @@
                                         $sub_total = 0;
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$title_header_second);
-                                            echo displayItem($item,$title_header_second);
+                                            $encoded_by=$item->userid;
+                                            echo displayItem($item,$title_header_second,$encoded_by);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += (int)$estimated_budget;
                                         }
@@ -299,8 +246,8 @@
                                         $expense_total = 0;
                                         $tranche = $expense->id."-".$alphabet[$count_first];
                                         echo displayHeader($title_header_expense.$title_header_first);
-                                        if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C'){
-                                            $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
+                                        if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C' or $tranche == '48-D'){
+                                            $items = \DB::connection('mysql')->select("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
                                         }
                                         else{
                                             $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
@@ -311,8 +258,10 @@
                                         $sub_total = 0;
                                         $title_header_second = '';
                                         foreach($items as $item){
+
                                             //$item_collection[] = displayItem($item,$title_header_second);
-                                            echo displayItem($item,$title_header_second);
+                                            $encoded_by=$item->userid;
+                                            echo displayItem($item,$title_header_second,$encoded_by);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += $estimated_budget;
 
@@ -335,10 +284,13 @@
                         @else
                             <?php
                                 echo displayHeader($expense->description); //display expense if no value from first
-                                $items = \DB::connection('mysql')->select("call normal_tranche_region('$expense->id')");
+                                $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id')");
                                 foreach($items as $item){
-                                    echo displayItem($item,$expense->description);
+                                    $encoded_by = $item->encoded_by;
+//                                    echo end_user($encoded_by);
+                                    echo displayItem($item,$expense->description,$encoded_by);
                                 }
+//
                             ?>
                         @endif
                         @endforeach

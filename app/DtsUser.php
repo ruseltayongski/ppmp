@@ -9,4 +9,9 @@ class DtsUser extends Authenticatable
 {
     protected $connection = 'dts';
     protected $table = 'users';
+
+    public function item_daily()
+    {
+        return $this->hasMany('App\DtsUser');
+    }
 }

@@ -190,9 +190,12 @@ foreach($expenses as $expense){
                     $flag[$display_second] = true;
                 }
                 $pdf->SetFont('Arial','B',7);
-                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
                 $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
+
+                if(count($items) > 0)
+                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -216,16 +219,19 @@ foreach($expenses as $expense){
 
                 $flag[$display_first] = true;
                 $title_header_expense1 .= "\t\t\t\t\t\t\t".$display_first;
-                $pdf->displayExpense($title_header_expense1);
+                $tranche = $expense->id."-".$alphabet[$count_first];
 
                 $expense_total = 0;
-                $tranche = $expense->id."-".$alphabet[$count_first];
+
                 $items = queryItem("call main_tranche('$expense->id','$tranche')");
+
+                if(count($items) > 0)
+                    $pdf->displayExpense($title_header_expense1);
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
                     $pdf->displayItem($item,$generate_level,$division_id,$section_id);
-                    $expense_total += $item->estimated_budget;
+                    $expense_total += (int)$item->estimated_budget;
                 }
                 $pdf->SetFont('Arial','B',7);
 
@@ -254,10 +260,13 @@ foreach($expenses as $expense){
     } else {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
-        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
-            $pdf->displayExpense($expense->description); //display expense if no value from first
+
 
         $items = queryItem("call normal_tranche_region('$expense->id')");
+
+        if(count($items)>0)
+        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
+            $pdf->displayExpense($expense->description); //display expense if no value from first
 
         foreach($items as $item){
             if($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5){
