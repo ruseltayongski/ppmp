@@ -43,11 +43,16 @@ class PpmpController extends Controller
         ]);
     }
 
+    public function realignment(){
+        $expenses = Expense::get();
+
+    }
+
     public function ppmpList($expense_id = null,Request $request){
         $keyword = "";
         $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post') || isset($request->item_id[0]) ){
-            if($request->item_save){ //if ang button ge saved
+            if($request->item_save){ //if ang button ge savedRe
                 //return $request->all();
                 $item_to_filter = $this->ppmpUpdate($request);
             }
@@ -339,12 +344,6 @@ class PpmpController extends Controller
         }
 
         return "Successfully Updated!";
-    }
-
-    public function viewSection(){
-
-
-
     }
 
 }

@@ -30,6 +30,7 @@ Route::post('user/division/update','MaintenanceController@updateDivisionPost');
 Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
+
 //ppmp
 Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
@@ -73,4 +74,7 @@ Route::post('pap/edit_save','PapController@PapEditSave');
 Route::get('migrating/item','PpmpController@migratingItem');
 
 Route::get('division/check','PpmpController@divisionCheck');
+
+//realignment
+Route::get('user/realignment','RealignmentController@index');
 

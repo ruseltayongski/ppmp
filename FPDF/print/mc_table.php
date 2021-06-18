@@ -32,7 +32,7 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)',0,0,'C');
             $this->SetFont('Arial','B',10);
             $this->setXY(3,27);
-            $this->Cell(290,8,'CY 2021',0,0,'C');
+            $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -267,7 +267,30 @@ class PDF_MC_Table extends FPDF
         else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-        if ((int)$item_body->qty > 0)
+        if($division_id=="4"){
+            if ((int)$item_body->qty > 0)
+                $this->Item([
+                    $item->code,
+                    $item->description,
+                    $item_body->unit_measurement,
+                    $item_body->qty,
+                    number_format((float)$item_body->unit_cost, 2, '.', ','),
+                    number_format((float)$item_body->estimated_budget, 2, '.', ','),
+                    $item_body->mode_procurement,
+                    $item_body->jan,
+                    $item_body->feb,
+                    $item_body->mar,
+                    $item_body->apr,
+                    $item_body->may,
+                    $item_body->jun,
+                    $item_body->jul,
+                    $item_body->aug,
+                    $item_body->sep,
+                    $item_body->oct,
+                    $item_body->nov,
+                    $item_body->dece,
+                ]);
+        }elseif ($division_id=="6"){
             $this->Item([
                 $item->code,
                 $item->description,
@@ -289,10 +312,14 @@ class PDF_MC_Table extends FPDF
                 $item_body->nov,
                 $item_body->dece,
             ]);
+        }
+
+
     }
 
-    function expenseTotal($sub_total, $difference){
-        $this->Expense([
+    function expenseTotal($sub_total,$difference){
+
+            $this->Expense([
             "",
             "",
             "",

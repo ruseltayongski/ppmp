@@ -63,6 +63,10 @@
         <ul class="nav navbar-nav">
             <li><a href="{{ asset('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
+            @if(Auth::user()->division == "6")
+            <li><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
+            @endif
+            {{--<li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> Realignment </a></li>--}}
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
             -->

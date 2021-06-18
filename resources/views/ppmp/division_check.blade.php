@@ -8,9 +8,6 @@
         $section_id = Auth::user()->section;
         $division_id = Auth::user()->division;
 
-        function AdekJoyax(){
-            return "<span>Adek c Joyax</span>";
-        }
 
         function displayHeader($title){
             return "<tr class='text-green'>
@@ -63,7 +60,6 @@
                     $item->nov = $item_daily->nov;
                     $item->dece = $item_daily->dece;
 //                  $item->section = $item_daily->section_id;
-
                 }
             }
 
@@ -77,10 +73,11 @@
         }
 
         function
-        displayItem($item,$expense_title,$encoded_by){
+        displayItem($item,$expense_title,$encoded_by,$section){
             $user = Auth::user();
+//            $sec = \App\Section::all();
+//            $section_id = $sec->pluck('id');
             setItem($item,$user->section);
-
 
 
                 $data = "<tr>
@@ -102,6 +99,8 @@
                         <td>$item->oct</td>
                         <td>$item->nov</td>
                         <td>$item->dece</td>
+                        <td>$item->id</td>
+                        <td>$section</td>
                         <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$encoded_by'>$encoded_by</span></td>
 
                     </tr>";
@@ -152,6 +151,7 @@
                     <table class="table table-striped" style="font-size: 7pt;">
                         {{--@if($division_id == "4")--}}
 
+
                         <tr>
 
                             <th>Item Description/General Specification</th>
@@ -172,9 +172,6 @@
                             <th>October</th>
                             <th>November</th>
                             <th>December</th>
-                            {{--@foreach($sections as $section)--}}
-                                {{--{{$section->description}}--}}
-                            {{--@endforeach--}}
                         </tr>
 
 
@@ -217,8 +214,9 @@
                                         $sub_total = 0;
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$title_header_second);
+                                            $section= $item->section;
                                             $encoded_by=$item->userid;
-                                            echo displayItem($item,$title_header_second,$encoded_by);
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += (int)$estimated_budget;
                                         }
@@ -258,10 +256,10 @@
                                         $sub_total = 0;
                                         $title_header_second = '';
                                         foreach($items as $item){
-
                                             //$item_collection[] = displayItem($item,$title_header_second);
+                                            //$section = $item->section_id;
                                             $encoded_by=$item->userid;
-                                            echo displayItem($item,$title_header_second,$encoded_by);
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += $estimated_budget;
 
@@ -286,9 +284,9 @@
                                 echo displayHeader($expense->description); //display expense if no value from first
                                 $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id')");
                                 foreach($items as $item){
+                                    $section= $item->section_id;
                                     $encoded_by = $item->encoded_by;
-//                                    echo end_user($encoded_by);
-                                    echo displayItem($item,$expense->description,$encoded_by);
+                                    echo displayItem($item,$expense->description,$encoded_by,$section);
                                 }
 //
                             ?>

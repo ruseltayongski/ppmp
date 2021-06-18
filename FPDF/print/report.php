@@ -192,7 +192,9 @@ foreach($expenses as $expense){
                 $pdf->SetFont('Arial','B',7);
 
                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
+
                 $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
+
 
                 if(count($items) > 0)
                 $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
@@ -243,7 +245,15 @@ foreach($expenses as $expense){
                     if($expense->id.$tranche == "11-C"){
                         $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
                         $sum = $pdf->sub_total["11-A-1"] + $pdf->sub_total["11-A-2"] + $pdf->sub_total["11-A-3"] + $pdf->sub_total["11-B"]+ $pdf->sub_total[$expense->id.$tranche];
+
+                        if($division_id == 4)
                         $difference = $expense->chief_lhsd - $sum;
+                         else if($division_id == 6){
+                             $difference = $expense->chief_msd - $sum;
+                         }
+                         else{
+                             $difference = 0;
+                         }
                     }
                     else{
                         $difference= 0;
@@ -261,9 +271,11 @@ foreach($expenses as $expense){
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
-
         $items = queryItem("call normal_tranche_region('$expense->id')");
 
+
+        //
+//        if($division_id == "4")
         if(count($items)>0)
         if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
             $pdf->displayExpense($expense->description); //display expense if no value from first
@@ -284,13 +296,30 @@ foreach($expenses as $expense){
         $pdf->SetFont('Arial','B',7);
 
         $sub_total = 0;
+        $qty = 0;
         if(isset($pdf->sub_total[$expense->id])){
             $sub_total = number_format((float)$pdf->sub_total[$expense->id], 2, '.', ',');
-            $difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id];
+
+            if($division_id == 4)
+                $difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id];
+            else if($division_id == 6){
+                $difference = $expense->chief_msd - $pdf->sub_total[$expense->id];
+            }
+            else{
+                $difference = 0;
+            }
+
         }
         $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
     }
 }
+//        foreach ($expenses as $expense)
+//        $start = microtime(true);
+//        $items = queryItem("call normal_tranche_region('$expense->id')");
+//        $end = microtime(true);
+//        $execution = ($end - $start);
+//
+//        echo "It takes" .$execution. "time";
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);
@@ -311,6 +340,10 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
     $pdf->SetWidths(array(15,160,100));
     if($division_id == 9 || $division_id == 10)
         $pdf->TableFooter(array("",$_GET['end_user_name'],"Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE"));
+    // joy
+    else if ($division_id == 6)
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
+        // joy
     else
         $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
 
@@ -348,7 +381,6 @@ else {
         $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
     }
 }
-
 
 $pdf->Output();
 ?>
