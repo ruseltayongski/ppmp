@@ -267,7 +267,7 @@ class PDF_MC_Table extends FPDF
         else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-            if ((int)$item_body->qty > 0)
+            if ((int)$item_body->qty >= 0 && $item_body->unit_cost != 0)
                 $this->Item([
                     $item->code,
                     $item->description,
