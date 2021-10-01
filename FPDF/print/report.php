@@ -36,15 +36,15 @@ function queryItem($sql){
     $pdo = conn();
     $query = $sql;
 
-    try
-    {
+    try {
         $st = $pdo->prepare($query);
         $st->execute();
         $row = $st->fetchAll(PDO::FETCH_OBJ);
-    }catch(PDOException $ex){
+    } catch(PDOException $ex){
         echo $ex->getMessage();
         exit();
     }
+
     return $row;
 }
 
@@ -165,9 +165,9 @@ $pdf->TableTitle([
 ],'BLR');
 
 //test
-    $start = microtime(true);
+    //$start = microtime(true);
 //
-foreach($expenses as $expense){
+foreach($expenses as $expense) {
     $count_first = 0;
     $count_second = 0;
     $alphabet = range('A', 'Z');
@@ -360,10 +360,10 @@ foreach($expenses as $expense){
 
         //test
         //$items = queryItem("call main_tranche('$expense->id','$tranche')");
-//        $end = microtime(true);
-//        $execution = ($end - $start);
-//
-//        echo "It takes" .$execution. "time";
+        /*$end = microtime(true);
+        $execution = ($end - $start);
+
+        echo "It takes" .$execution. "time";*/
         //test
 
 $pdf->Ln(3);
