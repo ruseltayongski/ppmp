@@ -317,7 +317,6 @@ class PDF_MC_Table extends FPDF
         ]);
     }
 
-
     function CheckPageBreak($h)
     {
         //If the height h would cause an overflow, add a new page immediately

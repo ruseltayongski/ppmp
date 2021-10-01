@@ -85,6 +85,10 @@
         #myBtn:hover {
             background-color: #555;
         }
+
+        .modal-body{
+            overflow: auto;
+        }
     </style>
 </head>
     <body>

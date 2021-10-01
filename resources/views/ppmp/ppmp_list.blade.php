@@ -457,46 +457,6 @@
                             ?>
                         </table>
                     </div>
-                    @else
-                        <div class="box-body">
-                            <div class="row">
-                                <?php
-                                    $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
-                                ?>
-                                @foreach(\App\Expense::get() as $expense)
-                                <div class="col-md-3 col-sm-6 col-xs-12">
-                                    <div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
-                                        <span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">
-                                                <?php
-                                                    $temp = $expense->description;
-                                                    $count = 0;
-                                                    $string = "";
-                                                    for($i=0;$i<$expense_length;$i++){
-                                                        if(!isset($temp[$i])){
-                                                            $temp .= ".";
-                                                        }
-                                                        if($count != 23){
-                                                            $count++;
-                                                            $string .= $temp[$i];
-                                                        } else {
-                                                            $count = 0;
-                                                            $string .= "<br>";
-                                                        }
-                                                    }
-                                                    echo $string;
-                                                ?>
-                                            </span>
-                                            <span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id')")) }}</span>
-                                        </div>
-                                        <!-- /.info-box-content -->
-                                    </div>
-                                    <!-- /.info-box -->
-                                </div>
-                                @endforeach
-                            </div>
-                        </div>
                     @endif
                 </div>
                 <!-- /.box -->
@@ -523,6 +483,7 @@
                         <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Section
                         </a>
+
                         -->
                         <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
                         @foreach($section as $sec)

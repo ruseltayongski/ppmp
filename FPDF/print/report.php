@@ -1,5 +1,7 @@
 <?php
 date_default_timezone_set('Asia/Manila');
+
+
 function conn()
 {
     $server = 'localhost';
@@ -162,6 +164,9 @@ $pdf->TableTitle([
     "Dec", //19
 ],'BLR');
 
+//test
+    $start = microtime(true);
+//
 foreach($expenses as $expense){
     $count_first = 0;
     $count_second = 0;
@@ -197,7 +202,37 @@ foreach($expenses as $expense){
 
 
                 if(count($items) > 0)
-                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+                    $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+
+                //test
+//                $title_header_expense="hello";
+//                $title_header_first="world";
+//                $title_header_second="test";
+//                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+//
+//                $generate_level="region";
+//                $division_id ="4";
+//                $section_id="82";
+//
+//                if($division_id == "4"){
+//
+//                        $items = queryItem("CALL main_tranche('1','11-A-1')");
+//
+//                        foreach ($items as $item)
+//                            $pdf->displayItem($item,$generate_level,$division_id,$section_id);
+//                }elseif($division_id == "6"){
+//
+//                    $items = queryItem("CALL main_tranche('1','11-A-2')");
+//
+//                    foreach ($items as $item)
+//                        $pdf->displayItem($item,$generate_level,$division_id,$section_id);
+//                }
+//                    $items = queryItem("CALL main_tranche('1','11-A-3')");
+//
+//                    foreach ($items as $item)
+//                    $pdf->displayItem($item,$generate_level,$division_id,$section_id);
+                //test
+
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -223,7 +258,10 @@ foreach($expenses as $expense){
                 $title_header_expense1 .= "\t\t\t\t\t\t\t".$display_first;
                 $tranche = $expense->id."-".$alphabet[$count_first];
 
+
                 $expense_total = 0;
+
+                //$items = $pdf->query($tranche,$expense);
 
                 $items = queryItem("call main_tranche('$expense->id','$tranche')");
 
@@ -271,8 +309,9 @@ foreach($expenses as $expense){
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
+       // $items = $pdf->query($tranche,$expense);
         $items = queryItem("call normal_tranche_region('$expense->id')");
-//
+
 //      if(count($items)>0)
 
         if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
@@ -317,13 +356,15 @@ foreach($expenses as $expense){
         $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
     }
 }
-//        foreach ($expenses as $expense)
-//        $start = microtime(true);
-//        $items = queryItem("call normal_tranche_region('$expense->id')");
+
+
+        //test
+        //$items = queryItem("call main_tranche('$expense->id','$tranche')");
 //        $end = microtime(true);
 //        $execution = ($end - $start);
 //
 //        echo "It takes" .$execution. "time";
+        //test
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);

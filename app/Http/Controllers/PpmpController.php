@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\CreatedLogs;
 
+
 class PpmpController extends Controller
 {
     public function index(){
@@ -43,10 +44,6 @@ class PpmpController extends Controller
         ]);
     }
 
-    public function realignment(){
-        $expenses = Expense::get();
-
-    }
 
     public function ppmpList($expense_id = null,Request $request){
         $keyword = "";
@@ -345,5 +342,4 @@ class PpmpController extends Controller
 
         return "Successfully Updated!";
     }
-
 }

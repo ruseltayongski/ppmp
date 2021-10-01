@@ -72,9 +72,12 @@ Route::post('pap/edit_save','PapController@PapEditSave');
 
 //
 Route::get('migrating/item','PpmpController@migratingItem');
-
+Route::get('FPDF/print/report','PpmpController@query');
 Route::get('division/check','PpmpController@divisionCheck');
 
 //realignment
-Route::get('user/realignment','RealignmentController@index');
+//Route::get('user/realignment','RealignmentController@index');
+//Route::patch('user/realignment','RealignmentController@realignment')->name('realignment');
+//Route::get('user/realignment_view','RealignmentController@viewRealignment');
+
 

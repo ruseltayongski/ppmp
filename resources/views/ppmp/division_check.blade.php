@@ -33,6 +33,9 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>";
         }
 
@@ -72,14 +75,19 @@
 
         }
 
-        function
-        displayItem($item,$expense_title,$encoded_by,$section){
+        function displayItem($item,$expense_title,$encoded_by,$section,$status){
             $user = Auth::user();
 //            $sec = \App\Section::all();
 //            $section_id = $sec->pluck('id');
             setItem($item,$user->section);
 
+            $encoded = \App\PisUser::select(DB::raw('CONCAT(fname, " ", lname) AS full_name'))
+                ->where('userid', $encoded_by)
+                ->pluck('full_name')
+                ->first();
 
+
+            if(empty($encoded_by)){
                 $data = "<tr>
                         <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
                         <td>$item->unit_measurement</td>
@@ -101,12 +109,59 @@
                         <td>$item->dece</td>
                         <td>$item->id</td>
                         <td>$section</td>
-                        <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$encoded_by'>$encoded_by</span></td>
-
+                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$status'>$status</span></td>
+                    <tr>";
+            }elseif($encoded)
+                $data = "<tr>
+                        <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
+                        <td>$item->unit_measurement</td>
+                        <td>$item->qty</td>
+                        <td>$item->unit_cost</td>
+                        <td>$item->estimated_budget</td>
+                        <td>$item->mode_procurement</td>
+                        <td>$item->jan</td>
+                        <td>$item->feb</td>
+                        <td>$item->mar</td>
+                        <td>$item->apr</td>
+                        <td>$item->may</td>
+                        <td>$item->jun</td>
+                        <td>$item->jul</td>
+                        <td>$item->aug</td>
+                        <td>$item->sep</td>
+                        <td>$item->oct</td>
+                        <td>$item->nov</td>
+                        <td>$item->dece</td>
+                        <td>$item->id</td>
+                        <td>$section</td>
+                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$encoded_by'>$encoded</span></td>
                     </tr>";
-
-               if($item->qty > 0)
+            else
+                $data = "<tr>
+                        <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
+                        <td>$item->unit_measurement</td>
+                        <td>$item->qty</td>
+                        <td>$item->unit_cost</td>
+                        <td>$item->estimated_budget</td>
+                        <td>$item->mode_procurement</td>
+                        <td>$item->jan</td>
+                        <td>$item->feb</td>
+                        <td>$item->mar</td>
+                        <td>$item->apr</td>
+                        <td>$item->may</td>
+                        <td>$item->jun</td>
+                        <td>$item->jul</td>
+                        <td>$item->aug</td>
+                        <td>$item->sep</td>
+                        <td>$item->oct</td>
+                        <td>$item->nov</td>
+                        <td>$item->dece</td>
+                        <td>$item->id</td>
+                        <td>$section</td>
+                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$encoded_by'>$encoded_by</span></td>
+                    </tr>";
+                if($item->qty >= 0 && $item->unit_cost != 0)
                 return $data;
+
         }
 
 
@@ -148,7 +203,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="box-body">
-                    <table class="table table-striped" style="font-size: 7pt;">
+                    <table class="table table-striped dataTable dtr-inline" role="grid" aria-describedby="example1_info" style="font-size: 8pt;">
                         {{--@if($division_id == "4")--}}
 
 
@@ -216,7 +271,9 @@
                                             //$item_collection[] = displayItem($item,$title_header_second);
                                             $section= $item->section;
                                             $encoded_by=$item->userid;
-                                            echo displayItem($item,$title_header_second,$encoded_by,$section);
+
+                                            $status = $item->status;
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += (int)$estimated_budget;
                                         }
@@ -259,7 +316,9 @@
                                             //$item_collection[] = displayItem($item,$title_header_second);
                                             //$section = $item->section_id;
                                             $encoded_by=$item->userid;
-                                            echo displayItem($item,$title_header_second,$encoded_by,$section);
+                                            $status = $item->status;
+
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += $estimated_budget;
 
@@ -286,9 +345,11 @@
                                 foreach($items as $item){
                                     $section= $item->section_id;
                                     $encoded_by = $item->encoded_by;
-                                    echo displayItem($item,$expense->description,$encoded_by,$section);
+                                    if(empty($encoded_by))
+                                        $encoded_by = $item->userid;
+                                    echo displayItem($item,$expense->description,$encoded_by,$section,$status);
                                 }
-//
+
                             ?>
                         @endif
                         @endforeach
