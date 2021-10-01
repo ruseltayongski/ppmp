@@ -502,7 +502,7 @@
             <div class="container">
                 <div class="col-md-6">
                     @if(isset($expenses) && count($expenses) > 0)
-                        <button class="btn btn-app" onclick="itemChecker()" type="submit">
+                        <button class="btn btn-app" id="ppmp_saved" onclick="itemChecker()" type="submit">
                             <i class="fa fa-save"></i> Save
                         </button>
                     @endif
@@ -574,6 +574,7 @@
             var item_fixed_checker = false;
             var item_expense_check = false;
 
+
             var result_display = "<div class=''> THIS ITEM: </div>";
             $(".item_submit :input.item-check").each(function(){
                 console.log(input);
@@ -584,6 +585,7 @@
                     item_fixed_checker = true;
                 }
             });
+
             if(item_fixed_checker && expense_id != 1){
                 console.log("item_fixed_checker");
                 result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
@@ -593,6 +595,7 @@
                         msg: result_display
                     });
                 event.preventDefault();
+                $("#ppmp_saved").attr("disabled", false);
             }
 
             for (var i = 0; i < item_array.length - 1; i++) {
@@ -601,7 +604,8 @@
                     result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
                 }
             }
-            if(item_expense_check){
+
+            if(item_expense_check) {
                 console.log("item_expense_checker");
                 result_display += "<div class=''> already existed on this EXPENSE</div>";
                 Lobibox.alert('error',
@@ -610,6 +614,7 @@
                     msg: result_display
                 });
                 event.preventDefault();
+                $("#ppmp_saved").attr("disabled", false);
             }
 
 
@@ -638,8 +643,6 @@
                 });
                 event.preventDefault();
             }*/
-
-
         }
 
         function filterItems(){
