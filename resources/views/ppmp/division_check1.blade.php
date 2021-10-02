@@ -4,10 +4,8 @@
     <title>PPMP|CHECK</title>
 
     <?php
-
     $section_id = Auth::user()->section;
     $division_id = Auth::user()->division;
-
 
     function displayHeader($title){
         return "<tr class='text-green'>
@@ -33,14 +31,17 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>";
     }
 
     function setItem($item,$division_id){
         if( $item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
-//                    ->where("expense_id",$item->expense_id)
-//                    ->where("tranche",$item->tranche)
+                ->where("expense_id",$item->expense_id)
+                ->where("tranche",$item->tranche)
                 ->where("division_id",$division_id)
                 ->orderBy("id","desc")
                 ->first();
@@ -59,7 +60,7 @@
                 $item->oct = $item_daily->oct;
                 $item->nov = $item_daily->nov;
                 $item->dece = $item_daily->dece;
-//                  $item->section = $item_daily->section_id;
+                $item->section = $item_daily->section_id;
             }
         }
 
@@ -72,95 +73,35 @@
 
     }
 
-    function displayItem($item,$expense_title,$encoded_by,$section,$status){
+    function displayItem($item,$expense_title,$encoded_by,$section,$status,$division_id){
         $user = Auth::user();
-//            $sec = \App\Section::all();
-//            $section_id = $sec->pluck('id');
         setItem($item,$user->section);
-
-        $encoded = \App\PisUser::select(DB::raw('CONCAT(fname, " ", lname) AS full_name'))
-            ->where('userid', $encoded_by)
-            ->pluck('full_name')
-            ->first();
-
-
-        if(empty($encoded_by)){
-            $data = "<tr>
+        $data = "<tr>
                         <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
                         <td>$item->unit_measurement</td>
                         <td>$item->qty</td>
                         <td>$item->unit_cost</td>
                         <td>$item->estimated_budget</td>
                         <td>$item->mode_procurement</td>
-                        <td>$item->jan</td>
-                        <td>$item->feb</td>
-                        <td>$item->mar</td>
-                        <td>$item->apr</td>
-                        <td>$item->may</td>
-                        <td>$item->jun</td>
-                        <td>$item->jul</td>
-                        <td>$item->aug</td>
-                        <td>$item->sep</td>
-                        <td>$item->oct</td>
-                        <td>$item->nov</td>
-                        <td>$item->dece</td>
-                        <td>$item->id</td>
-                        <td>$section</td>
-                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$status'>$status</span></td>
-                    <tr>";
-        }elseif($encoded)
-            $data = "<tr>
-                        <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
-                        <td>$item->unit_measurement</td>
-                        <td>$item->qty</td>
-                        <td>$item->unit_cost</td>
-                        <td>$item->estimated_budget</td>
-                        <td>$item->mode_procurement</td>
-                        <td>$item->jan</td>
-                        <td>$item->feb</td>
-                        <td>$item->mar</td>
-                        <td>$item->apr</td>
-                        <td>$item->may</td>
-                        <td>$item->jun</td>
-                        <td>$item->jul</td>
-                        <td>$item->aug</td>
-                        <td>$item->sep</td>
-                        <td>$item->oct</td>
-                        <td>$item->nov</td>
-                        <td>$item->dece</td>
-                        <td>$item->id</td>
-                        <td>$section</td>
-                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$encoded_by'>$encoded</span></td>
-                    </tr>";
-        else
-            $data = "<tr>
-                        <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
-                        <td>$item->unit_measurement</td>
-                        <td>$item->qty</td>
-                        <td>$item->unit_cost</td>
-                        <td>$item->estimated_budget</td>
-                        <td>$item->mode_procurement</td>
-                        <td>$item->jan</td>
-                        <td>$item->feb</td>
-                        <td>$item->mar</td>
-                        <td>$item->apr</td>
-                        <td>$item->may</td>
-                        <td>$item->jun</td>
-                        <td>$item->jul</td>
-                        <td>$item->aug</td>
-                        <td>$item->sep</td>
-                        <td>$item->oct</td>
-                        <td>$item->nov</td>
-                        <td>$item->dece</td>
-                        <td>$item->id</td>
-                        <td>$section</td>
-                        <td><span data-toggle='tooltip' title='haha' class= 'badge bg-green' data-original-title='$encoded_by'>$encoded_by</span></td>
-                    </tr>";
-        if($item->qty >= 0 && $item->unit_cost != 0)
-            return $data;
+                    ";
 
+        foreach(Session::get("sections") as $section){
+            $section_report = \DB::connection('mysql')->select("call get_body_section('$item->id','$section->id')");
+            if($section_report[0]->userid) {
+                $encoded_by = \App\DtsUser::where("username",$section_report[0]->userid)->first();
+                $encoded_by = $encoded_by->lname;
+            }
+            else {
+                $encoded_by = "NO NAME";
+            }
+            $qty = $section_report[0]->qty;
+
+            $data .= "<td>".$qty."<br>"."<small style='font-size: 7pt;' class='text-green'>$encoded_by</small>"."</td>";
+        }
+
+        $data .= "</tr>";
+        return $data;
     }
-
 
     function expenseTotal($total){
         return "<tr>
@@ -172,7 +113,6 @@
                     <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
                 </tr>";
     }
-
 
 
     //        function addItem($expense_title,$expense,$tranche,$expense_description){
@@ -199,33 +139,19 @@
     <div class="box box-primary">
         <div class="row">
             <div class="col-md-12">
-                <div class="box-body">
-                    <table class="table table-striped" style="font-size: 7pt;">
-                        {{--@if($division_id == "4")--}}
-
-
+                <div class="box-body table-responsive">
+                    <table class="table table-striped" role="grid" aria-describedby="example1_info" style="font-size: 8pt;">
                         <tr>
-
                             <th>Item Description/General Specification</th>
                             <th>Unit<br>Issue</th>
                             <th>QTY</th>
                             <th>Unit Cost</th>
                             <th width="5%">Estimated Budget</th>
                             <th width="5%">Mode Procurement</th>
-                            <th>January</th>
-                            <th>February</th>
-                            <th>March</th>
-                            <th>April</th>
-                            <th>May</th>
-                            <th>June</th>
-                            <th>July</th>
-                            <th>August</th>
-                            <th>September</th>
-                            <th>October</th>
-                            <th>November</th>
-                            <th>December</th>
+                            @foreach($sections as $section)
+                                <th>{{ $section->description }}</th>
+                            @endforeach
                         </tr>
-
 
                         @foreach($expenses as $expense)
                             <?php
@@ -270,7 +196,7 @@
                                             $encoded_by=$item->userid;
 
                                             $status = $item->status;
-                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status);
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status,$division_id);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += (int)$estimated_budget;
                                         }
@@ -315,7 +241,7 @@
                                             $encoded_by=$item->userid;
                                             $status = $item->status;
 
-                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status);
+                                            echo displayItem($item,$title_header_second,$encoded_by,$section,$status,$division_id);
                                             $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                             $sub_total += $estimated_budget;
 
@@ -344,7 +270,7 @@
                                     $encoded_by = $item->encoded_by;
                                     if(empty($encoded_by))
                                         $encoded_by = $item->userid;
-                                    echo displayItem($item,$expense->description,$encoded_by,$section,$status);
+                                    echo displayItem($item,$expense->description,$encoded_by,$section,$status,$division_id);
                                 }
 
                                 ?>

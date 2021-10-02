@@ -34,6 +34,8 @@
     <link rel="stylesheet" href="{{ asset('public/adminLTE/plugins/iCheck/all.css') }}">
     <!-- Google Font -->
     <link rel="stylesheet" href="{{ asset('public/adminLTE/google.css') }}">
+    <!-- Fixed Header -->
+    <link href="{{ asset('public/plugin/table-fixed-header/table-fixed-header.css') }}" rel="stylesheet">
 
 
     @yield('css')
@@ -141,7 +143,7 @@
         </div>
         @include('layouts.navbar-nav')
     </nav>
-    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home','division/check'), true) ? 'container-fluid' : 'container' }}">
+    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home','division/check','division/check1'), true) ? 'container-fluid' : 'container' }}">
         <div class="loading"></div>
         @include('modal')
         @yield('content')
@@ -155,7 +157,7 @@
         <footer id="footer">
             <div class="container">
                 <b>Version</b> 2.0
-                <strong>Copyright &copy; 2019 <a href="http://www.ro7.doh.gov.ph/">DOH-RO7</a>.</strong> All rights
+                <strong>Copyright &copy; {{ date('Y') }} <a href="http://www.ro7.doh.gov.ph/">DOH-RO7</a>.</strong> All rights
                 reserved.
             </div>
         </footer>
@@ -233,7 +235,8 @@
     <script src="{{ asset('public/adminLTE/plugins/iCheck/icheck.min.js') }}"></script>
     <!-- Select2 -->
     <script src="{{ asset('public/adminLTE/bower_components/select2/dist/js/select2.full.min.js') }}"></script>
-
+    <!-- TABLE-HEADER-FIXED -->
+    <script src="{{ asset('public/plugin/table-fixed-header/table-fixed-header.js') }}"></script>
 
 
     @section('js')

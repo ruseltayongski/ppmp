@@ -320,9 +320,7 @@ foreach($expenses as $expense) {
             $pdf->displayExpense($expense->description);
 
 
-
-        foreach($items as $item){
-
+        foreach($items as $item) {
             if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
                 $pdf->SetFont('Arial','',7);
                 $item->description = $expense->description;
@@ -336,11 +334,12 @@ foreach($expenses as $expense) {
                 $expense_total += $item->estimated_budget;
             }
         }
-        $pdf->SetFont('Arial','B',7);
 
+        $pdf->SetFont('Arial','B',7);
         $sub_total = 0;
         $qty = 0;
-        if(isset($pdf->sub_total[$expense->id])){
+
+        if(isset($pdf->sub_total[$expense->id])) {
             $sub_total = number_format((float)$pdf->sub_total[$expense->id], 2, '.', ',');
 
             if($division_id == 4)
@@ -351,20 +350,18 @@ foreach($expenses as $expense) {
             else{
                 $difference = 0;
             }
-
         }
         $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
     }
 }
 
+//test
+//$items = queryItem("call main_tranche('$expense->id','$tranche')");
+/*$end = microtime(true);
+$execution = ($end - $start);
 
-        //test
-        //$items = queryItem("call main_tranche('$expense->id','$tranche')");
-        /*$end = microtime(true);
-        $execution = ($end - $start);
-
-        echo "It takes" .$execution. "time";*/
-        //test
+echo "It takes" .$execution. "time";*/
+//test
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);

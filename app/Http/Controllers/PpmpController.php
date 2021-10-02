@@ -37,13 +37,13 @@ class PpmpController extends Controller
         $division_id = Auth::user()->division;
 
         $sections = Section::where('division',"=",$division_id)->get();
+        Session::put("sections",$sections);
 
         return view('ppmp.division_check',[
             "expenses" => $expenses,
             "sections" => $sections
         ]);
     }
-
 
     public function ppmpList($expense_id = null,Request $request){
         $keyword = "";

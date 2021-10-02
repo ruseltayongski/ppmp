@@ -300,7 +300,8 @@
         </tr>";
     }
     ?>
-    <form action="{{ asset('ppmp/list/search') }}" method="POST" class="item_submit" onsubmit="itemChecker()">
+
+    <form action="{{ asset('ppmp/list/search') }}" method="POST" class="item_submit">
         {{ csrf_field() }}
         <input type="hidden" class="item_save" name="item_save">
         <div class="row" style="margin-bottom: 60px;">
@@ -502,7 +503,7 @@
             <div class="container">
                 <div class="col-md-6">
                     @if(isset($expenses) && count($expenses) > 0)
-                        <button class="btn btn-app" id="ppmp_saved" onclick="itemChecker()" type="submit">
+                        <button class="btn btn-app" id="ppmp_saved" type="submit">
                             <i class="fa fa-save"></i> Save
                         </button>
                     @endif
@@ -565,85 +566,94 @@
         });
 
 
-        function itemChecker(){
-            var expense_id = "<?php echo $expense_id; ?>";
-            $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);
-            $(".item_save").val(true);
 
-            var item_array = [];
-            var item_fixed_checker = false;
-            var item_expense_check = false;
+        $(document).ready(function () {
+            $(".item_submit").submit(function () {
+                $("#ppmp_saved").attr("disabled", true);
 
 
-            var result_display = "<div class=''> THIS ITEM: </div>";
-            $(".item_submit :input.item-check").each(function(){
-                console.log(input);
-                var input = $(this).val();
-                item_array.push(input);
-                if(item_fixed.includes(input)){
-                    result_display += "<li style='margin-left: 20px;'>"+input+"</li>";
-                    item_fixed_checker = true;
+                var expense_id = "<?php echo $expense_id; ?>";
+                $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);
+                $(".item_save").val(true);
+
+                var item_array = [];
+                var item_fixed_checker = false;
+                var item_expense_check = false;
+
+                $("#ppmp_saved").attr("disabled", true);
+
+                var result_display = "<div class=''> THIS ITEM: </div>";
+                $(".item_submit :input.item-check").each(function() {
+                    console.log(input);
+                    var input = $(this).val();
+                    item_array.push(input);
+                    if(item_fixed.includes(input)){
+                        result_display += "<li style='margin-left: 20px;'>"+input+"</li>";
+                        item_fixed_checker = true;
+                    }
+                });
+
+                if(item_fixed_checker && expense_id != 1){ //first error trapping
+                    console.log("item_fixed_checker");
+                    result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
+                    Lobibox.alert('error',
+                        {
+                            title: "ERROR",
+                            msg: result_display
+                        });
+                    event.preventDefault();
+                    $("#ppmp_saved").attr("disabled", false);
                 }
-            });
 
-            if(item_fixed_checker && expense_id != 1){
-                console.log("item_fixed_checker");
-                result_display += "<div class=''> cannot be saved here, Please go to OFFICE SUPPLIES A OR B</div>";
-                Lobibox.alert('error',
+                for (var i = 0; i < item_array.length - 1; i++) {
+                    if (item_array[i + 1] == item_array[i]) {
+                        item_expense_check = true;
+                        result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
+                    }
+                }
+
+                if(item_expense_check) { //2nd error trapping
+                    console.log("item_expense_checker");
+                    result_display += "<div class=''> already existed on this EXPENSE</div>";
+                    Lobibox.alert('error',
+                        {
+                            title: "ERROR",
+                            msg: result_display
+                        });
+                    event.preventDefault();
+                    $("#ppmp_saved").attr("disabled", false);
+                }
+
+                return true;
+
+                /*var merge_item = item_description.concat(item_array);
+
+                var sorted_arr = merge_item.slice().sort();
+                console.log(sorted_arr);
+                var results = [];
+                var result_display = "Duplicate List:<ul>";
+                for (var i = 0; i < sorted_arr.length - 1; i++) {
+                    if (sorted_arr[i + 1] == sorted_arr[i]) {
+                        results.push(sorted_arr[i]);
+                        result_display += "<li style='margin-left: 20px;'>"+sorted_arr[i]+"</li>";
+                    }
+                }
+
+                result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
+                if (results === undefined || results.length == 0) {
+                    //success
+                }
+                else {
+                    Lobibox.alert('error',
                     {
-                        title: "ERROR",
+                        title: "Checker",
                         msg: result_display
                     });
-                event.preventDefault();
-                $("#ppmp_saved").attr("disabled", false);
-            }
+                    event.preventDefault();
+                }*/
 
-            for (var i = 0; i < item_array.length - 1; i++) {
-                if (item_array[i + 1] == item_array[i]) {
-                    item_expense_check = true;
-                    result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
-                }
-            }
-
-            if(item_expense_check) {
-                console.log("item_expense_checker");
-                result_display += "<div class=''> already existed on this EXPENSE</div>";
-                Lobibox.alert('error',
-                {
-                    title: "ERROR",
-                    msg: result_display
-                });
-                event.preventDefault();
-                $("#ppmp_saved").attr("disabled", false);
-            }
-
-
-            /*var merge_item = item_description.concat(item_array);
-
-            var sorted_arr = merge_item.slice().sort();
-            console.log(sorted_arr);
-            var results = [];
-            var result_display = "Duplicate List:<ul>";
-            for (var i = 0; i < sorted_arr.length - 1; i++) {
-                if (sorted_arr[i + 1] == sorted_arr[i]) {
-                    results.push(sorted_arr[i]);
-                    result_display += "<li style='margin-left: 20px;'>"+sorted_arr[i]+"</li>";
-                }
-            }
-
-            result_display += "</ul><div class='alert-danger'> <i class='fa fa-info' style='margin-left:5px;'></i> Please remove the duplicate item..</div>";
-            if (results === undefined || results.length == 0) {
-                //success
-            }
-            else {
-                Lobibox.alert('error',
-                {
-                    title: "Checker",
-                    msg: result_display
-                });
-                event.preventDefault();
-            }*/
-        }
+            });
+        });
 
         function filterItems(){
             var select_val = $("#filter_item").select2("val");

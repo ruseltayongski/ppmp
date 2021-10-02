@@ -63,6 +63,9 @@
         <ul class="nav navbar-nav">
             <li><a href="{{ asset('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
+            <!--
+            <li><a href="{{ asset('division/check1') }}"><i class="fa fa-dashboard"></i> LHSD CHECK</a></li>
+            -->
             @if(Auth::user()->division == "6")
             <li><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
             @endif
