@@ -30,9 +30,9 @@ Route::post('user/division/update','MaintenanceController@updateDivisionPost');
 Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
-
 //ppmp
 Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList');
+Route::post('ppmp/set_program','PpmpController@setProgram');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
 Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
@@ -77,8 +77,8 @@ Route::get('division/check','PpmpController@divisionCheck');
 Route::get('division/check1','PpmpController@divisionCheck');
 
 //realignment
-//Route::get('user/realignment','RealignmentController@index');
-//Route::patch('user/realignment','RealignmentController@realignment')->name('realignment');
-//Route::get('user/realignment_view','RealignmentController@viewRealignment');
+Route::get('user/realignment','RealignmentController@index')->name('test');
+Route::patch('user/realignment','RealignmentController@realignment')->name('realignment');
+Route::get('user/realignment_view','RealignmentController@viewRealignment');
 
 

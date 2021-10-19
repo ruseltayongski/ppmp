@@ -6,6 +6,7 @@ use App\DtsUser;
 use App\Item;
 use App\ItemDaily;
 use App\PisUser;
+use App\Program;
 use App\Qty;
 use App\Section;
 use App\User;
@@ -25,14 +26,19 @@ use App\CreatedLogs;
 
 class PpmpController extends Controller
 {
-    public function index(){
+    public function index() {
         $expenses = Expense::get();
-        return view("ppmp.dashboard",[
-            "expenses" => $expenses
+        $section = Auth::user()->section;
+
+        $programs = Program::where('section_id','=',$section)->get();
+
+        return view('ppmp.dashboard',[
+            "expenses" => $expenses,
+            "programs" => $programs
         ]);
     }
 
-    public function divisionCheck(){
+    public function divisionCheck() {
         $expenses = Expense::get();
         $division_id = Auth::user()->division;
 
@@ -45,7 +51,22 @@ class PpmpController extends Controller
         ]);
     }
 
-    public function ppmpList($expense_id = null,Request $request){
+    public function setProgram(Request $request) {
+        $id = $request->programs;
+
+        if(!empty($id)){
+            $programs = Program::find($id)->pluck('id');
+            return $programs->toArray();
+        }
+    }
+
+    public function ppmpList($expense_id = null,Request $request) {
+
+        $id = $this->setProgram($request);
+
+        $programs = Program::wherein('id', $id)->get();
+
+        if(empty($id))
         $keyword = "";
         $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post') || isset($request->item_id[0]) ){
@@ -101,7 +122,8 @@ class PpmpController extends Controller
             "head" => $head,
             "item_search" => $keyword,
             "expense_id" => $expense_id,
-            "request" => $request
+            "request" => $request,
+            "programs" => $programs
         ]);
     }
 

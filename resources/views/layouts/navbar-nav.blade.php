@@ -69,13 +69,13 @@
             @if(Auth::user()->division == "6")
             <li><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
             @endif
-            {{--<li class="dropdown">--}}
-                {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> REALIGNMENT</a>--}}
-                {{--<ul class="dropdown-menu">--}}
-            {{--<li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>--}}
-            {{--<li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>--}}
-                {{--</ul>--}}
-            {{--</li>--}}
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> REALIGNMENT</a>
+                <ul class="dropdown-menu">
+            <li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>
+            <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
+                </ul>
+            </li>
 
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>

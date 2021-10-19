@@ -322,6 +322,8 @@
                     <?php
                         $section_id = Auth::user()->section;
                         $division_id = Auth::user()->division;
+                        $yearly_reference = Session::get('yearly_reference');
+                        $ppmp_status = Session::get('ppmp_status');
                     ?>
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
@@ -348,6 +350,7 @@
                                 <th></th>
                             </tr>
                             <?php
+
                             foreach($expenses as $expense)
                             {
                                 $count_first = 0;
@@ -408,7 +411,7 @@
                                             $tranche = $expense->id."-".$alphabet[$count_first];
                                             echo displayHeader($title_header_expense.$title_header_first);
                                             if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
-                                                $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id')");
+                                                $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference')");
                                             }
                                             else{
                                                 $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
@@ -436,7 +439,7 @@
                                     $expense_total = 0;
                                     echo displayHeader($expense->description); //display expense if no value from first
 
-                                    $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id')");
+                                    $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')");
 
                                     echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
                                     $item_collection = [];
@@ -455,6 +458,11 @@
                                     }
                                 } // end normal expense
                             }
+                            if(isset($programs)){
+                                foreach($programs as $program){
+                                    echo $program->description;
+                                }}
+                            else "ok";
                             ?>
                         </table>
                     </div>

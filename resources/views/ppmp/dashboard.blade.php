@@ -67,12 +67,194 @@
             margin-left: 2%;
         }
 
+        :root {
+            --card-line-height: 1.2em;
+            --card-padding: 2em;
+            --card-radius: 0.5em;
+            --color-green: #558309;
+            --color-gray: #e2ebf6;
+            --color-dark-gray: #c4d1e1;
+            --radio-border-width: 2px;
+            --radio-size: 1.4em;
+        }
+
+        body {
+            background-color: #f2f8ff;
+            color: #263238;
+            font-family: 'Noto Sans', sans-serif;
+            margin: 0;
+            /*padding: 2em 6vw;*/
+        }
+
+        .grid {
+            display: grid;
+            grid-gap: var(--card-padding);
+            margin: 0 auto;
+            max-width: 60em;
+            padding: 0;
+
+        @media (min-width: 42em) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        }
+
+        .card {
+            background-color: #fff;
+            border-radius: var(--card-radius);
+            position: relative;
+            padding-top: 1em;
+        }
+        /*.card:hover {*/
+            /*box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);*/
+        /*}*/
+
+        .radio {
+            font-size: inherit;
+            margin: 0;
+            position: absolute;
+            right: calc(var(--card-padding) + var(--radio-border-width));
+            top: calc(var(--card-padding) + var(--radio-border-width));
+        }
+
+        @supports(-webkit-appearance: none) or (-moz-appearance: none) {
+            .radio {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                background: #fff;
+                border: var(--radio-border-width) solid var(--color-gray);
+                border-radius: 50%;
+                cursor: pointer;
+                height: var(--radio-size);
+                outline: none;
+                transition: background 0.2s ease-out,
+                border-color 0.2s ease-out;
+                width: var(--radio-size);
+            }
+            .radio:after {
+                border: var(--radio-border-width) solid #fff;
+                border-top: 0;
+                border-left: 0;
+                content: '';
+                display: block;
+                height: 0.75rem;
+                left: 25%;
+                position: absolute;
+                top: 50%;
+                transform:
+                        rotate(45deg)
+                        translate(-50%, -50%);
+                width: 0.375rem;
+            }
+
+            .radio:checked {
+                background: var(--color-green);
+                border-color: var(--color-green);
+            }
+        }
+
+        .card:hover .radio {
+            border-color: var(--color-dark-gray);
+        }
+
+        .card:checked {
+            border-color: var(--color-green);
+        }
+
+
+
+        .plan-details {
+            border: var(--radio-border-width) solid var(--color-gray);
+            border-radius: var(--card-radius);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            padding: 0.8em;
+            transition: border-color 0.2s ease-out;
+        }
+
+        .card:hover .plan-details {
+            border-color: var(--color-dark-gray);
+        }
+
+        .radio:checked ~ .plan-details {
+            border-color: var(--color-green);
+        }
+
+        .radio:focus ~ .plan-details {
+            box-shadow: 0 0 0 2px var(--color-dark-gray);
+        }
+
+        .radio:disabled ~ .plan-details {
+            color: var(--color-dark-gray);
+            cursor: default;
+        }
+
+        .radio:disabled ~ .plan-details .plan-type {
+            color: var(--color-dark-gray);
+        }
+
+        .card:hover .radio:disabled ~ .plan-details {
+            border-color: var(--color-gray);
+            box-shadow: none;
+        }
+
+        .card:hover .radio:disabled {
+            border-color: var(--color-gray);
+        }
+
+        .plan-type {
+            color: var(--color-green);
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1em;
+        }
+
+        /*.plan-cost {*/
+            /*font-size: 2.5rem;*/
+            /*font-weight: bold;*/
+            /*padding: 0.5rem 0;*/
+        /*}*/
+
+        /*.slash {*/
+            /*font-weight: normal;*/
+        /*}*/
+
+        /*.plan-cycle {*/
+            /*font-size: 2rem;*/
+            /*font-variant: none;*/
+            /*border-bottom: none;*/
+            /*cursor: inherit;*/
+            /*text-decoration: none;*/
+        /*}*/
+
+        .hidden-visually {
+            border: 0;
+            clip: rect(0, 0, 0, 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            white-space: nowrap;
+            width: 1px;
+        }
+
+        .h4 {
+            font-weight: bold;
+        }
+
+        .modal-body {
+            overflow: auto;
+        }
+
     </style>
     <title>PPMP|DASHBOARD</title>
 
     <?php
     $section_id = Auth::user()->section;
     $division_id = Auth::user()->division;
+    $yearly_reference = Session::get('yearly_reference');
+    $ppmp_status = session::get('ppmp_status');
     ?>
 
     <div class="box box-primary">
@@ -85,33 +267,120 @@
                         ?>
                         @foreach($expenses as $expense)
                             <div class="col-md-3 col-sm-6 col-xs-12">
-                                <div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
-                                    <span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>
-                                    <div class="info-box-content">
-                                                <span class="info-box-text">
+                                {{--//joyx--}}
+                                <div class="info-box">
+                                    <div class="grid" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                        <label class="card">
+                                            <span class="plan-details">
+                                                <span class="plan-type">
+    <!--                                                 -->
+    {{--//                                                $temp = $expense->description;--}}
+    {{--//                                                $count = 0;--}}
+    {{--//                                                //$string = "";--}}
+    {{--//--}}
+    {{--//                                                echo "<div class='h3'>".$temp."</div>";--}}
+
                                                     <?php
                                                     $temp = $expense->description;
                                                     $count = 0;
                                                     $string = "";
                                                     for($i=0;$i<$expense_length;$i++){
-                                                        if(!isset($temp[$i])){
-                                                            $temp .= ".";
-                                                        }
-                                                        if($count != 23){
-                                                            $count++;
-                                                            $string .= $temp[$i];
-                                                        } else {
-                                                            $count = 0;
-                                                            $string .= "<br>";
-                                                        }
+                                                    if(!isset($temp[$i])){
+                                                    $temp .= '.';
+                                                    }
+                                                    if($count != 23){
+                                                    $count++;
+                                                    $string .= $temp[$i];
+                                                    } else {
+                                                    $count = 0;
+                                                    $string .= "";
+                                                    }
                                                     }
                                                     echo $string;
                                                     ?>
                                                 </span>
-                                        <span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id')")) }}</span>
+                                            <span class="h4">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>
+                                                <span class=""> Program </span>
+                                        </span>
+                                        </label>
                                     </div>
-                                    <!-- /.info-box-content -->
+
+                                    <div>
+                                        <a href="" class="btn btn-md btn-info" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
+                                            SET PROGRAM
+                                        </a>
+                                    </div>
+
+                                    {{--Modal for Set Program --}}
+                                    <div class="modal fade" id="Modal{{$expense->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">{{$expense->id}}</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+
+                                                </div>
+                                                <form id="program_form" action='{{ asset("/ppmp/list".'/'.$expense->id) }}' method="post">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                    {{--{{ method_field('PATCH') }}--}}
+                                                    <div class="modal-body">
+                                                        <div class="container">
+                                                                <div class="row">
+                                                                    <div class="col-md-3 col-sm-6 col-xs-12">
+                                                                        Select Program:
+                                                                        {{--<div class="col-md-12">Select Program</div>--}}
+                                                                        <input type="hidden" name="exp" id="exp" value="{{$expense->id}}"/> {{$expense->id}}
+                                                                        <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel"> Select
+                                                                            <option value="" selected disabled> Select a program </option>
+                                                                            @foreach($programs as $a)
+                                                                                <option value="{{ $a->id }}">{{ $a->description }}</option>
+                                                                            @endforeach
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button id="btnsave" type="submit" class="btn btn-primary" name="save">Save changes</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                    </div>
+
                                 </div>
+                                {{--//--}}
+                                {{--<div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>--}}
+                                    {{--<span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>--}}
+                                    {{--<div class="info-box-content">--}}
+                                                {{--<span class="info-box-text">--}}
+                                                    {{--<?php--}}
+                                                    {{--$temp = $expense->description;--}}
+                                                    {{--$count = 0;--}}
+                                                    {{--$string = "";--}}
+                                                    {{--for($i=0;$i<$expense_length;$i++){--}}
+                                                        {{--if(!isset($temp[$i])){--}}
+                                                            {{--$temp .= ".";--}}
+                                                        {{--}--}}
+                                                        {{--if($count != 23){--}}
+                                                            {{--$count++;--}}
+                                                            {{--$string .= $temp[$i];--}}
+                                                        {{--} else {--}}
+                                                            {{--$count = 0;--}}
+                                                            {{--$string .= "<br>";--}}
+                                                        {{--}--}}
+                                                    {{--}--}}
+                                                    {{--echo $string;--}}
+                                                    {{--?>--}}
+                                                {{--</span>--}}
+                                        {{--<span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>--}}
+                                    {{--</div>--}}
+                                    <!-- /.info-box-content -->
+                                {{--</div>--}}
                                 <!-- /.info-box -->
                             </div>
                         @endforeach
@@ -123,5 +392,10 @@
 @endsection
 
 @section('js')
-
+    <script>
+        $(document).ready(function() {
+            var id = $('.js-example-basic-multiple').select2();
+            console.log(id);
+        });
+    </script>
 @endsection

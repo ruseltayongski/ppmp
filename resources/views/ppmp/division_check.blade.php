@@ -5,6 +5,7 @@
     <?php
         $section_id = Auth::user()->section;
         $division_id = Auth::user()->division;
+        $yearly_reference = Session::get('yearly_reference');
 
         class SubTotal {
             public $sub_total;
@@ -44,6 +45,7 @@
                 else {
                     $encoded_by = "";
                 }
+
                 $qty = $section_report[0]->qty;
 
                 $item->qty = (int)$item->qty + (int)$qty;
@@ -155,19 +157,13 @@
                                         echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                         $item_collection = [];
                                         $sub_total->resetSubTotal();
-                                        foreach($items as $item){
-                                            //$item_collection[] = displayItem($item,$title_header_second);
+                                        foreach($items as $item) {
                                             $section= $item->section;
                                             $encoded_by=$item->userid;
 
                                             $status = $item->status;
                                             echo displayItem($item,$sub_total);
                                         }
-                                        /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection,$request); //paginate item
-                                        $item_collection->getCollection()->transform(function ($value) {
-                                            echo $value;
-                                        });
-                                        echo paginateItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_second),$item_collection->links());*/
                                         echo "</tbody>";
                                         echo expenseTotal($sub_total->sub_total);
                                     } // end of maine tranche expense
@@ -188,7 +184,7 @@
                                         $tranche = $expense->id."-".$alphabet[$count_first];
                                         echo displayHeader($title_header_expense.$title_header_first);
                                         if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C' or $tranche == '48-D'){
-                                            $items = \DB::connection('mysql')->select("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
+                                            $items = \DB::connection('mysql')->select("call tranche_one_c_division('$expense->id','$tranche','$division_id','$yearly_reference')");
                                         }
                                         else{
                                             $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
@@ -220,7 +216,7 @@
                         @else
                             <?php
                                 echo displayHeader($expense->description); //display expense if no value from first
-                                $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id')");
+                                $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id','$yearly_reference')");
                                 $sub_total->resetSubTotal();
                                 foreach($items as $item){
                                     $section= $item->section_id;
