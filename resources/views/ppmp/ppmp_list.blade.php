@@ -100,11 +100,17 @@
     }
 
     function setItem($item,$section_id){
+
+        $yearly_reference = Session::get('yearly_reference');
+        $ppmp_status = Session::get('ppmp_status');
         if( $item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
+
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
                 ->where("expense_id",$item->expense_id)
                 ->where("tranche",$item->tranche)
                 ->where("section_id",$section_id)
+                ->where("yearly_ref_id",$yearly_reference)
+                ->where('ppmp_status',$ppmp_status)
                 ->orderBy("id","desc")
                 ->first();
             if($item_daily){
@@ -130,10 +136,11 @@
         return $item;
     }
 
-    function displayItem($item,$expense_title){
+    function displayItem($item,$expense_title) {
+
         $user = Auth::user();
         setItem($item,$user->section);
-        if($item->status == 'fixed' && !$user->user_priv){
+        if(($item->status == 'fixed') && $user->section != 45){
             $description = [
                 "readonly" => "readonly"
             ];
@@ -145,7 +152,7 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
-        $user->user_priv ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $user->section == "45" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
         $data = "<tr class='$item->unique_id $item->id'>
@@ -155,6 +162,7 @@
                     <input type='hidden' id='no-border' name='expense_id$item->id' value='$item->expense_id'>
                     <input type='hidden' id='no-border' name='tranche$item->id' value='$item->tranche'>
                     <input type='hidden' id='no-border' name='status$item->id' value='$item->status'>
+                    <input type='hidden' id='no-border' name='program$item->id' value='$item->ppmp_status'>
                     $expense_title_display
                     <td >".
                         "<div class='tooltip_top' style='width: 100%;'>".
@@ -284,7 +292,7 @@
     function addItem($expense_title,$expense,$tranche,$expense_description){
         return "<tr>
             <td colspan='19'>
-                <button type='button' data-id='$expense_title' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
+                <button type='button' data-id='$expense_title'  data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
             </td>
         </tr>";
     }
@@ -350,119 +358,197 @@
                                 <th></th>
                             </tr>
                             <?php
+                                    foreach($expenses as $expense)
+                                    {
+                                        $count_first = 0;
+                                        $count_second = 0;
+                                        $alphabet = range('A', 'Z');
+                                        $expense_code = json_decode($expense->code,true);
+                                        if(isset($expense_code)){
+                                            foreach($expense_code as $display_first => $first){
+                                                foreach($first as $display_second){ //main tranche expense
+                                                    $count_second++;
+                                                    if(isset($flag[$expense->description])){
+                                                        $title_header_expense = "";
+                                                    } else {
+                                                        $title_header_expense = $expense->description; //Office Supplies
+                                                        $flag[$expense->description] = true;           //mga naay tranche
+                                                    }
+                                                    if(isset($flag[$display_first])){
+                                                        $title_header_first = "";
+                                                    } else {
+                                                        $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
+                                                        $flag[$display_first] = true;
+                                                    }
+                                                    if(isset($flag[$display_second])){
+                                                        $title_header_second = "";
+                                                    } else {
+                                                        $title_header_second = "<div style='padding-left: 10%'>".$display_second."</div>";
+                                                        $flag[$display_second] = true;
+                                                    }
+                                                    $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
 
-                            foreach($expenses as $expense)
-                            {
-                                $count_first = 0;
-                                $count_second = 0;
-                                $alphabet = range('A', 'Z');
-                                $expense_code = json_decode($expense->code,true);
-                                if(isset($expense_code)){
-                                    foreach($expense_code as $display_first => $first){
-                                        foreach($first as $display_second){ //main tranche expense
-                                            $count_second++;
-                                            if(isset($flag[$expense->description])){
-                                                $title_header_expense = "";
-                                            } else {
-                                                $title_header_expense = $expense->description; //Office Supplies
-                                                $flag[$expense->description] = true;           //mga naay tranche
-                                            }
-                                            if(isset($flag[$display_first])){
-                                                $title_header_first = "";
-                                            } else {
-                                                $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
-                                                $flag[$display_first] = true;
-                                            }
-                                            if(isset($flag[$display_second])){
-                                                $title_header_second = "";
-                                            } else {
-                                                $title_header_second = "<div style='padding-left: 10%'>".$display_second."</div>";
-                                                $flag[$display_second] = true;
-                                            }
-                                            $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
-                                            echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
-                                            $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
+                                                    if(isset($programs)){
+                                                        foreach ($programs as $program)
+                                                        if(count($programs) == 1){
+                                                            echo displayHeader($program->description);
+                                                            }
+                                                        else
+                                                        for ($i = 2; $i <= count($programs); $i++){
+                                                            echo displayHeader($program->description);
+                                                            $i++;
+                                                            echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
+                                                            $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
 
-                                            echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
-                                            $item_collection = [];
-                                            $sub_total = 0;
-                                            foreach($items as $item){
-                                                echo displayItem($item,$title_header_second);
-                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
-                                                $sub_total += $estimated_budget;
-                                            }
-                                            echo "</tbody>";
-                                            echo expenseTotal($sub_total);
-                                        } // end of maine tranche expense
-                                        if(!isset($flag[$display_first])){ // sub tranche expense
-                                            if(isset($flag[$expense->description])){
-                                                $title_header_expense = "";
-                                            } else {
-                                                $title_header_expense = $expense->description;
-                                                $flag[$expense->description] = true;
-                                            }
-                                            if(isset($flag[$display_first])){
-                                                $title_header_first = "";
-                                            } else {
-                                                $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
-                                                $flag[$display_first] = true;
-                                            }
-                                            $expense_total = 0;
-                                            $tranche = $expense->id."-".$alphabet[$count_first];
-                                            echo displayHeader($title_header_expense.$title_header_first);
-                                            if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
-                                                $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference')");
-                                            }
-                                            else{
-                                                $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
-                                            }
+                                                            echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
+                                                            $item_collection = [];
+                                                            $sub_total = 0;
+                                                            foreach($items as $item){
+                                                                echo displayItem($item,$title_header_second);
+                                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                                $sub_total += $estimated_budget;
+                                                            }
+                                                            echo "</tbody>";
+                                                            echo expenseTotal($sub_total);
+                                                        }
+                                                    }
+                                                    echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
+                                                    $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
 
-                                            echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
-                                            $item_collection = [];
-                                            $sub_total = 0;
-                                            $title_header_second = '';
-                                            foreach($items as $item){
-                                                echo displayItem($item,$title_header_second);
-                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
-                                                $sub_total += $estimated_budget;
-                                            }
-                                            echo "</tbody>";
-                                            echo expenseTotal($sub_total);
-                                            if($tranche != "1-B")
-                                                echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                                    echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
+                                                    $item_collection = [];
+                                                    $sub_total = 0;
+                                                    foreach($items as $item){
+                                                        echo displayItem($item,$title_header_second);
+                                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                        $sub_total += $estimated_budget;
+                                                    }
 
-                                        } // display if first is null
-                                        $count_first++;
-                                    } // end sub tranche expense
-                                }
-                                else { // normal expense
-                                    $expense_total = 0;
-                                    echo displayHeader($expense->description); //display expense if no value from first
+                                                    echo "</tbody>";
+                                                    echo expenseTotal($sub_total);
 
-                                    $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')");
+                                                } // end of maine tranche expense
+                                                if(!isset($flag[$display_first])){ // sub tranche expense
+                                                    if(isset($flag[$expense->description])){
+                                                        $title_header_expense = "";
+                                                    } else {
+                                                        $title_header_expense = $expense->description;
+                                                        $flag[$expense->description] = true;
+                                                    }
+                                                    if(isset($flag[$display_first])){
+                                                        $title_header_first = "";
+                                                    } else {
+                                                        $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
+                                                        $flag[$display_first] = true;
+                                                    }
+                                                    $expense_total = 0;
+                                                    $tranche = $expense->id."-".$alphabet[$count_first];
+                                                    if(isset($programs)){
+                                                        foreach ($programs as $program)
+                                                            if(count($programs) == 1)
+                                                                echo displayHeader($program->description);
+                                                            else
+                                                                for ($i = 2; $i <= count($programs); $i++){
+                                                                    echo displayHeader($program->description);
+                                                                    $i++;
+                                                                    echo displayHeader($title_header_expense.$title_header_first);
+                                                                    if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
+                                                                        $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference','$ppmp_status')");
+                                                                    }
+                                                                    else{
+                                                                        $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
+                                                                    }
 
-                                    echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
-                                    $item_collection = [];
-                                    $sub_total = 0;
-                                    foreach($items as $item){
-                                        //$item_collection[] = displayItem($item,$expense->description);
-                                        echo displayItem($item,$expense->description);
-                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
-                                        $sub_total += $estimated_budget;
+                                                                    echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
+                                                                    $item_collection = [];
+                                                                    $sub_total = 0;
+                                                                    $title_header_second = '';
+                                                                    foreach($items as $item){
+                                                                        echo displayItem($item,$title_header_second);
+                                                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                                        $sub_total += $estimated_budget;
+                                                                    }
+                                                                    echo "</tbody>";
+                                                                    echo expenseTotal($sub_total);
+                                                                }
+                                                    }
+                                                    echo displayHeader($title_header_expense.$title_header_first);
+                                                    if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
+                                                        $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference','$ppmp_status')");
+                                                    }
+                                                    else{
+                                                        $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
+                                                    }
+
+                                                    echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
+                                                    $item_collection = [];
+                                                    $sub_total = 0;
+                                                    $title_header_second = '';
+                                                    foreach($items as $item){
+                                                        echo displayItem($item,$title_header_second);
+                                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                        $sub_total += $estimated_budget;
+                                                    }
+                                                    echo "</tbody>";
+                                                    echo expenseTotal($sub_total);
+                                                    if($tranche != "1-B")
+                                                        echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                                } // display if first is null
+                                                $count_first++;
+                                            } // end sub tranche expense
+                                        }
+                                        else
+                                            { // normal expense
+                                                $expense_total = 0;
+                                                if(!($programs)){
+                                                    echo displayHeader($expense->description); //display expense if no value from first
+
+                                                    $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')");
+
+                                                    echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
+                                                    $item_collection = [];
+                                                    $sub_total = 0;
+                                                    foreach($items as $item){
+                                                        //$item_collection[] = displayItem($item,$expense->description);
+                                                        echo displayItem($item,$expense->description);
+                                                        $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                        $sub_total += $estimated_budget;
+                                                    }
+                                                    echo "</tbody>";
+                                                    echo expenseTotal($sub_total);
+                                                    echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
+                                                    if($expense_total != 0){
+                                                        echo expenseTotal($expense_total);
+                                                    }
+                                                }
+                                                foreach ($programs as $program)
+                                                    for ($i = 0; $i <= count($programs); $i++){
+                                                        echo displayHeader($program->description);
+                                                        $i++;
+                                                        echo displayHeader($expense->description); //display expense if no value from first
+
+                                                        $items = \DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')");
+
+                                                        echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description)."'>";
+                                                        $item_collection = [];
+                                                        $sub_total = 0;
+                                                        foreach($items as $item){
+                                                            //$item_collection[] = displayItem($item,$expense->description);
+                                                            echo displayItem($item,$expense->description);
+                                                            $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                            $sub_total += $estimated_budget;
+                                                        }
+                                                        $tranche="0";
+                                                        echo "</tbody>";
+                                                        echo expenseTotal($sub_total);
+                                                        echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
+                                                        if($expense_total != 0){
+                                                            echo expenseTotal($expense_total);
+                                                        }
+                                                        break;
+                                            }// end normal expense
+                                        }
                                     }
-                                    echo "</tbody>";
-                                    echo expenseTotal($sub_total);
-                                    echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
-                                    if($expense_total != 0){
-                                        echo expenseTotal($expense_total);
-                                    }
-                                } // end normal expense
-                            }
-                            if(isset($programs)){
-                                foreach($programs as $program){
-                                    echo $program->description;
-                                }}
-                            else "ok";
                             ?>
                         </table>
                     </div>
@@ -482,21 +568,21 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Region
                         </a>
-                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Division
                         </a>
                         <!--
-                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Section
                         </a>
 
                         -->
                         <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
                         @foreach($section as $sec)
-                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description }}" target="_blank">
+                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                                 <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
                             </a>
                         @endforeach
@@ -684,6 +770,7 @@
             var userid = "<?php echo Auth::user()->username; ?>";
             var item_unique_row = uuidv4()+userid;
             var encoded_by = "<?php echo Auth::user()->lname.' '.Auth::user()->fname ?>";
+            var program = element.data('program');
 
             item_status = "<span class='badge bg-red' data-unique_id='"+item_unique_row+"' data-item_description='' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
             var mode_procurement = <?php echo $mode_procurement; ?>;
@@ -700,6 +787,7 @@
                 "<input type='hidden' name='expense_id"+item_unique_row+"' value='"+expense+"' ></td>" +
                 "<input type='hidden' name='tranche"+item_unique_row+"' value='"+tranche+"' ></td>" +
                 "<input type='hidden' name='status"+item_unique_row+"' value='approve' ></td>" +
+                "<input type='hidden' name='program"+item_unique_row+"' value='"+program+"' ></td>" +
                 "<span class='hide' id='expense_description"+item_unique_row+"'>"+expense_description+"</span>" +
                 "<td width='35%' style='padding-left: 4%'>" +
                 "<div class='tooltip_top' style='width: 100%;'>"+

@@ -306,9 +306,14 @@
                                     </div>
 
                                     <div>
+                                        <input type="hidden" name="ppmp_status" id="ppmp_status" value="{{$ppmp_status}}"/>
+                                        <input type="hidden" name="yearly_reference" id="yearly_reference" value="{{$yearly_reference}}"/>
+                                        @if($ppmp_status == "program")
                                         <a href="" class="btn btn-md btn-info" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
                                             SET PROGRAM
                                         </a>
+                                            @else
+                                        @endif
                                     </div>
 
                                     {{--Modal for Set Program --}}

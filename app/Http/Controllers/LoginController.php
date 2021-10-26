@@ -16,15 +16,14 @@ class LoginController extends Controller
         if($request->isMethod('post')){
             if(Auth::attempt(array('username' => $request->username, 'password' => $request->password))){
                 $yearly_reference = YearlyReference::where("year",$request->yearly_ref)->first();
-                $ppmp_status = PpmpStatus::where('description',$request->ppmp_status)->first();
-                if(!($yearly_reference && $ppmp_status)){
+                if(!($yearly_reference)){
                     Auth::logout();
                     Session::flush();
                     return Redirect::to('/')->with('ops','Yearly reference not exist!')->with("yearly_ref",$request->yearly_ref)->with('username',$request->username)->with('password',$request->password);
                 }
 
                 Session::put("yearly_reference",$yearly_reference->id);
-                Session::put("ppmp_status",$ppmp_status->id);
+                Session::put("ppmp_status",$request->ppmp_status);
 
                 if(Auth::user()->user_priv)
                     return Redirect::to('admin/home');

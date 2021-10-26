@@ -53,55 +53,126 @@ class PpmpController extends Controller
 
     public function setProgram(Request $request) {
         $id = $request->programs;
+        $ppmp_status = $request->ppmp_status;
 
-        if(!empty($id)){
+        if(!empty($id)) {
             $programs = Program::find($id)->pluck('id');
-            return $programs->toArray();
+            return $programs;
         }
     }
 
     public function ppmpList($expense_id = null,Request $request) {
 
-        $id = $this->setProgram($request);
+        $yearly_reference = Session::get('yearly_reference');   //get yearly_ref
+        $ppmp_status = Session::get('ppmp_status');             //get ppmp_status
 
-        $programs = Program::wherein('id', $id)->get();
+        if($yearly_reference == 2 && $ppmp_status == "program") {       //
+            $set_program = $this->setProgram($request);
 
-        if(empty($id))
-        $keyword = "";
-        $item_to_filter = "NO_DATA"; //TEMP NO DATA
-        if($request->isMethod('post') || isset($request->item_id[0]) ){
-            if($request->item_save){ //if ang button ge savedRe
-                //return $request->all();
-                $item_to_filter = $this->ppmpUpdate($request);
-            }
-            $keyword = $request->item_search;
-            if($keyword){
-                $item = Item::
+            if(empty($set_program))
+            $programs = Program::whereIn('id',array($set_program))->get();
+            else
+                if(!empty($set_program))
+                    $programs = Program::whereIn('id',$set_program)->get();
+
+            $keyword = "";
+            $item_to_filter = "NO_DATA"; //TEMP NO DATA
+            if($request->isMethod('post') || isset($request->item_id[0]) ){
+                if($request->item_save){ //if ang button ge saved
+                    //return $request->all();
+                    $item_to_filter = $this->ppmpUpdate($request);
+                }
+
+                $keyword = $request->item_search;
+                if($keyword){
+                    $item = Item::
                     where("description","like","%$keyword%")
-                    ->where(function($q){
-                        $q->where('item.status','=','approve')
-                            ->orWhere('item.status','=','fixed');
-                    })
-                    ->pluck('expense_id')->toArray();
-                if(!$item){ //if mag add sa new item then wala sa result, search the item_to_filter
-                    $keyword = $item_to_filter;
-                    $item = Item::where('division','=',Auth::user()->division)
-                        ->where("description","like","%$keyword%")
                         ->where(function($q){
                             $q->where('item.status','=','approve')
                                 ->orWhere('item.status','=','fixed');
                         })
                         ->pluck('expense_id')->toArray();
+                    if(!$item){ //if mag add sa new item then wala sa result, search the item_to_filter
+                        $keyword = $item_to_filter;
+                        $item = Item::where('division','=',Auth::user()->division)
+                            ->where("description","like","%$keyword%")
+                            ->where(function($q){
+                                $q->where('item.status','=','approve')
+                                    ->orWhere('item.status','=','fixed');
+                            })
+                            ->pluck('expense_id')->toArray();
+                    }
+                    $expenses = Expense::whereIn("id",$item)->get();
+                } else {
+                    $expenses = Expense::where("id","=",$expense_id)->get();
                 }
-                $expenses = Expense::whereIn("id",$item)->get();
+
             } else {
                 $expenses = Expense::where("id","=",$expense_id)->get();
             }
 
-        } else {
-            $expenses = Expense::where("id","=",$expense_id)->get();
-        }
+            $all_item = Item::get();
 
+            $mode_procurement = ModeProcurement::get();
+            $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+            $end_user_designation = Designation::find(Auth::user()->designation)->description;
+            $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+                ->LeftJoin('dts.users','users.id','=','division.head')
+                ->LeftJoin('dts.designation','designation.id','=','users.designation')
+                ->where('division.id','=',Auth::user()->division)
+                ->first();
+
+            return view('ppmp.ppmp_list',[
+                "expenses" => $expenses,
+                "all_item" => $all_item,
+                "mode_procurement" => $mode_procurement,
+                "end_user_name" => $end_user_name,
+                "end_user_designation" => $end_user_designation,
+                "head" => $head,
+                "item_search" => $keyword,
+                "expense_id" => $expense_id,
+                "request" => $request,
+                "programs" => $programs
+            ]);
+
+        }else
+//
+            $keyword = "";
+            $item_to_filter = "NO_DATA"; //TEMP NO DATA
+            if($request->isMethod('post') || isset($request->item_id[0]) ){
+                if($request->item_save){ //if ang button ge saved
+                    //return $request->all();
+                    $item_to_filter = $this->ppmpUpdate($request);
+                }
+                $keyword = $request->item_search;
+                if($keyword){
+                    $item = Item::
+                        where("description","like","%$keyword%")
+                        ->where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','fixed');
+                        })
+                        ->pluck('expense_id')->toArray();
+                    if(!$item){ //if mag add sa new item then wala sa result, search the item_to_filter
+                        $keyword = $item_to_filter;
+                        $item = Item::where('division','=',Auth::user()->division)
+                            ->where("description","like","%$keyword%")
+                            ->where(function($q){
+                                $q->where('item.status','=','approve')
+                                    ->orWhere('item.status','=','fixed');
+                            })
+                            ->pluck('expense_id')->toArray();
+                    }
+                    $expenses = Expense::whereIn("id",$item)->get();
+                } else {
+                    $expenses = Expense::where("id","=",$expense_id)->get();
+                }
+
+            } else {
+                $expenses = Expense::where("id","=",$expense_id)->get();
+            }
+
+        $programs ="";
         $all_item = Item::get();
 
         $mode_procurement = ModeProcurement::get();
@@ -123,7 +194,7 @@ class PpmpController extends Controller
             "item_search" => $keyword,
             "expense_id" => $expense_id,
             "request" => $request,
-            "programs" => $programs
+            $programs
         ]);
     }
 
@@ -132,6 +203,10 @@ class PpmpController extends Controller
         $encoded_by = Auth::user()->username;
         $division_id = Auth::user()->division;
         $section_id = Auth::user()->section;
+
+        //
+        $yearly_reference = Session::get('yearly_reference');   //get yearly_ref
+        $ppmp_status = Session::get('ppmp_status');  //get ppmp_status
 
         foreach($request->get('item_id') as $value){
             $unique_id = $request->get('unique_id'.$value);
@@ -153,13 +228,24 @@ class PpmpController extends Controller
             $dece = $request->get('dece'.$value);
             $unit_cost = $request->get('unit_cost'.$value);
             $mode_procurement = $request->get('mode_procurement'.$value);
+            //
+            $yearly_ref = $yearly_reference;
+            $ppmp_stat = $ppmp_status;
+
 
 
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)
                 ->first();
-            if(!$item){
+
+            if($section_id == 45) {
+                $item->unit_cost = $unit_cost;
+                $item->unit_measurement = $unit_measurement;
+                $item->save();
+            }
+
+            if(!$item) {
                 $item = new Item();
                 $item->expense_id = $expense_id;
                 $item->userid = $encoded_by;
@@ -170,7 +256,7 @@ class PpmpController extends Controller
                 $item->save();
             }
 
-
+            //if mao siya ang item
 
             $item_daily = ItemDaily::
                 where(function($q) use($value,$unique_id){
@@ -198,6 +284,8 @@ class PpmpController extends Controller
                 ->where("nov",$nov)
                 ->where("dece",$dece)
                 ->orderBy("id","desc")
+                ->where('yearly_ref_id',$yearly_ref)
+                ->where('ppmp_status',$ppmp_stat)
                 ->first();
 
             $item_id = $item->id;
@@ -228,6 +316,8 @@ class PpmpController extends Controller
                 $item_daily->oct = $oct;
                 $item_daily->nov = $nov;
                 $item_daily->dece = $dece;
+                $item_daily->yearly_ref_id = $yearly_ref;
+                $item_daily->ppmp_status = $ppmp_stat;
                 $item_daily->save();
             }
 

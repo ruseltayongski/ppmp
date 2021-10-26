@@ -166,6 +166,10 @@ $pdf->TableTitle([
 //test
     //$start = microtime(true);
 //
+
+$yearly_reference = $_GET['yearly_reference'];
+$ppmp_status = $_GET['ppmp_status'];
+
 foreach($expenses as $expense) {
     $count_first = 0;
     $count_second = 0;
@@ -309,7 +313,7 @@ foreach($expenses as $expense) {
         $pdf->SetFont('Arial','B',7);
 
        // $items = $pdf->query($tranche,$expense);
-        $items = queryItem("call normal_tranche_region('$expense->id')");
+        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status')");
 
 //      if(count($items)>0)
 
