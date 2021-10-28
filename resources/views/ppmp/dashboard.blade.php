@@ -281,13 +281,6 @@
                                         <label class="card">
                                             <span class="plan-details">
                                                 <span class="plan-type">
-    <!--                                                 -->
-    {{--//                                                $temp = $expense->description;--}}
-    {{--//                                                $count = 0;--}}
-    {{--//                                                //$string = "";--}}
-    {{--//--}}
-    {{--//                                                echo "<div class='h3'>".$temp."</div>";--}}
-
                                                     <?php
                                                     $temp = $expense->description;
                                                     $count = 0;
@@ -326,7 +319,6 @@
                                         @endif
                                     </div>
 
-                                    {{--Modal for Set Program --}}
                                     <div class="modal fade" id="Modal{{$expense->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
@@ -344,7 +336,6 @@
                                                 </div>
                                                 <form id="program_form" action='{{ asset("/ppmp/set_program") }}' method="post">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    {{--{{ method_field('PATCH') }}--}}
                                                     <div class="modal-body">
                                                                         {{--<div class="col-md-12">Select Program</div>--}}
                                                                         <input type="hidden" name="expense" id="exp" value="{{$expense->id}}"/>
@@ -365,37 +356,7 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-                                {{--//--}}
-                                {{--<div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>--}}
-                                    {{--<span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>--}}
-                                    {{--<div class="info-box-content">--}}
-                                                {{--<span class="info-box-text">--}}
-                                                    {{--<?php--}}
-                                                    {{--$temp = $expense->description;--}}
-                                                    {{--$count = 0;--}}
-                                                    {{--$string = "";--}}
-                                                    {{--for($i=0;$i<$expense_length;$i++){--}}
-                                                        {{--if(!isset($temp[$i])){--}}
-                                                            {{--$temp .= ".";--}}
-                                                        {{--}--}}
-                                                        {{--if($count != 23){--}}
-                                                            {{--$count++;--}}
-                                                            {{--$string .= $temp[$i];--}}
-                                                        {{--} else {--}}
-                                                            {{--$count = 0;--}}
-                                                            {{--$string .= "<br>";--}}
-                                                        {{--}--}}
-                                                    {{--}--}}
-                                                    {{--echo $string;--}}
-                                                    {{--?>--}}
-                                                {{--</span>--}}
-                                        {{--<span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>--}}
-                                    {{--</div>--}}
-                                    <!-- /.info-box-content -->
-                                {{--</div>--}}
-                                <!-- /.info-box -->
                             </div>
                         @endforeach
                     </div>
