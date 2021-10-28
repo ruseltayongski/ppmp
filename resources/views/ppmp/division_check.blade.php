@@ -33,11 +33,13 @@
         }
 
         function displayItem($item, $sub_total){
+            $yearly_reference = Session::get('yearly_reference');
+            $ppmp_status = Session::get('ppmp_status');
 
             $data_qty = "";
 
             foreach(Session::get("sections") as $section){
-                $section_report = \DB::connection('mysql')->select("call get_body_section('$item->id','$section->id')");
+                $section_report = \DB::connection('mysql')->select("call get_body_section('$item->id','$section->id','$yearly_reference','$ppmp_status')");
                 if($section_report[0]->userid) {
                     $encoded_by = \App\DtsUser::where("username",$section_report[0]->userid)->first();
                     $encoded_by = $encoded_by->lname;
@@ -184,7 +186,7 @@
                                         $tranche = $expense->id."-".$alphabet[$count_first];
                                         echo displayHeader($title_header_expense.$title_header_first);
                                         if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C' or $tranche == '48-D'){
-                                            $items = \DB::connection('mysql')->select("call tranche_one_c_division('$expense->id','$tranche','$division_id','$yearly_reference')");
+                                            $items = \DB::connection('mysql')->select("call tranche_one_c_division('$expense->id','$tranche','$division_id')");
                                         }
                                         else{
                                             $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
@@ -216,7 +218,7 @@
                         @else
                             <?php
                                 echo displayHeader($expense->description); //display expense if no value from first
-                                $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id','$yearly_reference')");
+                                $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id')");
                                 $sub_total->resetSubTotal();
                                 foreach($items as $item){
                                     $section= $item->section_id;

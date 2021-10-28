@@ -16,10 +16,19 @@ class LoginController extends Controller
         if($request->isMethod('post')){
             if(Auth::attempt(array('username' => $request->username, 'password' => $request->password))){
                 $yearly_reference = YearlyReference::where("year",$request->yearly_ref)->first();
-                if(!($yearly_reference)){
+                $ppmp_status = $request->ppmp_status;
+                $section = Auth::user()->section;
+
+                if(!$yearly_reference){
                     Auth::logout();
                     Session::flush();
                     return Redirect::to('/')->with('ops','Yearly reference not exist!')->with("yearly_ref",$request->yearly_ref)->with('username',$request->username)->with('password',$request->password);
+                }
+
+                if($ppmp_status == "program" && !($section == 28 || $section == 32 || $section == 29)) {
+                    Auth::logout();
+                    Session::flush();
+                    return Redirect::to('/')->with('ops','Your section is not applicable to use program PPMP');
                 }
 
                 Session::put("yearly_reference",$yearly_reference->id);

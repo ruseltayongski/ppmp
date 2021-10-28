@@ -207,36 +207,6 @@ foreach($expenses as $expense) {
                 if(count($items) > 0)
                     $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
 
-                //test
-//                $title_header_expense="hello";
-//                $title_header_first="world";
-//                $title_header_second="test";
-//                $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
-//
-//                $generate_level="region";
-//                $division_id ="4";
-//                $section_id="82";
-//
-//                if($division_id == "4"){
-//
-//                        $items = queryItem("CALL main_tranche('1','11-A-1')");
-//
-//                        foreach ($items as $item)
-//                            $pdf->displayItem($item,$generate_level,$division_id,$section_id);
-//                }elseif($division_id == "6"){
-//
-//                    $items = queryItem("CALL main_tranche('1','11-A-2')");
-//
-//                    foreach ($items as $item)
-//                        $pdf->displayItem($item,$generate_level,$division_id,$section_id);
-//                }
-//                    $items = queryItem("CALL main_tranche('1','11-A-3')");
-//
-//                    foreach ($items as $item)
-//                    $pdf->displayItem($item,$generate_level,$division_id,$section_id);
-                //test
-
-
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
                     $pdf->displayItem($item,$generate_level,$division_id,$section_id);
@@ -357,14 +327,6 @@ foreach($expenses as $expense) {
         $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
     }
 }
-
-//test
-//$items = queryItem("call main_tranche('$expense->id','$tranche')");
-/*$end = microtime(true);
-$execution = ($end - $start);
-
-echo "It takes" .$execution. "time";*/
-//test
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);
