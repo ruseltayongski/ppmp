@@ -144,7 +144,72 @@ class PpmpController extends Controller
             "item_search" => $keyword,
             "expense_id" => $expense_id,
             "request" => $request,
-            "program_settings" => $program_settings
+            "program_settings" => $program_settings,
+        ]);
+    }
+
+    public function programBlade(Request $request) {
+
+        $sections = Section::select("section.id","section.description","setting.section_id")
+            ->Join('ppmpv2.program_settings as setting','setting.section_id','=','section.id')
+            ->get();
+
+        $keyword = "";
+        $item_to_filter = "NO_DATA"; //TEMP NO DATA
+        if($request->isMethod('post') || isset($request->item_id[0]) ){
+            if($request->item_save){ //if ang button ge saved
+                //return $request->all();
+                $item_to_filter = $this->ppmpProgramUpdate($request);
+            }
+
+            $keyword = $request->item_search;
+            if($keyword){
+                $item = Item::
+                where("description","like","%$keyword%")
+                    ->where(function($q){
+                        $q->where('item.status','=','approve')
+                            ->orWhere('item.status','=','fixed');
+                    })
+                    ->pluck('expense_id')->toArray();
+                if(!$item){ //if mag add sa new item then wala sa result, search the item_to_filter
+                    $keyword = $item_to_filter;
+                    $item = Item::where('division','=',Auth::user()->division)
+                        ->where("description","like","%$keyword%")
+                        ->where(function($q){
+                            $q->where('item.status','=','approve')
+                                ->orWhere('item.status','=','fixed');
+                        })
+                        ->pluck('expense_id')->toArray();
+                }
+                $expenses = Expense::whereIn("id",$item)->get();
+            } else {
+
+            }
+
+        } else {
+
+        }
+
+        $all_item = Item::get();
+
+        $mode_procurement = ModeProcurement::get();
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        return view('ppmp.report_html',[
+            "all_item" => $all_item,
+            "mode_procurement" => $mode_procurement,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head,
+            "item_search" => $keyword,
+            "request" => $request,
+            "sections" => $sections
         ]);
     }
 
@@ -263,6 +328,8 @@ class PpmpController extends Controller
                 $item->section = $section_id;
                 $item->tranche = $tranche;
                 $item->description = $description;
+                $item->ppmp_status = $ppmp_status;
+                $item->yearly_ref_id = $yearly_reference;
                 $item->save();
             }
 

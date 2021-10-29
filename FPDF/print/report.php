@@ -283,7 +283,7 @@ foreach($expenses as $expense) {
         $pdf->SetFont('Arial','B',7);
 
        // $items = $pdf->query($tranche,$expense);
-        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status')");
+        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
 //      if(count($items)>0)
 
