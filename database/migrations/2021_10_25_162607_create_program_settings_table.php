@@ -21,6 +21,8 @@ class CreateProgramSettingsTable extends Migration
             $table->integer('created_by')->nullable();
             $table->integer('expense_id')->nullable();
             $table->integer('program_id')->nullable();
+            $table->integer('section_id')->nullable();
+            $table->integer('division_id')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

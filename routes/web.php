@@ -32,6 +32,8 @@ Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
 Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList');
+Route::match(["GET","POST"],'program/list/{expense_id}','PpmpController@ppmpProgram');
+//Route::match(["GET","POST"],'program/blade','PpmpController@programBlade');
 Route::post('ppmp/set_program','PpmpController@setProgram');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');

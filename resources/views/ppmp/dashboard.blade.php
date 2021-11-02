@@ -263,45 +263,49 @@
                 <div class="box-body">
                     <div class="row">
                         <?php
-                        $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
+                            $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
                         ?>
                         @foreach($expenses as $expense)
                             <div class="col-md-3 col-sm-6 col-xs-12">
                                 {{--//joyx--}}
                                 <div class="info-box">
-                                    <div class="grid" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                        @if($ppmp_status =="program")
+                                            <?php
+                                                $program_count = \App\ProgramSetting::where('expense_id',"=",$expense->id)
+                                                    ->where('created_by',"=",Auth::user()->id)->count();
+                                            ?>
+                                            <div class="grid" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
+                                        @else
+                                        <div class="grid" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                        @endif
                                         <label class="card">
                                             <span class="plan-details">
                                                 <span class="plan-type">
-    <!--                                                 -->
-    {{--//                                                $temp = $expense->description;--}}
-    {{--//                                                $count = 0;--}}
-    {{--//                                                //$string = "";--}}
-    {{--//--}}
-    {{--//                                                echo "<div class='h3'>".$temp."</div>";--}}
-
                                                     <?php
                                                     $temp = $expense->description;
                                                     $count = 0;
                                                     $string = "";
-                                                    for($i=0;$i<$expense_length;$i++){
-                                                    if(!isset($temp[$i])){
-                                                    $temp .= '.';
-                                                    }
-                                                    if($count != 23){
-                                                    $count++;
-                                                    $string .= $temp[$i];
-                                                    } else {
-                                                    $count = 0;
-                                                    $string .= "";
-                                                    }
+                                                    for($i=0;$i<$expense_length;$i++) {
+                                                        if(!isset($temp[$i])){
+                                                        $temp .= '.';
+                                                        }
+                                                        if($count != 23){
+                                                        $count++;
+                                                        $string .= $temp[$i];
+                                                        } else {
+                                                        $count = 0;
+                                                        $string .= "";
+                                                        }
                                                     }
                                                     echo $string;
                                                     ?>
+
                                                 </span>
                                             <span class="h4">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>
-                                                <span class=""> Program </span>
-                                        </span>
+                                            @if($ppmp_status == "program")
+                                                <span class=""> Program {{ $program_count }}</span>
+                                            @endif
+                                            </span>
                                         </label>
                                     </div>
 
@@ -312,40 +316,37 @@
                                         <a href="" class="btn btn-md btn-info" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
                                             SET PROGRAM
                                         </a>
-                                            @else
                                         @endif
                                     </div>
 
-                                    {{--Modal for Set Program --}}
                                     <div class="modal fade" id="Modal{{$expense->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                         <div class="modal-dialog" role="document">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="exampleModalLabel">{{$expense->id}}</h5>
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                        <span aria-hidden="true">&times;</span>
-                                                    </button>
-
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <h3 class="modal-title" id="exampleModalLabel">SET PROGRAM</h3>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                                <form id="program_form" action='{{ asset("/ppmp/list".'/'.$expense->id) }}' method="post">
+                                                <form id="program_form" action='{{ asset("/ppmp/set_program") }}' method="post">
                                                     <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    {{--{{ method_field('PATCH') }}--}}
                                                     <div class="modal-body">
-                                                        <div class="container">
-                                                                <div class="row">
-                                                                    <div class="col-md-3 col-sm-6 col-xs-12">
-                                                                        Select Program:
                                                                         {{--<div class="col-md-12">Select Program</div>--}}
-                                                                        <input type="hidden" name="exp" id="exp" value="{{$expense->id}}"/> {{$expense->id}}
-                                                                        <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel"> Select
-                                                                            <option value="" selected disabled> Select a program </option>
+                                                                        <input type="hidden" name="expense" id="exp" value="{{$expense->id}}"/>
+                                                                        <input type="hidden" name="section_id"  value="{{$section_id}}"/>
+                                                                        <input type="hidden" name="division_id"  value="{{$division_id}}"/>
+                                                                        <input type="hidden" name="user_id" value="{{Auth::user()->id}}"/>
+                                                                        <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel" style="width: 100%">
                                                                             @foreach($programs as $a)
                                                                                 <option value="{{ $a->id }}">{{ $a->description }}</option>
                                                                             @endforeach
                                                                         </select>
-                                                                    </div>
-                                                                </div>
-                                                        </div>
                                                         <div class="modal-footer">
                                                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                             <button id="btnsave" type="submit" class="btn btn-primary" name="save">Save changes</button>
@@ -353,40 +354,9 @@
                                                     </div>
                                                 </form>
                                             </div>
-
                                         </div>
                                     </div>
-
                                 </div>
-                                {{--//--}}
-                                {{--<div class="info-box" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>--}}
-                                    {{--<span class="info-box-icon bg-aqua"><i class="ion ion-ios-cart-outline"></i></span>--}}
-                                    {{--<div class="info-box-content">--}}
-                                                {{--<span class="info-box-text">--}}
-                                                    {{--<?php--}}
-                                                    {{--$temp = $expense->description;--}}
-                                                    {{--$count = 0;--}}
-                                                    {{--$string = "";--}}
-                                                    {{--for($i=0;$i<$expense_length;$i++){--}}
-                                                        {{--if(!isset($temp[$i])){--}}
-                                                            {{--$temp .= ".";--}}
-                                                        {{--}--}}
-                                                        {{--if($count != 23){--}}
-                                                            {{--$count++;--}}
-                                                            {{--$string .= $temp[$i];--}}
-                                                        {{--} else {--}}
-                                                            {{--$count = 0;--}}
-                                                            {{--$string .= "<br>";--}}
-                                                        {{--}--}}
-                                                    {{--}--}}
-                                                    {{--echo $string;--}}
-                                                    {{--?>--}}
-                                                {{--</span>--}}
-                                        {{--<span class="info-box-number">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>--}}
-                                    {{--</div>--}}
-                                    <!-- /.info-box-content -->
-                                {{--</div>--}}
-                                <!-- /.info-box -->
                             </div>
                         @endforeach
                     </div>
@@ -398,6 +368,18 @@
 
 @section('js')
     <script>
+        function redirectProgram(program_count,expense_id) {
+            if(program_count > 0)
+                location.href='{{ asset('program/list').'/' }}'+expense_id;
+            else {
+                Lobibox.alert('error',
+                    {
+                        title: "WARNING",
+                        msg: "Please set a program first"
+                    });
+            }
+        }
+
         $(document).ready(function() {
             var id = $('.js-example-basic-multiple').select2();
             console.log(id);

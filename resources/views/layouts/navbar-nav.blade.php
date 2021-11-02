@@ -76,6 +76,7 @@
                     <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
                 </ul>
             </li>
+            <li><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>
 
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
