@@ -81,4 +81,9 @@ Route::get('user/realignment','RealignmentController@index')->name('test');
 Route::patch('user/realignment','RealignmentController@realignment')->name('realignment');
 Route::get('user/realignment_view','RealignmentController@viewRealignment');
 
-
+//programs
+Route::get('program/home','AdminController@viewProgram');
+Route::post('program/add','AdminController@addProgram');
+Route::post('program/edit','AdminController@editProgBtn');
+Route::post('program/update','AdminController@updateProgram');
+Route::post('program/delete','AdminController@deleteProgram');
