@@ -100,21 +100,23 @@
             <div class="col-md-3">
                 <strong class="title-info">Welcome,</strong> <strong class="title-desc">{{ strtoupper(Auth::user()->lname.', '.Auth::user()->fname) }}</strong>
             </div>
-            <div class="col-md-3">
-                <center>
-                    <strong class="title-info">Section:</strong>
-                    <strong class="title-desc">
-                    <?php
-                        $section = \App\Section::find(Auth::user()->section);
-                        if(isset($section)){
-                            echo $section->description;
-                        } else {
-                            echo 'NO SECTION';
-                        }
-                    ?>
-                    </strong>
-                </center>
-            </div>
+            @if(!Auth::user()->user_priv) 
+                <div class="col-md-3">
+                    <center>
+                        <strong class="title-info">Section:</strong>
+                        <strong class="title-desc">
+                        <?php
+                            $section = \App\Section::find(Auth::user()->section);
+                            if(isset($section)){
+                                echo $section->description;
+                            } else {
+                                echo 'NO SECTION';
+                            }
+                        ?>
+                        </strong>
+                    </center>
+                </div>
+            @endif
             <div class="col-md-3">
                 <center>
                     <strong class="title-info">Division:</strong>
