@@ -84,7 +84,7 @@
 
             @if(Session::get('charge_menu'))
                 @if(Auth::user()->user_priv) 
-                <!-- EDITED FOR PROGRAMS -Christine -->
+                <!-- EDITED FOR PROGRAMS  -->
                 <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
                 <!--
                 <li class="dropdown">
