@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Item;
 use Illuminate\Support\Facades\DB;
+use App\Division;
 use App\User;
+use App\Program;
 use App\Section;
 
 class AdminController extends Controller
@@ -50,6 +52,70 @@ class AdminController extends Controller
 
     public function resetSection(){
 
+    }
+
+    /****************************************************************************/
+    //                  PROGRAM CRUD FOR ADMIN                                  //
+    /****************************************************************************/
+    public function viewProgram(){
+        $div_id = Auth::user()->division;
+        $div_desc = Division::find($div_id)->description;
+        $programs = Program::Where('division_id', $div_id)->OrderBy('acronym', 'asc')->get();
+        $sections = Section::Where('division', $div_id)->get();
+        return view('programs.program', [
+            "programs" => $programs,
+            "div_id" => $div_id,
+            "div_desc" => $div_desc,
+            "sections" => $sections
+        ]);
+    }
+
+    public function addProgram(Request $request){
+        if(Auth::user()->user_priv){
+            $prog = new Program();
+            $prog->description = $request->description;
+            $prog->acronym = $request->acronym;
+            $prog->division_id = $request->division_id;
+            $prog->section_id = $request->section_id;
+            $prog->budget_allotment = $request->budget;
+            $prog->fund_source = $request->fund_source;
+            $prog->expense_id = $request->expense_id;
+            $prog->save();
+        }
+        return Redirect::back()->with('program_notif', 'Program successfully added!');
+    }
+
+    public function editProgram(Request $request){
+        $div_id = Auth::user()->division;
+        $program = Program::find($request->program_id);        
+        $div_desc = Division::find($div_id)->description;
+        $sections = Section::Where('division', $div_id)->get();
+        return view('programs.update',[
+            "program" => $program,
+            "div_id" => $div_id,
+            "div_desc" => $div_desc,
+            "sections" => $sections
+        ]);
+    }
+
+    public function updateProgram(Request $request){
+        if(Auth::user()->user_priv){
+            $updated = Program::where('id', $request->program_id)
+                        ->update(['description' => $request->description,
+                                  'acronym' => $request->acronym,
+                                  'section_id' => $request->section_id,
+                                  'budget_allotment' => $request->budget,
+                                  'fund_source' => $request->fund_source,
+                                  'expense_id' => $request->expense_id]);
+        }
+        return Redirect::back()->with('program_notif', 'Program successfully updated!');
+    }
+
+    public function deleteProgram(Request $request){
+        if(Auth::user()->user_priv){
+            Program::where('id','=',$request->program_id_delete)->delete();
+        }
+        return Redirect::back()->with('program_notif', 'Program successfully deleted!');
     }
 
 }
