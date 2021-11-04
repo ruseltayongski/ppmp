@@ -461,6 +461,9 @@ class PpmpController extends Controller
                 $item->section = $section_id;
                 $item->tranche = $tranche;
                 $item->description = $description;
+                $item->ppmp_status = $ppmp_status;
+                $item->yearly_ref_id = $yearly_reference;
+                $item->program_id = $program_id;
                 $item->save();
             }
 

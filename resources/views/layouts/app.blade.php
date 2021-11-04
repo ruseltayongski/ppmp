@@ -132,7 +132,7 @@
             </div>
             <div class="col-md-3">
                 <div class="pull-right">
-                    <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }}</strong>
+                    <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }} </strong>
                 </div>
             </div>
             <div class="clearfix"></div>

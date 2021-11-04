@@ -236,18 +236,18 @@ class PDF_MC_Table extends FPDF
         $this->Ln($h);
     }
 
-    function displayItem($item,$generate_level,$division_id,$section_id)
+    function displayItem($item,$generate_level,$division_id,$section_id, $program_id,$expense_id)
     {
         $yearly_reference = $_GET['yearly_reference'];
         $ppmp_status = $_GET['ppmp_status'];
-        $program_id = $_GET['program_id'];
+//        $program_id = $_GET['program_id'];
 
         if ($generate_level == 'region')
-            $item_body = queryItem("call get_body_region('$item->id','$yearly_reference','$ppmp_status')")[0];
+            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
         elseif ($generate_level == 'division')
-            $item_body = queryItem("call get_body_division_program('$item->id','$division_id','$yearly_reference','$ppmp_status','$program_id','$section_id')")[0];
+            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
         elseif ($generate_level == 'section' || $generate_level == 'select_section')
-            $item_body = queryItem("call get_body_section('$item->id','$section_id','$yearly_reference','$ppmp_status')")[0];
+            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
 
         $item_body->qty = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
         $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '', (float)$item_body->unit_cost));
