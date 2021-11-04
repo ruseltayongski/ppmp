@@ -307,8 +307,6 @@ class PpmpController extends Controller
             $yearly_ref = $yearly_reference;
             $ppmp_stat = $ppmp_status;
 
-
-
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)

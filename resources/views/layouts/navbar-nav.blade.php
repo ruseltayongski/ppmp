@@ -72,8 +72,8 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> REALIGNMENT</a>
                 <ul class="dropdown-menu">
-            <li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>
-            <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
+                    <li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>
+                    <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
                 </ul>
             </li>
             <li><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>
@@ -83,7 +83,9 @@
             -->
 
             @if(Session::get('charge_menu'))
-                @if(Auth::user()->user_priv)
+                @if(Auth::user()->user_priv) 
+                <!-- EDITED FOR PROGRAMS  -->
+                <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
                 <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>
@@ -93,6 +95,7 @@
                 </li>
                 <li><a href="{{ url('expense/list') }}"><i class="fa fa-rub"></i> Expense</a></li>
                 -->
+
                 <li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>
                 <li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>
                 @endif
