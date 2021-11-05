@@ -22,7 +22,7 @@
         $sub_total = new SubTotal();
         $sub_total->resetSubTotal();
 
-        function displayHeader($title){
+        function displayHeader($title) {
             return "<tr class='text-green'>
                     <td colspan='25'>
                         <strong>
@@ -32,14 +32,20 @@
                 </tr>";
         }
 
-        function displayItem($item, $sub_total){
+        function displayItem($item, $sub_total, $expense_id){
             $yearly_reference = Session::get('yearly_reference');
             $ppmp_status = Session::get('ppmp_status');
 
             $data_qty = "";
 
-            foreach(Session::get("sections") as $section){
-                $section_report = \DB::connection('mysql')->select("call get_body_section('$item->id','$section->id','$yearly_reference','$ppmp_status')");
+            foreach(Session::get("sections") as $section) {
+                if(isset($item->item_id)) {
+                    $section_report = \DB::connection('mysql')->select("call get_body_section('$item->item_id','$section->id','$yearly_reference','$ppmp_status')");
+                }
+                else {
+                    $section_report = \DB::connection('mysql')->select("call get_body_section('$item->id','$section->id','$yearly_reference','$ppmp_status')");
+                }
+
                 if($section_report[0]->userid) {
                     $encoded_by = \App\DtsUser::where("username",$section_report[0]->userid)->first();
                     $encoded_by = $encoded_by->lname;
@@ -158,13 +164,14 @@
 
                                         echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second)."'>";
                                         $item_collection = [];
+                                        $sub_total = new SubTotal();
                                         $sub_total->resetSubTotal();
                                         foreach($items as $item) {
                                             $section= $item->section;
                                             $encoded_by=$item->userid;
 
                                             $status = $item->status;
-                                            echo displayItem($item,$sub_total);
+                                            echo displayItem($item,$sub_total,$expense->id);
                                         }
                                         echo "</tbody>";
                                         echo expenseTotal($sub_total->sub_total);
@@ -195,6 +202,7 @@
                                         echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_first)."'>";
                                         $item_collection = [];
                                         $title_header_second = '';
+                                        $sub_total = new SubTotal();
                                         $sub_total->resetSubTotal();
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$title_header_second);
@@ -202,7 +210,7 @@
                                             $encoded_by=$item->userid;
                                             $status = $item->status;
 
-                                            echo displayItem($item,$sub_total);
+                                            echo displayItem($item,$sub_total,$expense->id);
                                         }
                                         /*$item_collection =  \App\Http\Controllers\PpmpController::MyPagination(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$item_collection,$request); //paginate item
                                         $item_collection->getCollection()->transform(function ($value) {
@@ -219,13 +227,15 @@
                             <?php
                                 echo displayHeader($expense->description); //display expense if no value from first
                                 $items = \DB::connection('mysql')->select("call normal_tranche_division('$expense->id','$division_id')");
+                                $sub_total = new SubTotal();
                                 $sub_total->resetSubTotal();
                                 foreach($items as $item){
                                     $section= $item->section_id;
                                     $encoded_by = $item->encoded_by;
+
                                     if(empty($encoded_by))
                                         $encoded_by = $item->userid;
-                                    echo displayItem($item,$sub_total);
+                                    echo displayItem($item,$sub_total,$expense->id);
                                 }
                                 echo expenseTotal($sub_total->sub_total);
 

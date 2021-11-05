@@ -32,7 +32,7 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)',0,0,'C');
             $this->SetFont('Arial','B',10);
             $this->setXY(3,27);
-            $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
+            $this->Cell(290,8,'CY 2022',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -238,31 +238,21 @@ class PDF_MC_Table extends FPDF
 
     function displayItem($item,$generate_level,$division_id,$section_id, $program_id,$expense_id)
     {
-        $yearly_reference = $_GET['yearly_reference'];
-        $ppmp_status = $_GET['ppmp_status'];
-//        $program_id = $_GET['program_id'];
 
-        if ($generate_level == 'region')
-            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
-        elseif ($generate_level == 'division')
-            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
-        elseif ($generate_level == 'section' || $generate_level == 'select_section')
-            $item_body = queryItem($expense_id,$section_id,$program_id)[0];
-
-        $item_body->qty = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
-        $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '', (float)$item_body->unit_cost));
+        $item->qty = $item->jan + $item->feb + $item->mar + $item->apr + $item->may + $item->jun + $item->jul + $item->aug + $item->sep + $item->oct + $item->nov + $item->dece;
+        $item->estimated_budget = ((int)$item->qty * str_replace(',', '', (float)$item->unit_cost));
 
         $sum = 0;
         if($item->expense_id == "1")
-            $sum += $item_body->estimated_budget;
+            $sum += $item->estimated_budget;
 
         $sub_total = "0";
         if (isset($this->sub_total[$item->expense_id . $item->tranche]))
             $sub_total = $this->sub_total[$item->expense_id . $item->tranche];
 
 
-        $this->sub_total[$item->expense_id . $item->tranche] = $item_body->estimated_budget + $sub_total;
-        $this->grand_total += $item_body->estimated_budget;
+        $this->sub_total[$item->expense_id . $item->tranche] = $item->estimated_budget + $sub_total;
+        $this->grand_total += $item->estimated_budget;
         //
 
         if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
@@ -270,32 +260,32 @@ class PDF_MC_Table extends FPDF
         else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-        if ((int)$item_body->qty > 0 )
+        if ((int)$item->qty > 0 )
             $this->Item([
                 $item->code,
-                $item->description,
-                $item_body->unit_measurement,
-                $item_body->qty,
-                number_format((float)$item_body->unit_cost, 2, '.', ','),
-                number_format((float)$item_body->estimated_budget, 2, '.', ','),
-                $item_body->mode_procurement,
-                $item_body->jan,
-                $item_body->feb,
-                $item_body->mar,
-                $item_body->apr,
-                $item_body->may,
-                $item_body->jun,
-                $item_body->jul,
-                $item_body->aug,
-                $item_body->sep,
-                $item_body->oct,
-                $item_body->nov,
-                $item_body->dece,
+                "\t\t\t\t\t\t\t\t".$item->description,
+                $item->unit_measurement,
+                $item->qty,
+                number_format((float)$item->unit_cost, 2, '.', ','),
+                number_format((float)$item->estimated_budget, 2, '.', ','),
+                $item->mode_procurement,
+                $item->jan,
+                $item->feb,
+                $item->mar,
+                $item->apr,
+                $item->may,
+                $item->jun,
+                $item->jul,
+                $item->aug,
+                $item->sep,
+                $item->oct,
+                $item->nov,
+                $item->dece,
             ]);
 
     }
 
-    function expenseTotal($sub_total,$difference){
+    function expenseTotal($sub_total){
 
         $this->Expense([
             "",
@@ -304,8 +294,8 @@ class PDF_MC_Table extends FPDF
             "",
             "Sub Total:",
             $sub_total,
-            "Difference",
-            "$difference",
+            "",
+            "",
             "",
             "",
             "",
