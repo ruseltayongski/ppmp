@@ -1,20 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Manila');
 
-function conn_program()
-{
-    $server = 'localhost';
-    try{
-        $pdo = new PDO("mysql:host=$server; dbname=dts",'root','adm1n');
-        $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-    }
-    catch (PDOException $err) {
-        echo "<h3>Can't connect to database server address $server</h3>";
-        exit();
-    }
-    return $pdo;
-}
-
 function conn()
 {
     $server = 'localhost';
