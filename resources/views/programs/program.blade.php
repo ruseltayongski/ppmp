@@ -7,15 +7,23 @@
         <section class="content-header">
             <h1>
                 PROGRAMS
-                &emsp;
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#add_new">
-                    Add New
-                </button>
             </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Programs</a></li>
-                <li class="active">Home</li>
-            </ol>
+            <ol class="breadcrumb form-inline my-2 my-lg-0">
+                <form action="{{ asset('program/search') }}" method="POST">
+                    {{ csrf_field() }} 
+                    <input type="search" class="form-control" name="keyword" placeholder="Program Description/Acronym" style="width: 40%;">
+                    <select class="form-control" name="div_id" data-placeholder="Division" style="width: 35%;">
+                        <option value="0" selected>Select division</option>
+                        @foreach($divisions as $div)
+                            <option value="{{ $div->id }}">{{ $div->description }}</option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn btn-success"><i class="fa fa-search"></i> FILTER</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add_new">
+                        ADD NEW
+                    </button>
+                </form>
+            </ol><br>
         </section>
         <!-- Main content -->
         <section class="content">
@@ -27,6 +35,11 @@
                         <div class="modal fade" id="add_new">
                             <div class="modal-dialog">
                                 <div class="modal-content">   
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title">Add Program</h4>
+                                    </div>
                                     <div class="modal-body">
                                         <div class="box-body">
                                             <div class="form-group">
@@ -48,6 +61,7 @@
                                                         <div class="col-md-6">
                                                             <label >Section</label>
                                                             <select class="form-control" name="section_id" data-placeholder="Select a Section" style="width: 100%;" required>
+                                                                <option value="">---</option>
                                                                 @foreach($sections as $row)
                                                                     <option value="{{ $row->id }}">{{ $row->description }}</option>
                                                                 @endforeach
@@ -55,18 +69,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label >Budget Allotment</label>
-                                                <input type="number" class="form-control" name="budget" min="0" placeholder="Enter the budget allotment.">
-                                            </div>
-                                            <div class="form-group">
-                                                <label >Fund Source</label>
-                                                <input type="text" class="form-control" name="fund_source">
-                                            </div>
-                                            <div class="form-group">
-                                                <label >Expense ID</label>
-                                                <input type="text" class="form-control" name="expense_id">
                                             </div>
                                         </div>
                                     </div>
@@ -127,16 +129,13 @@
 
                     <div class="box">
                         <!-- /.box-header -->
-                        <div class="box-body no-padding table-responsive">
-                            <table class="table table-condensed">
+                        <div class="box-body no-padding table-responsive float-left">
+                            <table class="table table-condensed" data-pagination="true" ><!-- data-toggle="table" -->
                                 <tr>
                                     <th>Description</th>
                                     <th>Acronym</th>
                                     <th>Division ID</th>
                                     <th>Section ID</th>
-                                    <th>Budget Allotment</th>
-                                    <th>Fund Source</th>
-                                    <th>Expense ID</th>
                                 </tr>
                                 @foreach($programs as $row)
                                 <tr>
@@ -144,11 +143,6 @@
                                     <td>{{ $row->acronym }}</td>
                                     <td>{{ $row->division_id }}</td>
                                     <td>{{ $row->section_id }}</td>
-                                    <td>
-                                        <span class="badge bg-blue" style="font-size:12pt;"> <i class="fa fa-paypal"></i> {{ number_format($row->budget_allotment, 2, '.', ',') }}</span>
-                                    </td>
-                                    <td>{{ $row->fund_source }}</td>
-                                    <td>{{ $row->expense_id }}</td>
                                     
                                     <td>
                                         <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#program_edit" onclick="EditProgram({{ $row->id }})">
@@ -162,6 +156,9 @@
                                 @endforeach
                             </table>
                         </div>
+                        <div style="text-align: right;">
+                            {!! $programs->links() !!}
+                        </div>                            
                         <!-- /.box-body -->
                     </div>
                 </section>
@@ -195,6 +192,5 @@
         function DeleteProgram(program_id){
             $(".program_id_delete").val(program_id);
         }
-
     </script>
 @endsection
