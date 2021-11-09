@@ -9,9 +9,10 @@ use Illuminate\Support\Facades\Redirect;
 use App\Item;
 use Illuminate\Support\Facades\DB;
 use App\Division;
-use App\User;
+use App\Expense;
 use App\Program;
 use App\Section;
+use App\User;
 
 class AdminController extends Controller
 {
@@ -60,13 +61,17 @@ class AdminController extends Controller
     public function viewProgram(){
         $div_id = Auth::user()->division;
         $div_desc = Division::find($div_id)->description;
-        $programs = Program::Where('division_id', $div_id)->OrderBy('acronym', 'asc')->get();
+        $programs = Program::OrderBy('acronym', 'asc')->paginate(20);
         $sections = Section::Where('division', $div_id)->get();
+        $divisions = Division::OrderBy("description")->get();
+        // $expense = Expense::OrderBy("description")->get();
         return view('programs.program', [
             "programs" => $programs,
             "div_id" => $div_id,
             "div_desc" => $div_desc,
-            "sections" => $sections
+            "sections" => $sections,
+            "divisions" => $divisions
+            // "expense" => $expense
         ]);
     }
 
@@ -77,22 +82,17 @@ class AdminController extends Controller
             $prog->acronym = $request->acronym;
             $prog->division_id = $request->division_id;
             $prog->section_id = $request->section_id;
-            $prog->budget_allotment = $request->budget;
-            $prog->fund_source = $request->fund_source;
-            $prog->expense_id = $request->expense_id;
             $prog->save();
         }
-        return Redirect::back()->with('program_notif', 'Program successfully added!');
+        return Redirect::action('AdminController@viewProgram')->with('program_notif', 'Program successfully added!');
     }
 
     public function editProgram(Request $request){
-        $div_id = Auth::user()->division;
-        $program = Program::find($request->program_id);        
-        $div_desc = Division::find($div_id)->description;
-        $sections = Section::Where('division', $div_id)->get();
+        $program = Program::find($request->program_id);
+        $div_desc = Division::find($program->division_id)->description;
+        $sections = Section::Where('division', $program->division_id)->get();
         return view('programs.update',[
             "program" => $program,
-            "div_id" => $div_id,
             "div_desc" => $div_desc,
             "sections" => $sections
         ]);
@@ -103,19 +103,44 @@ class AdminController extends Controller
             $updated = Program::where('id', $request->program_id)
                         ->update(['description' => $request->description,
                                   'acronym' => $request->acronym,
-                                  'section_id' => $request->section_id,
-                                  'budget_allotment' => $request->budget,
-                                  'fund_source' => $request->fund_source,
-                                  'expense_id' => $request->expense_id]);
+                                  'section_id' => $request->section_id]);
         }
-        return Redirect::back()->with('program_notif', 'Program successfully updated!');
+        return Redirect::action('AdminController@viewProgram')->with('program_notif', 'Program successfully updated!');
     }
 
     public function deleteProgram(Request $request){
         if(Auth::user()->user_priv){
             Program::where('id','=',$request->program_id_delete)->delete();
         }
-        return Redirect::back()->with('program_notif', 'Program successfully deleted!');
+        return Redirect::action('AdminController@viewProgram')->with('program_notif', 'Program successfully deleted!');
     }
 
+    public function searchProgram(Request $request){
+        if(isset($request->keyword)){
+            $keyword = $request->keyword;
+            $programs = Program::where('description', 'like', '%'.$keyword.'%')
+                            ->orWhere('acronym', 'like', '%'.$keyword.'%')->OrderBy('acronym', 'asc')->paginate(20)
+                            ->appends(["keyword" => $request->keyword]);
+        }else if(isset($request->div_id) && $request->div_id != 0){
+            $div_id = $request->div_id;
+            $programs = Program::where('division_id', $div_id)->OrderBy('acronym', 'asc')->paginate(20)
+                            ->appends(["div_id" => $request->div_id]);
+        }else{
+            $programs = Program::OrderBy('acronym', 'asc')->paginate(20);
+        }
+
+        $div_id = Auth::user()->division;
+        $div_desc = Division::find($div_id)->description;
+        $sections = Section::Where('division', $div_id)->get();
+        $divisions = Division::OrderBy("description")->get();
+        // $expense = Expense::OrderBy("description")->get();
+        return view('programs.program', [
+            "programs" => $programs,
+            "div_id" => $div_id,
+            "div_desc" => $div_desc,
+            "sections" => $sections,
+            "divisions" => $divisions
+            // "expense" => $expense
+        ]);
+    }
 }
