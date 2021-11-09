@@ -89,3 +89,4 @@ Route::post('program/add','AdminController@addProgram');
 Route::post('program/edit','AdminController@editProgram');
 Route::post('program/update','AdminController@updateProgram');
 Route::post('program/delete','AdminController@deleteProgram');
+Route::any('program/search', 'AdminController@searchProgram');
