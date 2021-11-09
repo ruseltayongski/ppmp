@@ -1,20 +1,6 @@
 <?php
 date_default_timezone_set('Asia/Manila');
 
-function conn_program()
-{
-    $server = 'localhost';
-    try{
-        $pdo = new PDO("mysql:host=$server; dbname=dts",'root','adm1n');
-        $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
-    }
-    catch (PDOException $err) {
-        echo "<h3>Can't connect to database server address $server</h3>";
-        exit();
-    }
-    return $pdo;
-}
-
 function conn()
 {
     $server = 'localhost';
@@ -221,7 +207,8 @@ foreach($sections as $section) {
     $pdf->displayExpense($section->description);
     $programs = queryProgram($section->id);
     foreach($programs as $program) {
-        $pdf->displayExpense($program->description);
+        $program_desc = "\t\t\t\t\t\t\t\t".$program->description;
+        $pdf->displayExpense($program_desc);
         $expenses = queryExpense($program->id);
         foreach($expenses as $expense) {
             $count_first = 0;
@@ -290,8 +277,6 @@ foreach($sections as $section) {
 
                         $items = queryItem($expense->id,$program->id,$section->id);
 
-                        $pdf->displayExpense($section->description);
-
                         if (count($items) > 0)
                             $pdf->displayExpense($title_header_expense1);
 
@@ -338,10 +323,9 @@ foreach($sections as $section) {
                 $items = queryItem($expense->id,$program->id,$section->id);
 
                 if (count($items) > 0) {
-                    $pdf->displayExpense($expense->description);
+                    $exp_desc = "\t\t\t\t\t\t\t\t\t\t\t\t\t".$expense->description;
+                    $pdf->displayExpense($exp_desc);
                 }
-                else
-                    $pdf->displayExpense("WAY SUD");
 
                 foreach($items as $item) {
                     if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
@@ -357,7 +341,6 @@ foreach($sections as $section) {
                         $expense_total += $item->estimated_budget;
                     }
                 }
-
                 $pdf->SetFont('Arial','B',7);
                 $sub_total = 0;
                 $qty = 0;
@@ -374,11 +357,10 @@ foreach($sections as $section) {
                         $difference = 0;
                     }
                 }
-                //$pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
+                $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
             }
         }
     }
-
 }
 
 

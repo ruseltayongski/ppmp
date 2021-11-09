@@ -131,7 +131,7 @@
         }
 
         $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
-        $item->estimated_budget = (int)$item->qty * str_replace(',', '',(int)$item->unit_cost);
+        $item->estimated_budget = (int)$item->qty * str_replace(',', '',(float)$item->unit_cost);
 
         return $item;
     }

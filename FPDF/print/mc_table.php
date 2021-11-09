@@ -13,6 +13,9 @@ class PDF_MC_Table extends FPDF
     // Page header
     function Header()
     {
+        $yearly_reference = $_GET['yearly_reference'];
+        $ppmp_status = $_GET['ppmp_status'];
+
         if($this->PageNo() == 1){
             $this->setXY(10,6);
             $this->Image('../../public/img/doh.png',15,6,30);
@@ -32,7 +35,10 @@ class PDF_MC_Table extends FPDF
             $this->Cell(290,8,'PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)',0,0,'C');
             $this->SetFont('Arial','B',10);
             $this->setXY(3,27);
-            $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
+            if($yearly_reference == 1)
+                $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
+            else
+                $this->Cell(290,8,'CY 2022',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -294,7 +300,7 @@ class PDF_MC_Table extends FPDF
 
     }
 
-    function expenseTotal($sub_total,$difference){
+    function expenseTotal($sub_total){
 
             $this->Expense([
             "",
@@ -303,8 +309,8 @@ class PDF_MC_Table extends FPDF
             "",
             "Sub Total:",
             $sub_total,
-            "Difference",
-            "$difference",
+            "",
+            "",
             "",
             "",
             "",
