@@ -39,6 +39,8 @@
             $data_qty = "";
 
             foreach(Session::get("sections") as $section) {
+
+
                 if(isset($item->item_id)) {
                     $section_report = \DB::connection('mysql')->select("call get_body_section('$item->item_id','$section->id','$yearly_reference','$ppmp_status')");
                 }
@@ -58,11 +60,11 @@
 
                 $item->qty = (int)$item->qty + (int)$qty;
                 $item->estimated_budget = (int)$item->qty * str_replace(',', '',(float)$item->unit_cost);
-                $sub_total->incrementSubTotal($item->estimated_budget);
 
                 $data_qty .= "<td>".$qty."<br>"."<small style='font-size: 7pt;' class='text-green'>$encoded_by</small>"."</td>";
             }
 
+            $sub_total->incrementSubTotal($item->estimated_budget);
             $data = "<tr>
                         <td style='padding-left: 2%;'>".htmlspecialchars($item->description, ENT_QUOTES)."</td>
                         <td>$item->unit_measurement</td>
@@ -70,7 +72,9 @@
                         <td>$item->unit_cost</td>
                         <td>$item->estimated_budget</td>
                         <td>$item->mode_procurement</td>
+
                     ".$data_qty;
+
             $data .= "</tr>";
 
             return $data;
@@ -189,7 +193,7 @@
                                             $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
                                             $flag[$display_first] = true;
                                         }
-                                        $expense_total = 0;
+//                                        $expense_total = 0;
                                         $tranche = $expense->id."-".$alphabet[$count_first];
                                         echo displayHeader($title_header_expense.$title_header_first);
                                         if($tranche == '1-C' or $tranche == '48-A' or $tranche == '48-B' or $tranche == '48-C' or $tranche == '48-D'){

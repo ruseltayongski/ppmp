@@ -65,7 +65,7 @@ class PpmpController extends Controller
 //            ->where('division_id','=', $division_id)
             ->get();
 
-        if(count($set_program) > 0)
+        if(count($set_program) > 0 && $expense != 1)
             $set_program->each->delete();
 
         foreach ($programs as $program) {
@@ -312,7 +312,7 @@ class PpmpController extends Controller
                 ->where("tranche","=",$tranche)
                 ->first();
 
-            if($section_id == 45) {
+            if($section_id == 45 || $encoded_by == "0864") {
                 $item->unit_cost = $unit_cost;
                 $item->unit_measurement = $unit_measurement;
                 $item->save();
@@ -459,8 +459,8 @@ class PpmpController extends Controller
                 $item->section = $section_id;
                 $item->tranche = $tranche;
                 $item->description = $description;
-                $item->ppmp_status = $ppmp_status;
-                $item->yearly_ref_id = $yearly_reference;
+                $item->ppmp_status = $ppmp_stat;
+                $item->yearly_ref_id = $yearly_ref;
                 $item->program_id = $program_id;
                 $item->save();
             }
@@ -492,9 +492,10 @@ class PpmpController extends Controller
                 ->where("oct",$oct)
                 ->where("nov",$nov)
                 ->where("dece",$dece)
+                ->where("yearly_ref_id",$yearly_ref)
+                ->where("ppmp_status",$ppmp_stat)
+                //->where("program_id",$program_id)
                 ->orderBy("id","desc")
-                ->where('yearly_ref_id',$yearly_ref)
-                ->where('ppmp_status',$ppmp_stat)
                 ->first();
 
             $item_id = $item->id;

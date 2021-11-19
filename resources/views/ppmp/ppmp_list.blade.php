@@ -140,7 +140,7 @@
 
         $user = Auth::user();
         setItem($item,$user->section);
-        if(($item->status == 'fixed') && $user->section != 45){
+        if(($item->status == 'fixed') && $user->section != 45 && $user->username != "0864") {
             $description = [
                 "readonly" => "readonly"
             ];
@@ -152,7 +152,7 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
-        $user->section == "45" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $user->section == "45" || $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
         $data = "<tr class='$item->unique_id $item->id'>
@@ -524,13 +524,13 @@
                         <i class="fa fa-file-pdf-o"></i> Generate PDF
                     </a>
                 </div>
-                <!--
-                <div class="col-md-6" >
-                    <h1>
-                        Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>
-                    </h1>
-                </div>
-                -->
+
+                {{--<div class="col-md-6" >--}}
+                    {{--<h1>--}}
+                        {{--Grand Total: <span class="badge bg-blue" style="font-size:20pt;"> <i class="fa fa-paypal"></i> {{ \DB::connection('mysql')->select("call grandTotal()")[0]->grand_total }}</span>--}}
+                    {{--</h1>--}}
+                {{--</div>--}}
+
             </div>
         </footer>
     </form>

@@ -38,7 +38,7 @@ class PDF_MC_Table extends FPDF
             if(isset($_GET['section_name']))
                 $this->Cell(290,8,$_GET['section_name'],0,0,'C');
             else
-                $this->Cell(290,8,'PER '.strtoupper($_GET['generate_level']),0,0,'C');
+                $this->Cell(290,8,'PROGRAM - PER '.strtoupper($_GET['generate_level']),0,0,'C');
 
             $this->ln(10);
         }
@@ -247,20 +247,19 @@ class PDF_MC_Table extends FPDF
             $sum += $item->estimated_budget;
 
         $sub_total = "0";
-        if (isset($this->sub_total[$item->expense_id . $item->tranche]))
-            $sub_total = $this->sub_total[$item->expense_id . $item->tranche];
 
+        if(isset($this->sub_total[$item->expense_id.$item->program_id.$item->tranche]))
+            $sub_total = $this->sub_total[$item->expense_id.$item->program_id.$item->tranche];
 
-        $this->sub_total[$item->expense_id . $item->tranche] = $item->estimated_budget + $sub_total;
-        $this->grand_total += $item->estimated_budget;
-        //
+            $this->sub_total[$item->expense_id.$item->program_id.$item->tranche] = $item->estimated_budget + $sub_total;
+            $this->grand_total += $item->estimated_budget;
 
         if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
             $item->description = $item->description;
         else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-        if ((int)$item->qty > 0 )
+        if ((int)$item->qty > 0)
             $this->Item([
                 $item->code,
                 "\t\t\t\t\t\t\t\t".$item->description,

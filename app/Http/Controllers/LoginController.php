@@ -25,7 +25,7 @@ class LoginController extends Controller
                     return Redirect::to('/')->with('ops','Yearly reference not exist!')->with("yearly_ref",$request->yearly_ref)->with('username',$request->username)->with('password',$request->password);
                 }
 
-                if($ppmp_status == "program" && !($section == 28 || $section == 32 || $section == 29)) {
+                if($ppmp_status == "program" && !($section == 28 || $section == 32 || $section == 29 || $section == 40)) {
                     Auth::logout();
                     Session::flush();
                     return Redirect::to('/')->with('ops','Your section is not applicable to use program PPMP');

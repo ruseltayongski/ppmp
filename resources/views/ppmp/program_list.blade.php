@@ -99,10 +99,11 @@
             </tr>";
     }
 
-    function setItem($item,$section_id){
+    function setItem($item,$section_id,$program_setting){
 
         $yearly_reference = Session::get('yearly_reference');
         $ppmp_status = Session::get('ppmp_status');
+
         if( $item->expense_id == 1 and ( $item->tranche == "1-A-1" or $item->tranche == "1-A-2" or $item->tranche == "1-A-3" or $item->tranche == "1-B" )){
 
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
@@ -110,7 +111,8 @@
                 ->where("tranche",$item->tranche)
                 ->where("section_id",$section_id)
                 ->where("yearly_ref_id",$yearly_reference)
-                ->where('ppmp_status',$ppmp_status)
+                ->where("ppmp_status",$ppmp_status)
+                ->where("program_id",$program_setting)
                 ->orderBy("id","desc")
                 ->first();
             if($item_daily){
@@ -139,7 +141,7 @@
     function displayItem($item,$expense_title,$program_id, $section_id) {
 
         $user = Auth::user();
-        setItem($item,$user->section);
+        setItem($item,$user->section,$program_id);
         if(($item->status == 'fixed') && $user->section != 45){
             $description = [
                 "readonly" => "readonly"
@@ -386,6 +388,7 @@
                                                     $flag[$display_second] = true;
                                                 }
                                                 $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
+
                                                 echo displayHeader($program_setting->description);
                                                 echo displayHeader($title_header_expense.$title_header_first.$title_header_second);
                                                 $items = \DB::connection('mysql')->select("call main_tranche('$expense->id','$tranche')");
@@ -393,9 +396,9 @@
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second).$program_setting->id."'>";
                                                 $item_collection = [];
                                                 $sub_total = 0;
-                                                foreach($items as $item){
+                                                foreach($items as $item) {
                                                     echo displayItem($item,$title_header_second,$program_setting->id, $section_id);
-                                                    $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                    $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
                                                 }
 
@@ -404,13 +407,13 @@
 
                                             } // end of maine tranche expense
                                             if(!isset($flag[$display_first])){ // sub tranche expense
-                                                if(isset($flag[$expense->description])){
+                                                if(isset($flag[$expense->description])) {
                                                     $title_header_expense = "";
                                                 } else {
                                                     $title_header_expense = $expense->description;
                                                     $flag[$expense->description] = true;
                                                 }
-                                                if(isset($flag[$display_first])){
+                                                if(isset($flag[$display_first])) {
                                                     $title_header_first = "";
                                                 } else {
                                                     $title_header_first = "<div style='padding-left: 5%'>".$display_first."</div>";
@@ -418,6 +421,7 @@
                                                 }
                                                 $expense_total = 0;
                                                 $tranche = $expense->id."-".$alphabet[$count_first];
+
                                                 echo displayHeader($program_setting->description);
                                                 echo displayHeader($title_header_expense.$title_header_first);
                                                 if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
@@ -433,7 +437,7 @@
                                                 $title_header_second = '';
                                                 foreach($items as $item){
                                                     echo displayItem($item,$title_header_second,$program_setting->id, $section_id);
-                                                    $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                    $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
                                                 }
                                                 echo "</tbody>";
@@ -458,7 +462,7 @@
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$expense->description);
                                             echo displayItem($item,$expense->description,$program_setting->id, $section_id);
-                                            $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                            $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
                                             $sub_total += $estimated_budget;
                                         }
                                         echo "</tbody>";
