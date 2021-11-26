@@ -31,11 +31,28 @@ class PpmpController extends Controller
         $expenses = Expense::get();
         $section = Auth::user()->section;
 
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $program_settings = ProgramSetting::all();
+//        if(Auth::user()->username == "201600256") {
+//            $programs = Program::all();
+//        }
+//        else
         $programs = Program::where('section_id','=',$section)->get();
 
         return view('ppmp.dashboard',[
             "expenses" => $expenses,
-            "programs" => $programs
+            "programs" => $programs,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head,
+            "program_settings" => $program_settings
         ]);
     }
 
@@ -60,9 +77,10 @@ class PpmpController extends Controller
         $section_id = Auth::user()->section;
         $division_id = $request->division_id;
 
+
         $set_program = ProgramSetting::where('expense_id','=',$expense)
             ->where('section_id','=', $section_id)
-//            ->where('division_id','=', $division_id)
+            ->where('program_id',"=", $programs)
             ->get();
 
         if(count($set_program) > 0 && $expense != 1)
@@ -315,6 +333,8 @@ class PpmpController extends Controller
             if($section_id == 45 || $encoded_by == "0864") {
                 $item->unit_cost = $unit_cost;
                 $item->unit_measurement = $unit_measurement;
+                //$item->description = $description;
+                $item->mode_procurement = $mode_procurement;
                 $item->save();
             }
 

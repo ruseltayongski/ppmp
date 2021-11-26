@@ -262,6 +262,13 @@
             <div class="col-md-12">
                 <div class="box-body">
                     <div class="row">
+                        @foreach($program_settings as $program_setting)
+                        @endforeach
+                            @if(Auth::user()->username == "201600256" && $ppmp_status == "program")
+                                <div style="padding-left: 10px; padding-right: 10px"><a class="btn-lg btn-success center-block col-sm-12" href="{{ url('FPDF/print/report_program.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&program_id='.$program_setting->id}}" target="_blank">
+                                        <i class="fa fa-file-pdf-o"></i> Generate Report - Program
+                                </a></div>
+                            @endif
                         <?php
                             $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
                         ?>
@@ -312,7 +319,7 @@
                                     <div>
                                         <input type="hidden" name="ppmp_status" id="ppmp_status" value="{{$ppmp_status}}"/>
                                         <input type="hidden" name="yearly_reference" id="yearly_reference" value="{{$yearly_reference}}"/>
-                                        @if($ppmp_status == "program")
+                                        @if($ppmp_status == "program" && Auth::user()->username != "201600256")
                                         <a href="" class="btn btn-md btn-info" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
                                             SET PROGRAM
                                         </a>
