@@ -330,7 +330,7 @@ class PpmpController extends Controller
                 ->where("tranche","=",$tranche)
                 ->first();
 
-            if($section_id == 45 || $encoded_by == "0864") {
+            if($section_id == 45 || $encoded_by == "0864" && $expense_id == 1) {
                 $item->unit_cost = $unit_cost;
                 $item->unit_measurement = $unit_measurement;
                 //$item->description = $description;

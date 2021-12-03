@@ -287,7 +287,7 @@ foreach($expenses as $expense) {
 
 //      if(count($items)>0)
 
-        if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
+        //if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
             $pdf->displayExpense($expense->description); //display expense if no value from first
 
         foreach($items as $item) {
