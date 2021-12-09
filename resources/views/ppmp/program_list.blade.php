@@ -424,7 +424,7 @@
 
                                                 echo displayHeader($program_setting->description);
                                                 echo displayHeader($title_header_expense.$title_header_first);
-                                                if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
+                                                if($tranche == '1-C' or $tranche == '50-A' or $tranche == '50-B' or $tranche == '50-C' or $tranche == '50-D'){
                                                     $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference','$ppmp_status')");
                                                 }
                                                 else{

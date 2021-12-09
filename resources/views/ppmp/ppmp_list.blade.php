@@ -419,7 +419,7 @@
                                                 $expense_total = 0;
                                                 $tranche = $expense->id."-".$alphabet[$count_first];
                                                 echo displayHeader($title_header_expense.$title_header_first);
-                                                if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
+                                                if($tranche == '1-C' or $tranche == '50-A' or $tranche == '50-B' or $tranche == '50-C' or $tranche == '50-D'){
                                                     $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference','$ppmp_status')");
                                                 }
                                                 else{
@@ -487,6 +487,9 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                            <i class="fa fa-file-pdf-o"></i> Consolidated
+                        </a>
                         <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Region
                         </a>

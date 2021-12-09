@@ -63,6 +63,23 @@ function queryDivision($division_id){
     return $row;
 }
 
+function queryOriginal($expense_id, $yearly_ref, $ppmp_status){
+    $pdo = conn();
+    //$query = "SELECT * from item_daily where status is NULL and expense_id = ? and program_id = ? and section_id = ? group by item_id DESC order by description ASC";
+    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.yearly_ref_id = ? and itd.ppmp_status = ? and itd1.id is null group by item_id DESC order by description ASC";
+
+    try {
+        $st = $pdo->prepare($query);
+        $st->execute(array($expense_id,$yearly_ref,$ppmp_status));
+        $row = $st->fetchAll(PDO::FETCH_OBJ);
+    } catch(PDOException $ex){
+        echo $ex->getMessage();
+        exit();
+    }
+
+    return $row;
+}
+
 
 require('mc_table.php');
 
@@ -282,8 +299,8 @@ foreach($expenses as $expense) {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
-       // $items = $pdf->query($tranche,$expense);
-        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
+        $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status);
+        //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
 //      if(count($items)>0)
 
