@@ -247,12 +247,12 @@ class PDF_MC_Table extends FPDF
             $sum += $item->estimated_budget;
 
         $sub_total = "0";
+            if(isset($this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id]))
+                $sub_total = $this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id];
 
-        if(isset($this->sub_total[$item->expense_id.$item->program_id.$item->tranche]))
-            $sub_total = $this->sub_total[$item->expense_id.$item->program_id.$item->tranche];
+                $this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id] = $item->estimated_budget + $sub_total;
+                $this->grand_total += $item->estimated_budget;
 
-            $this->sub_total[$item->expense_id.$item->program_id.$item->tranche] = $item->estimated_budget + $sub_total;
-            $this->grand_total += $item->estimated_budget;
 
         if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
             $item->description = $item->description;

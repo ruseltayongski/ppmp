@@ -99,14 +99,15 @@
         }
 
         .card {
-            background-color: #fff;
+            /*background-color: #926d8d;*/
             border-radius: var(--card-radius);
             position: relative;
-            padding-top: 1em;
+            opacity: 1.0;
+            /*padding-top: 1em;*/
         }
-        /*.card:hover {*/
-            /*box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);*/
-        /*}*/
+        .card:hover {
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);
+        }
 
         .radio {
             font-size: inherit;
@@ -159,8 +160,6 @@
         .card:checked {
             border-color: var(--color-green);
         }
-
-
 
         .plan-details {
             border: var(--radio-border-width) solid var(--color-gray);
@@ -247,6 +246,11 @@
             overflow: auto;
         }
 
+        /*.info-box {*/
+            /*display:flex;*/
+            /*align-items:flex-end;*/
+        /*}*/
+
     </style>
     <title>PPMP|DASHBOARD</title>
 
@@ -308,10 +312,10 @@
                                                     ?>
 
                                                 </span>
-                                            <span class="h4">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>
-                                            @if($ppmp_status == "program")
-                                                <span class=""> Program {{ $program_count }}</span>
-                                            @endif
+                                                <span class="h4">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section_id','$yearly_reference','$ppmp_status')")) }}</span>
+                                                    @if($ppmp_status == "program")
+                                                        <span class=""> Program {{ $program_count }}</span>
+                                                    @endif
                                             </span>
                                         </label>
                                     </div>
@@ -348,7 +352,7 @@
                                                                         <input type="hidden" name="expense" id="exp" value="{{$expense->id}}"/>
                                                                         <input type="hidden" name="section_id"  value="{{$section_id}}"/>
                                                                         <input type="hidden" name="division_id"  value="{{$division_id}}"/>
-                                                                        <input type="hidden" name="user_id" value="{{Auth::user()->id}}"/>
+                                                                        <input type="hidden" name="user_id" value="{{Auth::user()->username}}"/>
                                                                         <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel" style="width: 100%">
                                                                             @foreach($programs as $a)
                                                                                 <option value="{{ $a->id }}">{{ $a->description }}</option>

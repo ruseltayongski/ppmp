@@ -140,7 +140,7 @@
 
         $user = Auth::user();
         setItem($item,$user->section);
-        if(($item->status == 'fixed') && $user->section != 45 && $user->username != "0864") {
+        if(($item->status == 'fixed') && $user->username != "0864") {
             $description = [
                 "readonly" => "readonly"
             ];
@@ -152,7 +152,7 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
-        $user->section == "45" || $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
         $data = "<tr class='$item->unique_id $item->id'>
@@ -487,7 +487,7 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=consolidated&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Consolidated
                         </a>
                         <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">

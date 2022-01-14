@@ -67,7 +67,26 @@ function queryExpense($program_id){
 function queryItem($expense_id, $program_id, $section){
     $pdo = conn();
     //$query = "SELECT * from item_daily where status is NULL and expense_id = ? and program_id = ? and section_id = ? group by item_id DESC order by description ASC";
-    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.program_id = ? and itd.section_id = ? and itd1.id is null group by item_id DESC order by description ASC";
+    $query = "SELECT
+                itd.* 
+              from 
+                item_daily itd 
+              left join 
+                item_daily itd1 on (
+                                    itd.item_id = itd1.item_id and 
+                                    itd.id < itd1.id and
+                                    itd.expense_id = itd1.expense_id AND 
+                                    itd.program_id = itd1.program_id AND 
+                                    itd.section_id = itd1.section_id
+                                    ) 
+              where 
+                itd.status is NULL and 
+                itd.expense_id = ? and 
+                itd.program_id = ? and 
+                itd.section_id = ? and 
+                itd1.id is null 
+              group by item_id DESC 
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -83,7 +102,28 @@ function queryItem($expense_id, $program_id, $section){
 
 function queryMainTranche($expense_id, $program_id, $section, $tranche_code){
     $pdo = conn();
-    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.program_id = ? and itd.section_id = ? and itd.tranche = ? and itd1.id is null group by item_id DESC order by description ASC";
+    $query = "SELECT 
+                itd.* 
+              from 
+                item_daily itd 
+              left join 
+                item_daily itd1 on (
+                                    itd.item_id = itd1.item_id and 
+                                    itd.id < itd1.id AND 
+                                    itd.expense_id = itd1.expense_id AND 
+                                    itd.program_id = itd1.program_id AND 
+                                    itd.section_id = itd1.section_id AND 
+                                    itd.tranche = itd1.tranche
+                                    ) 
+              where 
+                itd.status is NULL and
+                itd.expense_id = ? and 
+                itd.program_id = ? and 
+                itd.section_id = ? and 
+                itd.tranche = ? and 
+                itd1.id is null 
+              group by item_id DESC
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -252,8 +292,8 @@ foreach($sections as $section) {
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche])) {
-                                $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche], 2, '.', ',');
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                                $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section->id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                         }
@@ -283,8 +323,8 @@ foreach($sections as $section) {
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche])) {
-                                $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche], 2, '.', ',');
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                                $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section->id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                         }
@@ -304,16 +344,16 @@ foreach($sections as $section) {
                     $pdf->SetFont('Arial', '', 7);
                     $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id);
 
-                    if ($item->estimated_budget) {
-                        $expense_total += $item->estimated_budget;
-                    }
+//                    if ($item->estimated_budget) {
+//                        $expense_total += $item->estimated_budget;
+//                    }
                 }
                     $pdf->SetFont('Arial', 'B', 7);
                     $sub_total = 0;
                     $difference = 0;
 
-                    if (isset($pdf->sub_total[$expense->id.$program->id])) {
-                        $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id], 2, '.', ',');
+                    if (isset($pdf->sub_total[$expense->id.$program->id.$section->id])) {
+                        $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$section->id], 2, '.', ',');
                     }
                 $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                 }

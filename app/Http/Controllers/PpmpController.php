@@ -330,7 +330,7 @@ class PpmpController extends Controller
                 ->where("tranche","=",$tranche)
                 ->first();
 
-            if($section_id == 45 || $encoded_by == "0864" && $expense_id == 1) {
+            if($encoded_by == "0864" && $expense_id == 1) {
                 $item->unit_cost = $unit_cost;
                 $item->unit_measurement = $unit_measurement;
                 //$item->description = $description;
@@ -378,9 +378,9 @@ class PpmpController extends Controller
                 ->where("oct",$oct)
                 ->where("nov",$nov)
                 ->where("dece",$dece)
-                ->orderBy("id","desc")
                 ->where('yearly_ref_id',$yearly_ref)
                 ->where('ppmp_status',$ppmp_stat)
+                ->orderBy("id","desc")
                 ->first();
 
             $item_id = $item->id;
@@ -465,11 +465,11 @@ class PpmpController extends Controller
                 ->where("tranche","=",$tranche)
                 ->first();
 
-            if($section_id == 45) {
-                $item->unit_cost = $unit_cost;
-                $item->unit_measurement = $unit_measurement;
-                $item->save();
-            }
+//            if($section_id == 45) {
+//                $item->unit_cost = $unit_cost;
+//                $item->unit_measurement = $unit_measurement;
+//                $item->save();
+//            }
 
             if(!$item) {
                 $item = new Item();

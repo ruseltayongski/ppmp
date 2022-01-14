@@ -308,14 +308,18 @@ foreach($expenses as $expense) {
             $pdf->displayExpense($expense->description); //display expense if no value from first
 
         foreach($items as $item) {
-            if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
-                $pdf->SetFont('Arial','',7);
-                $item->description = $expense->description;
 
-            } else {
-                $pdf->SetFont('Arial','',7);
+            if($yearly_reference == 1) {
+                if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
+                    $pdf->SetFont('Arial','',7);
+                    $item->description = $expense->description;
+
+                } else {
+                    $pdf->SetFont('Arial','B',7);
+                }
             }
-
+            else
+            $pdf->SetFont('Arial','',7);
             $pdf->displayItem($item,$generate_level,$division_id,$section_id);
             if($item->estimated_budget){
                 $expense_total += $item->estimated_budget;
