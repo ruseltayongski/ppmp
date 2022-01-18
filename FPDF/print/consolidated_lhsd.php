@@ -440,6 +440,7 @@ foreach($sections as $section) {
                         if (isset($pdf->sub_total[$expense->id . $program->id . $section->id])) {
                             $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $section->id], 2, '.', ',');
                         }
+                        if(count($items) > 0 )
                         $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                     }
                 }

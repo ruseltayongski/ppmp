@@ -63,14 +63,14 @@ function queryDivision($division_id){
     return $row;
 }
 
-function queryOriginal($expense_id, $yearly_ref, $ppmp_status){
+function queryOriginal($expense_id, $yearly_ref, $ppmp_status, $division_id){
     $pdo = conn();
     //$query = "SELECT * from item_daily where status is NULL and expense_id = ? and program_id = ? and section_id = ? group by item_id DESC order by description ASC";
-    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.yearly_ref_id = ? and itd.ppmp_status = ? and itd1.id is null group by item_id DESC order by description ASC";
+    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.yearly_ref_id = ? and itd.ppmp_status = ? and itd.division_id = ? and itd1.id is null group by item_id DESC order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
-        $st->execute(array($expense_id,$yearly_ref,$ppmp_status));
+        $st->execute(array($expense_id,$yearly_ref,$ppmp_status, $division_id));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     } catch(PDOException $ex){
         echo $ex->getMessage();
@@ -221,8 +221,9 @@ foreach($expenses as $expense) {
                 $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
 
 
-                if(count($items) > 0)
+                if(count($items) > 0) {
                     $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
+                }
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -233,6 +234,7 @@ foreach($expenses as $expense) {
                 $difference = 0;
                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$tranche], 2, '.', ',');
                 //$difference = $expense->chief_lhsd - $pdf->sub_total[$expense->id.$tranche];
+                if(count($items) > 0 )
                 $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
             } //display if first have value
 
@@ -255,8 +257,9 @@ foreach($expenses as $expense) {
 
                 $items = queryItem("call main_tranche('$expense->id','$tranche')");
 
-                if(count($items) > 0)
+                if(count($items) > 0) {
                     $pdf->displayExpense($title_header_expense1);
+                }
 
                 foreach($items as $item){
                     $pdf->SetFont('Arial','',7);
@@ -289,6 +292,7 @@ foreach($expenses as $expense) {
                     }
 
                 }
+                if(count($items) > 0 )
                 $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
 
             }
@@ -299,13 +303,14 @@ foreach($expenses as $expense) {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
-        $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status);
+        $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
         //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
-        if(count($items) > 0 )
+        if(count($items) > 0 ) {
+            $pdf->displayExpense($expense->description); //display expense if no value from first
+        }
 
         //if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
-            $pdf->displayExpense($expense->description); //display expense if no value from first
 
         foreach($items as $item) {
 
@@ -342,6 +347,7 @@ foreach($expenses as $expense) {
                 $difference = 0;
             }
         }
+        if(count($items) > 0 )
         $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
     }
 }

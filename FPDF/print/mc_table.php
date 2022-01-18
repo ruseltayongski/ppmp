@@ -280,9 +280,9 @@ class PDF_MC_Table extends FPDF
         $this->grand_total += $item_body->estimated_budget;
   //
 
-        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
-            $item->description = $item->description;
-        else
+//        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
+//            $item->description = $item->description;
+//        else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
             if ((int)$item_body->qty > 0)
