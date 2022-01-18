@@ -283,7 +283,8 @@
                                         @if($ppmp_status =="program")
                                             <?php
                                                 $program_count = \App\ProgramSetting::where('expense_id',"=",$expense->id)
-                                                    ->where('created_by',"=",Auth::user()->id)->count();
+                                                    ->where('section_id',"=", Auth::user()->section)->count();
+                                                    //->where('created_by',"=",Auth::user()->id)->count();
                                             ?>
                                             <div class="grid" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
                                         @else

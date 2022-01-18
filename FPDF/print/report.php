@@ -302,23 +302,23 @@ foreach($expenses as $expense) {
         $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status);
         //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
-//      if(count($items)>0)
+        if(count($items) > 0 )
 
         //if(!($expense->id == 16 || $expense->id == 17 || $expense->id == 18 || $expense->id == 19 || $expense->id == 45 || $expense->id == 44 || $expense->id == 42  || $expense->id == 32  || $expense->id == 5 ))
             $pdf->displayExpense($expense->description); //display expense if no value from first
 
         foreach($items as $item) {
 
-            if($yearly_reference == 1) {
-                if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
-                    $pdf->SetFont('Arial','',7);
-                    $item->description = $expense->description;
-
-                } else {
-                    $pdf->SetFont('Arial','B',7);
-                }
-            }
-            else
+//            if($yearly_reference == 1) {
+//                if(empty($item->description) && ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 42 || $item->expense_id == 32 || $item->expense_id == 5)){
+//                    $pdf->SetFont('Arial','',7);
+//                    $item->description = $expense->description;
+//
+//                } else {
+//                    $pdf->SetFont('Arial','B',7);
+//                }
+//            }
+//            else
             $pdf->SetFont('Arial','',7);
             $pdf->displayItem($item,$generate_level,$division_id,$section_id);
             if($item->estimated_budget){
