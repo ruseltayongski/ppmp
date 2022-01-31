@@ -328,11 +328,13 @@
                     </div>
                     <!-- /.box-header -->
                     <?php
-                        $section_id = Auth::user()->section;
+                        //$section_id = Auth::user()->section;
                         $division_id = Auth::user()->division;
                         $yearly_reference = Session::get('yearly_reference');
                         $ppmp_status = Session::get('ppmp_status');
                     ?>
+                    {{$section_id}}
+
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">

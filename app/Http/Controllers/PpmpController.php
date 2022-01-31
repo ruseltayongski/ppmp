@@ -27,10 +27,15 @@ use App\CreatedLogs;
 
 class PpmpController extends Controller
 {
-    public function index() {
+    public function index($section_id) {
         $expenses = Expense::get();
         $section = Auth::user()->section;
 
+        if(Session::get("admin")) {
+            $section= $section_id;
+            Session::put('section_id',$section);
+        }
+        Session::put('section_id',$section);
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
         $end_user_designation = Designation::find(Auth::user()->designation)->description;
         $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
@@ -52,7 +57,8 @@ class PpmpController extends Controller
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
             "head" => $head,
-            "program_settings" => $program_settings
+            "program_settings" => $program_settings,
+            "section" => $section
         ]);
     }
 
@@ -77,6 +83,9 @@ class PpmpController extends Controller
         $section_id = Auth::user()->section;
         $division_id = $request->division_id;
 
+        if(session::get('admin')) {
+            $section_id = session::get('section_id');
+        }
 
         $set_program = ProgramSetting::where('expense_id','=',$expense)
             ->where('section_id','=', $section_id)
@@ -100,8 +109,15 @@ class PpmpController extends Controller
 
     public function ppmpProgram($expense_id = null,Request $request) {
 
+        $section_id = Auth::user()->section;
+
+        if(session::get('admin')) {
+            $section_id = session::get('section_id');
+        }
+
         $program_settings = ProgramSetting::select("programs.id","programs.description")
                                         ->where('program_settings.expense_id',"=",$expense_id)
+                                        ->where('program_Settings.section_id',"=", $section_id)
                                         ->Join("programs","programs.id","=","program_settings.program_id")
                                         ->get();
 
@@ -163,6 +179,7 @@ class PpmpController extends Controller
             "expense_id" => $expense_id,
             "request" => $request,
             "program_settings" => $program_settings,
+            "section_id" => $section_id
         ]);
     }
 
@@ -231,7 +248,14 @@ class PpmpController extends Controller
         ]);
     }
 
-    public function ppmpList($expense_id = null,Request $request){
+    public function ppmpList($expense_id = null, Request $request){
+
+        $section_id = Auth::user()->section;
+
+        if(session::get('admin')) {
+            $section_id = session::get('section_id');
+        }
+
         $keyword = "";
         $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post') || isset($request->item_id[0]) ){
@@ -287,7 +311,8 @@ class PpmpController extends Controller
             "head" => $head,
             "item_search" => $keyword,
             "expense_id" => $expense_id,
-            "request" => $request
+            "request" => $request,
+            "section_id" => $section_id
         ]);
     }
 
@@ -296,6 +321,10 @@ class PpmpController extends Controller
         $encoded_by = Auth::user()->username;
         $division_id = Auth::user()->division;
         $section_id = Auth::user()->section;
+
+        if(session::get('admin')) {
+            $section_id = session::get('section_id');
+        }
 
         //
         $yearly_reference = Session::get('yearly_reference');   //get yearly_ref
@@ -430,6 +459,9 @@ class PpmpController extends Controller
         $division_id = Auth::user()->division;
         $section_id = Auth::user()->section;
 
+        if(session::get('admin')) {
+            $section_id = session::get('section_id');
+        }
         //
         $yearly_reference = Session::get('yearly_reference');   //get yearly_ref
         $ppmp_status = Session::get('ppmp_status');  //get ppmp_status

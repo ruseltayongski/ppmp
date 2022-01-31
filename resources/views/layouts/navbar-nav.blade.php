@@ -61,7 +61,7 @@
 
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li><a href="{{ asset('/') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            <li><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
             <li><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
             <!--
             <li><a href="{{ asset('division/check1') }}"><i class="fa fa-dashboard"></i> LHSD CHECK</a></li>
@@ -70,13 +70,13 @@
             <li><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
             @endif
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> REALIGNMENT</a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> Realignment</a>
                 <ul class="dropdown-menu">
                     <li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>
                     <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
                 </ul>
             </li>
-            <li><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>
+            {{--<li><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>--}}
 
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
@@ -86,6 +86,10 @@
                 @if(Auth::user()->user_priv) 
                 <!-- EDITED FOR PROGRAMS  -->
                 <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
+                <!--
+
+                <!-- LOG IN AS  -->
+                <li><a href="{{ url('admin/login') }}"><i class="fa fa-dashboard"></i> Login As</a></li>
                 <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>
@@ -101,6 +105,12 @@
                 @endif
             @endif
             <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                @if(Session::get('admin'))
+                    <?php
+                    $check_login_as = Session::get('auth');
+                    ?>
+                    <li><a href="{{ url('admin/account/return') }}"><i class="fa fa-user-secret"></i> <?php echo $check_login_as->user_priv == 1 ? 'Back as Admin' : 'Back as Agent'; ?></a></li>
+                @endif
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <!--

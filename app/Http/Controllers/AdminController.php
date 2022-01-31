@@ -13,6 +13,7 @@ use App\Expense;
 use App\Program;
 use App\Section;
 use App\User;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -142,5 +143,38 @@ class AdminController extends Controller
             "divisions" => $divisions
             // "expense" => $expense
         ]);
+    }
+
+    //loginAs
+    public function loginAs()
+    {
+        return view('admin.loginAs',[
+            'title' => 'Login As'
+        ]);
+    }
+
+    public function assignLogin(Request $req)
+    {
+        $user = Session::get('auth');
+
+        $user->section = $req->section_id;
+        $section = $user->section;
+
+        Session::put('auth',$user);
+        Session::put('admin',true);
+        Session::put('login_section',$section);
+
+        return redirect()->route('user', [
+            'section' => $section
+        ]);
+    }
+
+    public function returnToAdmin()
+    {
+        Session::forget('admin');
+        $user = Session::get('auth');
+        Session::put('auth',$user);
+        print_r($user);
+        return redirect()->route('admin');
     }
 }
