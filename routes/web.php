@@ -34,7 +34,7 @@ Route::get('user/privileged','MaintenanceController@userPrivileged');
 Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList')->name('ppmp_list');
 Route::match(["GET","POST"],'program/list/{expense_id}','PpmpController@ppmpProgram');
 Route::match(["GET","POST"],'program/blade','PpmpController@programBlade');
-Route::post('ppmp/set_program','PpmpController@setProgram');
+Route::post('ppmp/set_program','PpmpController@setProgram')->name('set_program');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
 Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');

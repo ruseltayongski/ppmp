@@ -27,13 +27,13 @@ use App\CreatedLogs;
 
 class PpmpController extends Controller
 {
-    public function index($section_id) {
+    public function index($section) {
         $expenses = Expense::get();
         $section = Auth::user()->section;
 
         if(Session::get("admin")) {
-            $section= $section_id;
-            Session::put('section_id',$section);
+            $section= session::get('section_id');
+            //Session::put('section_id',$section);
         }
         Session::put('section_id',$section);
         $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
@@ -184,19 +184,19 @@ class PpmpController extends Controller
     }
 
     public function programBlade(Request $request) {
+        $user = Auth::user();
 
-        $sections = Section::select("section.id","section.description","setting.section_id")
-            ->Join('ppmpv2.program_settings as setting','setting.section_id','=','section.id')
-            ->get();
+        $sections = Section::where('division',"=", $user->division)
+                    ->get();
+        $expenses = Expense::all();
 
         $keyword = "";
         $item_to_filter = "NO_DATA"; //TEMP NO DATA
         if($request->isMethod('post') || isset($request->item_id[0]) ){
-            if($request->item_save){ //if ang button ge saved
+            if($request->item_save){ //if ang button ge savedRe
                 //return $request->all();
-                $item_to_filter = $this->ppmpProgramUpdate($request);
+                $item_to_filter = $this->ppmpUpdate($request);
             }
-
             $keyword = $request->item_search;
             if($keyword){
                 $item = Item::
@@ -216,35 +216,19 @@ class PpmpController extends Controller
                         })
                         ->pluck('expense_id')->toArray();
                 }
-                $expenses = Expense::whereIn("id",$item)->get();
+
             } else {
 
             }
 
         } else {
-
         }
 
-        $all_item = Item::get();
-
-        $mode_procurement = ModeProcurement::get();
-        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
-        $end_user_designation = Designation::find(Auth::user()->designation)->description;
-        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
-            ->LeftJoin('dts.users','users.id','=','division.head')
-            ->LeftJoin('dts.designation','designation.id','=','users.designation')
-            ->where('division.id','=',Auth::user()->division)
-            ->first();
-
         return view('ppmp.report_html',[
-            "all_item" => $all_item,
-            "mode_procurement" => $mode_procurement,
-            "end_user_name" => $end_user_name,
-            "end_user_designation" => $end_user_designation,
-            "head" => $head,
-            "item_search" => $keyword,
             "request" => $request,
-            "sections" => $sections
+            "sections" => $sections,
+            "expenses" => $expenses,
+            "item_search" => $keyword
         ]);
     }
 
@@ -325,8 +309,6 @@ class PpmpController extends Controller
         if(session::get('admin')) {
             $section_id = session::get('section_id');
         }
-
-        //
         $yearly_reference = Session::get('yearly_reference');   //get yearly_ref
         $ppmp_status = Session::get('ppmp_status');  //get ppmp_status
 
@@ -348,11 +330,15 @@ class PpmpController extends Controller
             $oct = $request->get('oct'.$value);
             $nov = $request->get('nov'.$value);
             $dece = $request->get('dece'.$value);
+
             $unit_cost = $request->get('unit_cost'.$value);
             $mode_procurement = $request->get('mode_procurement'.$value);
             //
             $yearly_ref = $yearly_reference;
             $ppmp_stat = $ppmp_status;
+
+//            if(!$jan && !$feb && !$mar && !$apr && !$may && !$jun && !$jul && !$aug && !$sep && !$oct && !$nov && !$dece)
+//                return;
 
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
@@ -491,17 +477,10 @@ class PpmpController extends Controller
             $yearly_ref = $yearly_reference;
             $ppmp_stat = $ppmp_status;
 
-
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)
                 ->first();
-
-//            if($section_id == 45) {
-//                $item->unit_cost = $unit_cost;
-//                $item->unit_measurement = $unit_measurement;
-//                $item->save();
-//            }
 
             if(!$item) {
                 $item = new Item();

@@ -61,35 +61,48 @@
 
     <div id="navbar" class="navbar-collapse collapse">
         <ul class="nav navbar-nav">
-            <li><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
-            <li><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
+            <?php
+                $section = Session::get('section_id');
+            ?>
+            @if(Session::get('admin') && $section)
+                    <li style="font-family: verdana;"><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                @elseif (Auth::user()->user_priv)
+                    <li style="font-family: Verdana;"><a href="{{ asset('admin/home') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+                @else
+                    <li style="font-family: Verdana;"><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-dashboard"></i> Dashboard</a></li>
+            @endif
             <!--
             <li><a href="{{ asset('division/check1') }}"><i class="fa fa-dashboard"></i> LHSD CHECK</a></li>
             -->
             @if(Auth::user()->division == "6")
-            <li><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
+            <li style="font-family: Verdana;"><a href="{{ asset('public/ppmp_msd_2021.pdf') }}" download> <i class="fa fa-dashboard"></i> PPMP MSD 2021</a></li>
             @endif
-            <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> Realignment</a>
-                <ul class="dropdown-menu">
-                    <li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>
-                    <li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>
-                </ul>
-            </li>
-            {{--<li><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>--}}
-
+            {{--<li class="dropdown">--}}
+                {{--<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> Realignment</a>--}}
+                {{--<ul class="dropdown-menu">--}}
+                    {{--<li><a href="{{ asset('user/realignment') }}"><i class="fa fa-dashboard"></i> WFP </a></li>--}}
+                    {{--<li><a href="{{ asset('user/realignment_view') }}"><i class="fa fa-dashboard"></i> ALL WFP REALIGNMENT </a></li>--}}
+                {{--</ul>--}}
+            {{--</li>--}}
             <!--
             <li><a href="{{ url('ppmp/list/search') }}"><i class="fa fa-database"></i> PPMP List</a></li>
             -->
 
             @if(Session::get('charge_menu'))
-                @if(Auth::user()->user_priv) 
-                <!-- EDITED FOR PROGRAMS  -->
-                <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
-                <!--
-
+                @if(Auth::user()->user_priv)
+                <li class="dropdown">
+                    <a style="font-family: Verdana;" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> PPMP CHECK </a>
+                    <ul class="dropdown-menu">
+                        <!-- PER DIVISION (ORIGINAL) -->
+                        <li style="font-family: Verdana;"><a href="{{ asset('division/check') }}"><i class="fa fa-dashboard"></i> Division Check</a></li>
+                        <!-- PER PROGRAM  -->
+                        <li style="font-family: Verdana;"><a href="{{ asset('program/blade') }}"><i class="fa fa-dashboard"></i> Program Blade </a></li>
+                    </ul>
+                </li>
                 <!-- LOG IN AS  -->
                 <li><a href="{{ url('admin/login') }}"><i class="fa fa-dashboard"></i> Login As</a></li>
+                <!-- EDITED FOR PROGRAMS  -->
+                <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
                 <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>
@@ -100,17 +113,26 @@
                 <li><a href="{{ url('expense/list') }}"><i class="fa fa-rub"></i> Expense</a></li>
                 -->
 
-                <li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>
-                <li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>
+                {{--<li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>--}}
+                {{--<li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>--}}
                 @endif
             @endif
-            <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
-                @if(Session::get('admin'))
-                    <?php
-                    $check_login_as = Session::get('auth');
-                    ?>
-                    <li><a href="{{ url('admin/account/return') }}"><i class="fa fa-user-secret"></i> <?php echo $check_login_as->user_priv == 1 ? 'Back as Admin' : 'Back as Agent'; ?></a></li>
-                @endif
+                <li class="dropdown">
+                    <a style="font-family: Verdana;" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-dashboard"></i> Settings</a>
+                    <ul class="dropdown-menu">
+                        @if(Auth::user()->user_priv && !$section)
+                        <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            @elseif(Session::get('admin') && $section)
+                                <?php
+                                $check_login_as = Session::get('auth');
+                                ?>
+                                <li><a href="{{ url('admin/account/return') }}"><i class="fa fa-user-secret"></i> <?php echo $check_login_as->user_priv == 1 ? 'Back as Admin' : 'Back as Agent'; ?></a></li>
+                                <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            @else
+                                <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                        @endif
+                    </ul>
+                </li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <!--

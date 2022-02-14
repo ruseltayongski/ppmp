@@ -40,7 +40,20 @@ function querySection($division_id){
 
 function queryProgram($section_id){
     $pdo = conn();
-    $query = "SELECT prog.id,prog.description,setting.expense_id,setting.section_id FROM program_settings setting join programs prog on prog.id = setting.program_id where setting.section_id = ?  ORDER BY ID ASC";
+    $query = "SELECT 
+                prog.id,
+                prog.description,
+                setting.expense_id,
+                setting.section_id 
+              FROM 
+                program_settings setting 
+              join 
+                programs prog 
+                on 
+                  prog.id = setting.program_id 
+              where 
+                setting.section_id = ?  
+              ORDER BY ID ASC";
 
     try
     {

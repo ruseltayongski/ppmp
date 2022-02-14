@@ -24,7 +24,7 @@ class AdminController extends Controller
 
     public function home()
     {
-        $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
+       $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
 
         $item_qty = Item::select(
                         \DB::raw("SUM(COALESCE(qty.jan,0)) as jan"),
@@ -162,7 +162,7 @@ class AdminController extends Controller
 
         Session::put('auth',$user);
         Session::put('admin',true);
-        Session::put('login_section',$section);
+        Session::put('section_id',$section);
 
         return redirect()->route('user', [
             'section' => $section

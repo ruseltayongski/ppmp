@@ -3,7 +3,34 @@ use Illuminate\Support\Facades\Session;
 ?>
 @extends('layouts.app')
 
+@section('js')
+    <script type="text/javascript">
+        $(function () {
+            var data1 = [
+                [10, 10], [20, 20], [30, 30], [40, 40], [50, 50]
+            ];
+
+            var options = {
+                series:{
+                    bars:{show: true}
+                },
+                bars:{
+                    horizontal:true,
+                    barWidth:6
+                },
+                grid:{
+                    backgroundColor: { colors: ["#919191", "#141414"] }
+                }
+            };
+
+            $.plot($("#bar-chart"), [data1], options );
+
+        });
+    </script>
+@endsection
+
 @section('content')
+
     <title>Dashboard</title>
     <div class="col-md-9">
         <div class="box box-primary">
@@ -24,7 +51,7 @@ use Illuminate\Support\Facades\Session;
                     </section>
                     <!-- Bar chart -->
                     <div class="box-body">
-                        <div id="bar-chart" style="height: 300px;"></div>
+                    <div id="bar-chart" style="height: 300px;"></div>
                     </div>
                 </div>
             </section>
@@ -44,6 +71,3 @@ use Illuminate\Support\Facades\Session;
     @include('admin.admin_sidebar')
 @endsection
 
-@section('js')
-
-@endsection

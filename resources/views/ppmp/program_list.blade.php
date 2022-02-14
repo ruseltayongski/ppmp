@@ -333,7 +333,7 @@
                         $yearly_reference = Session::get('yearly_reference');
                         $ppmp_status = Session::get('ppmp_status');
                     ?>
-                    {{$section_id}}
+                    {{--{{$section_id}}--}}
 
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">

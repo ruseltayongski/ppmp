@@ -1,9 +1,17 @@
 <?php
 $user = Session::get('auth');
-$sections = \App\Section::select('id','description')
-//    ->where('id','!=','63')
-    ->where('division',$user->division)
-    ->get();
+    if(Session::get('ppmp_status') == "program") {
+       $sections = \App\Section::select("section.id","section.description","setting.section_id")
+          ->Join('ppmpv2.programs as setting','setting.section_id','=','section.id')
+          ->groupBy('section.id','section.description','setting.section_id')
+          ->orderBy('id','asc')
+          ->get();
+
+    }else {
+        $sections = \App\Section::select('id','description')
+            ->where('division',$user->division)
+            ->get();
+        }
 ?>
 @extends('layouts.app')
 
@@ -41,6 +49,7 @@ $sections = \App\Section::select('id','description')
                                     @foreach($sections as $f)
                                         <option value="{{ $f->id }}">{{ $f->description }}</option>
                                     @endforeach
+
                                 </select>
                             </td>
                         </tr>
@@ -58,6 +67,11 @@ $sections = \App\Section::select('id','description')
     </div>
 @endsection
 @section('js')
-
+    <script>
+        $(document).ready(function() {
+            var id = $('.js-example-basic-multiple').select2();
+            console.log(section_id);
+        });
+    </script>
 @endsection
 

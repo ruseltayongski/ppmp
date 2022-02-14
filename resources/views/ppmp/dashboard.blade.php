@@ -2,98 +2,122 @@
 
 @section('content')
     <style>
-        /*.ui-autocomplete*/
-        /*{*/
-            /*font-weight: bold;*/
-            /*background-color: white;*/
-            /*width: 20%;*/
-        /*}*/
-        /*.ui-menu-item {*/
-            /*cursor: pointer;*/
-            /*margin-top: 2%;*/
-        /*}*/
-        /*.mytooltip .mytext {*/
-            /*visibility: hidden;*/
-            /*width: 140px;*/
-            /*background-color: #00CC99;*/
-            /*color: #fff;*/
-            /*z-index: 1;*/
-            /*top: -5px;*/
-            /*right: 110%;*/
-            /*text-align: center;*/
-            /*border-radius: 6px;*/
-            /*padding: 5px 0;*/
-            /*position: absolute;*/
-        /*}*/
-        /*.mytooltip {*/
-            /*position: relative;*/
-            /*display: inline-block;*/
-        /*}*/
-        /*.mytooltip:hover .mytext {*/
-            /*visibility: visible;*/
-        /*}*/
-        /*#no-border{*/
-            /*border: none;*/
-        /*}*/
-        /*#readonly {*/
-            /*border:1px solid #00CC99;*/
-        /*}*/
-        /*!* TOOLTIP TOP *!*/
-        /*.tooltip_top {*/
-            /*position: relative;*/
-            /*display: inline-block;*/
-        /*}*/
-        /*.tooltip_top .tooltiptext {*/
-            /*visibility: hidden;*/
-            /*width: 120px;*/
-            /*background-color: #00CC99;*/
-            /*color: #fff;*/
-            /*text-align: center;*/
-            /*border-radius: 6px;*/
-            /*padding: 5px 0;*/
-            /*!* Position the tooltip *!*/
-            /*position: absolute;*/
-            /*z-index: 1;*/
-            /*bottom: 100%;*/
-            /*left: 50%;*/
-            /*margin-left: -60px;*/
-        /*}*/
-        /*.tooltip_top:hover .tooltiptext {*/
-            /*visibility: visible;*/
-        /*}*/
-        /*.pagination{*/
-            /*margin: 0;*/
-            /*padding: 0;*/
-            /*margin-left: 2%;*/
-        /*}*/
+        .ui-autocomplete
+        {
+            font-weight: bold;
+            background-color: white;
+            width: 20%;
+        }
+        .ui-menu-item {
+            cursor: pointer;
+            margin-top: 2%;
+        }
+        .mytooltip .mytext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #00CC99;
+            color: #fff;
+            z-index: 1;
+            top: -5px;
+            right: 110%;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+        }
+        .mytooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .mytooltip:hover .mytext {
+            visibility: visible;
+        }
+        #no-border{
+            border: none;
+        }
+        #readonly {
+            border:1px solid #00CC99;
+        }
+        /* TOOLTIP TOP */
+        .tooltip_top {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip_top .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #00CC99;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+            bottom: 100%;
+            left: 50%;
+            margin-left: -60px;
+        }
+        .tooltip_top:hover .tooltiptext {
+            visibility: visible;
+        }
+        .pagination{
+            margin: 0;
+            padding: 0;
+            margin-left: 2%;
+        }
 
-        @media (max-width: 1920px) and (max-height: 2424px) {
-            .card {
-                /*background-color: #926d8d;*/
-                border-radius: var(--card-radius);
-                position: relative;
-                opacity: 1.0;
-                /*padding-top: 1em;*/
-            }
+        :root {
+            --card-line-height: 1.2em;
+            --card-padding: 2em;
+            --card-radius: 0.5em;
+            --color-green: #558309;
+            --color-gray: #e2ebf6;
+            --color-dark-gray: #c4d1e1;
+            --radio-border-width: 2px;
+            --radio-size: 1.4em;
+        }
 
-            .plan-type {
-                color: var(--color-green);
-                font-size: 1.5rem;
-                font-weight: bold;
-                /*align-items: stretch;*/
-                /*line-height: 1em;*/
-            }
+        body {
+            background-color: #f2f8ff;
+            color: #263238;
+            font-family: 'Noto Sans', sans-serif;
+            margin: 0;
+            /*padding: 2em 6vw;*/
+        }
 
-            .plan-details {
-                border: var(--radio-border-width) solid var(--color-gray);
-                border-radius: var(--card-radius);
-                cursor: pointer;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                padding: 0.8em;
-                transition: border-color 0.2s ease-out;
-            }
+        .card {
+            /*background-color: #926d8d;*/
+            border-radius: var(--card-radius);
+            position: relative;
+            opacity: 1.0;
+            padding-top: 1em;
+        }
+
+        .plan-type {
+            color: var(--color-green);
+            font-size: 1.5rem;
+            font-weight: bold;
+            line-height: 1em;
+        }
+
+        .plan-details {
+            /*border: var(--radio-border-width) solid var(--color-gray);*/
+            /*border-radius: var(--card-radius);*/
+            cursor: pointer;
+            display: flex;
+            /*flex-direction: column;*/
+            /*align-items: flex-start;*/
+            padding: 1.0em;
+            transition: border-color 0.2s ease-out;
+        }
+
+        .tdcard {
+            border: var(--radio-border-width) solid var(--color-gray);
+            border-radius: var(--card-radius);
+            padding-bottom: 0.8em;
+            padding-right: 0.5em;
+            transition: border-color 0.2s ease-out;
         }
 
     </style>
@@ -106,118 +130,131 @@
     $yearly_reference = Session::get('yearly_reference');
     $ppmp_status = session::get('ppmp_status');
     $user = Session::get('auth');
-    ?>
+    //$section = session::get('section_id');
 
-    {{$section}}
-    <div class="box box-primary">
-        <div class="row" style="margin-bottom: 60px;">
-            <div class="col-md-12">
-                <div class="box-body">
+    $desc = \App\Section::select('description')
+        ->where('id',"=", $section)
+        ->first();
+    ?>
+    @if(session::get('admin'))
+        <h4 style="font-weight: bold">You are logged in as: {{$desc->description}}</h4>
+    @endif
+
+
+    {{--<div class="box box-primary">--}}
+        {{--<div class="row" style="margin-bottom: 60px;">--}}
+            {{--<div class="col-md-12">--}}
+                {{--<div class="box-body">--}}
                     <div class="row">
                         @foreach($program_settings as $program_setting)
                         @endforeach
-                            @if(Auth::user()->username == "201600256" && $ppmp_status == "program")
-                                <div style="padding-left: 10px; padding-right: 10px"><a class="btn-lg btn-success center-block col-sm-12" href="{{ url('FPDF/print/report_program.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&program_id='.$program_setting->id}}" target="_blank">
-                                        <i class="fa fa-file-pdf-o"></i> Generate Report - Program
+                        @if(Auth::user()->username == "201600256" && $ppmp_status == "program")
+                            <div style="padding-left: 10px; padding-right: 10px"><a class="btn-lg btn-success center-block col-sm-12" href="{{ url('FPDF/print/report_program.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&program_id='.$program_setting->id}}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Generate Report - Program
                                 </a></div>
-                            @endif
+                        @endif
                         <?php
-                            $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
+                        $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
                         ?>
-<!---->
-                        @foreach($expenses as $expense)
+                        @php
+                            $i = 0;
+                        @endphp
+                        <div class="table-responsive">
+                            <table>
+                                @foreach($expenses as $expense)
+                                    @if($i == 0)
+                                        <tr>
+                                            @endif
+                                            <td class="tdcard">
+                                                {{--<div class="col-md-3 col-sm-6 col-xs-12 d-flex align-content-stretch flex-wrap" style="border: 1px solid #b35e14;">--}}
 
-                            <div class="col-md-3 col-sm-6 col-xs-12 d-flex align-content-stretch flex-wrap" style="border: 1px solid #b35e14;">
-                                        @if($ppmp_status =="program")
-                                            <?php
-                                                $program_count = \App\ProgramSetting::where('expense_id',"=",$expense->id)
-                                                    ->where('section_id',"=", $section)->count();
-                                            ?>
-                                            <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
-                                        @else
-                                        <div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
-                                        @endif
-                                        <span class="">
-                                            <?php
-                                            $temp = $expense->description;
-                                            $count = 0;
-                                            $string = "";
-                                            for($i=0;$i<$expense_length;$i++) {
-                                                if(!isset($temp[$i])){
-                                                $temp .= '.';
-                                                }
-                                                if($count != 23){
-                                                $count++;
-                                                $string .= $temp[$i];
-                                                } else {
-                                                $count = 0;
-                                                $string .= "";
-                                                }
-                                            }
-                                            echo $expense->description;
-                                            ?>
-                                            <br><span class="h4">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section','$yearly_reference','$ppmp_status')")) }}</span>
-                                        @if($ppmp_status == "program")
-                                                <span class=""> Program {{ $program_count }}</span>
-                                                @endif
-                                        </span>
-                                    </div>
+                                                @if($ppmp_status =="program")
+                                                    @php
+                                                        $program_count = \App\ProgramSetting::where('expense_id',"=",$expense->id)
+                                                            ->where('section_id',"=", $section)->count();
+                                                    @endphp
+                                                    <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
+                                                        @else
+                                                            <div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                                                @endif
+                                                                <label class="card">
+                                                                <span class="plan-details">
+                                                                <span class="plan-type">
+                                                                {{$expense->description}}
+                                                                    <br><br><span class="h3">{{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section','$yearly_reference','$ppmp_status')")) }}</span>
+                                                                    @if($ppmp_status == "program")
+                                                                        <br><br><span class=""> Program {{ $program_count }}</span>
+                                                                    @endif
+                                                                </span>
+                                                                </span>
+                                                                </label>
+                                                            </div>
 
-                                    <div>
-                                        <input type="hidden" name="ppmp_status" id="ppmp_status" value="{{$ppmp_status}}"/>
-                                        <input type="hidden" name="yearly_reference" id="yearly_reference" value="{{$yearly_reference}}"/>
-                                        @if($ppmp_status == "program" && Auth::user()->username != "201600256")
-                                        <a href="" class="btn btn-md btn-info" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
-                                            SET PROGRAM
-                                        </a>
-                                        @endif
-                                    </div>
-
-
-                                    <div class="modal fade" id="Modal{{$expense->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                        <div class="modal-dialog" role="document">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <h3 class="modal-title" id="exampleModalLabel">SET PROGRAM</h3>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                <span aria-hidden="true">&times;</span>
-                                                            </button>
-                                                        </div>
+                                                            <div>
+                                                                <input type="hidden" name="ppmp_status" id="ppmp_status" value="{{$ppmp_status}}"/>
+                                                                <input type="hidden" name="yearly_reference" id="yearly_reference" value="{{$yearly_reference}}"/>
+                                                                @if($ppmp_status == "program")
+                                                                    <a href="" class="btn btn-md btn-info col-md-12" data-toggle="modal"  data-target="#Modal{{$expense->id}}">
+                                                                        SET PROGRAM
+                                                                    </a>
+                                                                @endif
+                                                            </div>
+                                                            <div class="modal fade" id="Modal{{$expense->id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                                <div class="modal-dialog" role="document">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <div class="row">
+                                                                                <div class="col-md-6">
+                                                                                    <h3 class="modal-title" id="exampleModalLabel">SET PROGRAM</h3>
+                                                                                </div>
+                                                                                <div class="col-md-6">
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <form id="program_form" action='{{ asset("/ppmp/set_program") }}' method="post">
+                                                                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                                                                            <div class="modal-body">
+                                                                                <div class="col-md-12">Select Program</div>
+                                                                                <input type="hidden" name="expense" id="exp" value="{{$expense->id}}"/>
+                                                                                <input type="hidden" name="section_id"  value="{{$section}}"/>
+                                                                                <input type="hidden" name="division_id"  value="{{$division_id}}"/>
+                                                                                <input type="hidden" name="user_id" value="{{Auth::user()->username}}"/>
+                                                                                <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel" style="width: 100%">
+                                                                                    @foreach($programs as $a)
+                                                                                        <option value="{{ $a->id }}">{{ $a->description }}</option>
+                                                                                    @endforeach
+                                                                                </select>
+                                                                                <div class="modal-footer">
+                                                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                                                    <button id="btnsave" type="submit" class="btn btn-primary" name="save">Save changes</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                     </div>
-                                                </div>
-                                                <form id="program_form" action='{{ asset("/ppmp/set_program") }}' method="post">
-                                                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                                    <div class="modal-body">
-                                                                        <div class="col-md-12">Select Program</div>
-                                                                        <input type="hidden" name="expense" id="exp" value="{{$expense->id}}"/>
-                                                                        <input type="hidden" name="section_id"  value="{{$section}}"/>
-                                                                        <input type="hidden" name="division_id"  value="{{$division_id}}"/>
-                                                                        <input type="hidden" name="user_id" value="{{Auth::user()->username}}"/>
-                                                                        <select class="js-example-basic-multiple" name="programs[]" multiple="multiple" id="sel" style="width: 100%">
-                                                                            @foreach($programs as $a)
-                                                                                <option value="{{ $a->id }}">{{ $a->description }}</option>
-                                                                            @endforeach
-                                                                        </select>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                                            <button id="btnsave" type="submit" class="btn btn-primary" name="save">Save changes</button>
-                                                        </div>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                            </div>
-                        @endforeach
+                                                    {{--</div>--}}
+                                            </td>
+                                            @php
+                                                $i++;
+                                                if ($i == 4) {
+                                                    echo '</tr><tr>';
+                                                    $i = 0;
+                                                }
+                                            @endphp
+                                            @endforeach
+                                        </tr>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                {{--</div>--}}
+            {{--</div>--}}
+        {{--</div>--}}
+    {{--</div>--}}
 @endsection
 
 @section('js')

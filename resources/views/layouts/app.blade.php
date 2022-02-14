@@ -91,7 +91,6 @@
         .modal-body{
             overflow: auto;
         }
-
     </style>
 </head>
     <body>
@@ -178,6 +177,13 @@
     <script src="{{ asset('public/adminLTE/bower_components/fastclick/lib/fastclick.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('public/adminLTE/dist/js/adminlte.min.js') }}"></script>
+    <!-- FLOT CHARTS -->
+    <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.js') }}"></script>
+    <!-- ChartJS -->
+    <script src="{{ asset('public/adminLTE/bower_components/chart.js/Chart.js') }}"></script>
+    <!-- FLOT EXCANVAS -->
+    <script src="{{ asset('public/adminLTE/bower_components/Flot/excanvas.js') }}"></script>
+
     @if(isset(Request::segments()[1]))
         @if(Request::segments()[0].'/'.Request::segments()[1] == 'admin/home')
             <!-- AdminLTE for demo purposes -->
@@ -190,6 +196,10 @@
             <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.pie.js') }}"></script>
             <!-- FLOT CATEGORIES PLUGIN - Used to draw bar charts -->
             <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.categories.js') }}"></script>
+            <!-- ChartJS -->
+            <script src="{{ asset('public/adminLTE/bower_components/chart.js/Chart.js') }}"></script>
+            <!-- FLOT EXCANVAS -->
+            <script src="{{ asset('public/adminLTE/bower_components/Flot/excanvas.js') }}"></script>
         @endif
     @endif
     <!-- lobibox -->
