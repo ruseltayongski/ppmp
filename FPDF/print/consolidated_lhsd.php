@@ -608,7 +608,7 @@ else {
     }
     else {
         $pdf->SetWidths(array(20,70,76,73,70));
-        $pdf->TableFooter(array("","Division Chief:","Evaluated By:","Recommending Approval:","Approved:"));
+        $pdf->TableFooter(array("","Submitted by:","Evaluated By:","Recommending Approval:","Approved:"));
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);

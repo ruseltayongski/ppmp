@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Session;
 @extends('layouts.app')
 
 @section('js')
+    <script src="{{ asset('public/adminLTE/bower_components/jquery/dist/jquery.min.js') }}"></script>
+    <script src="{{ asset('public/adminLTE/bower_components/Flot/excanvas.js') }}"></script>
+    <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.js') }}"></script>
+    <script src="{{ asset('public/adminLTE/bower_components/Flot/jquery.flot.pie.js') }}"></script>
+
     <script type="text/javascript">
         $(function () {
             var data1 = [
@@ -12,20 +17,58 @@ use Illuminate\Support\Facades\Session;
 
             var options = {
                 series:{
-                    bars:{show: true}
+                    bars:{show: false},
                 },
                 bars:{
-                    horizontal:true,
+                    vertical:false,
                     barWidth:6
                 },
                 grid:{
-                    backgroundColor: { colors: ["#919191", "#141414"] }
+                    backgroundColor: { colors: ["#FFFFFF", "#e3caca"] }
                 }
             };
 
             $.plot($("#bar-chart"), [data1], options );
 
         });
+
+        var data = [{
+            label: "LHSD Chief",
+            data: 150
+        }, {
+            label: "FHS",
+            data: 100
+        }, {
+            label: "NON-COMMUNICABLE",
+            data: 250
+        }, {
+            label: "COMMUNICABLE",
+            data: 250
+        }, {
+            label: "MASU",
+            data: 250
+        }];
+
+        var options1 = {
+            series: {
+                pie: {
+                    show: true,
+                    innerRadius: 0.5,
+                    radius: 1
+                }
+            },
+            grid: {
+                hoverable: true
+            },
+            tooltip: true,
+            tooltipOpts: {
+                cssClass: "flotTip",
+                content: "%s: %p.0%",
+                defaultTheme: true
+            }
+        };
+
+        $.plot($("#pie-placeholder"), data, options1);
     </script>
 @endsection
 
@@ -33,6 +76,16 @@ use Illuminate\Support\Facades\Session;
 
     <title>Dashboard</title>
     <div class="col-md-9">
+        <div class="box box-primary">
+            <!-- interactive chart -->
+            <div class="box-header">
+                <i class="fa fa-bar-chart-o"></i>
+                <h3 class="box-title">Interactive Area Chart</h3>
+            </div>
+            <div class="box-body">
+                <div id="pie-placeholder" style="height: 300px;"></div>
+            </div>
+        </div>
         <div class="box box-primary">
             <!-- Main content -->
             <section class="content">
@@ -55,16 +108,6 @@ use Illuminate\Support\Facades\Session;
                     </div>
                 </div>
             </section>
-        </div>
-        <div class="box box-primary">
-            <!-- interactive chart -->
-            <div class="box-header">
-                <i class="fa fa-bar-chart-o"></i>
-                <h3 class="box-title">Interactive Area Chart</h3>
-            </div>
-            <div class="box-body">
-                <div id="interactive" style="height: 300px;"></div>
-            </div>
         </div>
         <!-- /.box -->
     </div>

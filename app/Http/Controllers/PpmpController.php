@@ -31,6 +31,8 @@ class PpmpController extends Controller
         $expenses = Expense::get();
         $section = Auth::user()->section;
 
+        $prog = Session::get('prog');
+
         if(Session::get("admin")) {
             $section= session::get('section_id');
             //Session::put('section_id',$section);
@@ -49,7 +51,9 @@ class PpmpController extends Controller
 //            $programs = Program::all();
 //        }
 //        else
-        $programs = Program::where('section_id','=',$section)->get();
+        $programs = Program::where('section_id','=',$section)
+            ->where("id","!=", $prog)
+            ->get();
 
         return view('ppmp.dashboard',[
             "expenses" => $expenses,
@@ -82,6 +86,8 @@ class PpmpController extends Controller
         $user = $request->user_id;
         $section_id = Auth::user()->section;
         $division_id = $request->division_id;
+
+        Session::put("prog",$request->programs);
 
         if(session::get('admin')) {
             $section_id = session::get('section_id');
