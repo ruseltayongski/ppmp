@@ -13,6 +13,7 @@ use App\Expense;
 use App\Program;
 use App\Section;
 use App\User;
+use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
@@ -23,7 +24,7 @@ class AdminController extends Controller
 
     public function home()
     {
-        $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
+       $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
 
         $item_qty = Item::select(
                         \DB::raw("SUM(COALESCE(qty.jan,0)) as jan"),
@@ -142,5 +143,38 @@ class AdminController extends Controller
             "divisions" => $divisions
             // "expense" => $expense
         ]);
+    }
+
+    //loginAs
+    public function loginAs()
+    {
+        return view('admin.loginAs',[
+            'title' => 'Login As'
+        ]);
+    }
+
+    public function assignLogin(Request $req)
+    {
+        $user = Session::get('auth');
+
+        $user->section = $req->section_id;
+        $section = $user->section;
+
+        Session::put('auth',$user);
+        Session::put('admin',true);
+        Session::put('section_id',$section);
+
+        return redirect()->route('user', [
+            'section' => $section
+        ]);
+    }
+
+    public function returnToAdmin()
+    {
+        Session::forget('admin');
+        $user = Session::get('auth');
+        Session::put('auth',$user);
+        print_r($user);
+        return redirect()->route('admin');
     }
 }

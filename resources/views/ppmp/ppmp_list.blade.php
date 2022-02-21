@@ -99,7 +99,7 @@
             </tr>";
     }
 
-    function setItem($item,$section_id){
+    function setItem($item,$section){
 
         $yearly_reference = Session::get('yearly_reference');
         $ppmp_status = Session::get('ppmp_status');
@@ -108,9 +108,9 @@
             $item_daily = \App\ItemDaily::where("item_id",$item->id)
                 ->where("expense_id",$item->expense_id)
                 ->where("tranche",$item->tranche)
-                ->where("section_id",$section_id)
+                ->where("section_id",$section)
                 ->where("yearly_ref_id",$yearly_reference)
-                ->where('ppmp_status',$ppmp_status)
+                ->where("ppmp_status",$ppmp_status)
                 ->orderBy("id","desc")
                 ->first();
             if($item_daily){
@@ -140,7 +140,7 @@
 
         $user = Auth::user();
         setItem($item,$user->section);
-        if(($item->status == 'fixed') && $user->section != 45 && $user->username != "0864") {
+        if(($item->status == 'fixed') && $user->username != "0864") {
             $description = [
                 "readonly" => "readonly"
             ];
@@ -152,7 +152,7 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
-        $user->section == "45" || $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
         $data = "<tr class='$item->unique_id $item->id'>
@@ -328,11 +328,13 @@
                     </div>
                     <!-- /.box-header -->
                     <?php
-                        $section_id = Auth::user()->section;
+                        //$section = Auth::user()->section;
                         $division_id = Auth::user()->division;
                         $yearly_reference = Session::get('yearly_reference');
                         $ppmp_status = Session::get('ppmp_status');
                     ?>
+
+                    {{--{{$section_id}}--}}
                     @if(isset($expenses) && count($expenses) > 0 )
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped">
@@ -400,7 +402,6 @@
                                                 }
 
                                                 echo "</tbody>";
-                                                echo expenseTotal($sub_total);
 
                                             } // end of maine tranche expense
                                             if(!isset($flag[$display_first])){ // sub tranche expense
@@ -419,7 +420,7 @@
                                                 $expense_total = 0;
                                                 $tranche = $expense->id."-".$alphabet[$count_first];
                                                 echo displayHeader($title_header_expense.$title_header_first);
-                                                if($tranche == '1-C' or $tranche == '49-A' or $tranche == '49-B' or $tranche == '49-C' or $tranche == '49-D'){
+                                                if($tranche == '1-C' or $tranche == '50-A' or $tranche == '50-B' or $tranche == '50-C' or $tranche == '50-D'){
                                                     $items = \DB::connection('mysql')->select("call tranche_one_c('$expense->id','$tranche','$section_id','$yearly_reference','$ppmp_status')");
                                                 }
                                                 else{
@@ -487,24 +488,30 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=consolidated&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                            <i class="fa fa-file-pdf-o"></i> Consolidated
+                        </a>
+                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Region
                         </a>
-                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Division
                         </a>
                         <!--
-                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.Auth::user()->section.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Section
                         </a>
 
                         -->
-                        <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
-                        @foreach($section as $sec)
-                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
-                                <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
-                            </a>
-                        @endforeach
+                        {{$admin = session::get('admin')}}
+                        @if(!($admin))
+                            <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
+                            @foreach($section as $sec)
+                                <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
+                                </a>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
                 <!-- /.modal-content -->
@@ -583,7 +590,6 @@
         $(document).ready(function () {
             $(".item_submit").submit(function () {
                 $("#ppmp_saved").attr("disabled", true);
-
 
                 var expense_id = "<?php echo $expense_id; ?>";
                 $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);

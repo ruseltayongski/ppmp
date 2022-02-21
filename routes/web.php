@@ -21,20 +21,20 @@ Route::get('logout', function(){
 Route::match(['GET','POST'],'/','LoginController@index');
 
 //admin
-Route::get('admin/home','AdminController@home');
+Route::get('admin/home','AdminController@home')->name('admin');
 Route::get('admin/privileged','MaintenanceController@adminPrivilage');
 
 //user
-Route::get('user/home','PpmpController@index');
+Route::get('user/home/{section}','PpmpController@index')->name('user');
 Route::post('user/division/update','MaintenanceController@updateDivisionPost');
 Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
 //ppmp
-Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList');
+Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList')->name('ppmp_list');
 Route::match(["GET","POST"],'program/list/{expense_id}','PpmpController@ppmpProgram');
 Route::match(["GET","POST"],'program/blade','PpmpController@programBlade');
-Route::post('ppmp/set_program','PpmpController@setProgram');
+Route::post('ppmp/set_program','PpmpController@setProgram')->name('set_program');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
 Route::post('ppmp/delete','PpmpController@ppmpDelete');
 Route::get('ppmp/search/{keyword?}','PpmpController@ppmpSearch')->where('keyword', '(.*(?:%2F:)?.*)');
@@ -90,3 +90,8 @@ Route::post('program/edit','AdminController@editProgram');
 Route::post('program/update','AdminController@updateProgram');
 Route::post('program/delete','AdminController@deleteProgram');
 Route::any('program/search', 'AdminController@searchProgram');
+
+//login as
+Route::get('admin/login','AdminController@loginAs');
+Route::post('admin/login','AdminController@assignLogin');
+Route::get('admin/account/return','AdminController@returnToAdmin');
