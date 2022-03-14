@@ -2,7 +2,8 @@
     <!-- Profile Image -->
     <div class="box box-primary">
         <div class="box-body box-profile">
-            <img class="profile-user-img img-responsive img-circle" src="{{ str_replace('ppmpv2','pis',asset('')).'public/upload_picture/picture/'.$information->picture }}" alt="User profile picture">
+            <img class="profile-user-img img-responsive img-circle" src="{{ isset($information->picture) ? 'http://49.157.74.3/pis'.'public/upload_picture/picture/'.$information->picture : 'http://49.157.74.3/pis'.'public/upload_picture/unknown.png' }}" alt="User profile picture">
+        
 
             <h3 class="profile-username text-center">{{ strtoupper($information->fname.' '.$information->lname) }}</h3>
 

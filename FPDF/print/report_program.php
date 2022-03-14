@@ -77,7 +77,8 @@ function queryItem($expense_id, $program_id, $section){
                                     itd.id < itd1.id and
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
-                                    itd.section_id = itd1.section_id
+                                    itd.section_id = itd1.section_id AND
+                                    itd.yearly_ref_id = itd1.yearly_ref_id
                                     ) 
               where 
                 itd.status is NULL and 
@@ -113,7 +114,8 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code){
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
                                     itd.section_id = itd1.section_id AND 
-                                    itd.tranche = itd1.tranche
+                                    itd.tranche = itd1.tranche AND
+                                    itd.yearly_ref_id = itd1.yearly_ref_id
                                     ) 
               where 
                 itd.status is NULL and
