@@ -26,7 +26,7 @@ class AddYearlyRefIdToProgramSettingsTable extends Migration
     public function down()
     {
         Schema::table('program_settings', function (Blueprint $table) {
-            $table->integer('yearly_ref_id');
+            $table->dropColumn('yearly_ref_id');
         });
     }
 }
