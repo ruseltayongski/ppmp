@@ -96,7 +96,7 @@ function queryItem($expense_id, $program_id, $section, $yearly_ref){
                 itd.section_id = ? and 
                 itd.yearly_ref_id = ? AND 
                 itd1.id is null 
-              order by itd.description ASC";
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -134,7 +134,7 @@ function queryOriginal($expense_id, $section, $yearly_ref, $ppmp_stat){
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and
                 itd1.id is null
-              order by itd.description ASC";
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -172,8 +172,8 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $ye
                 itd.tranche = ? and 
                 itd.yearly_ref_id = ? AND 
                 itd1.id is null  
-              group by itd.item_id  
-              order by itd.description ASC";
+              group by item_id  
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -211,8 +211,8 @@ function queryTranche($expense_id,$section, $tranche_code, $yearly_ref, $ppmp_st
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and 
                 itd1.id is null 
-              group by itd.item_id  
-              order by itd.description ASC";
+              group by item_id  
+              order by description ASC";
 
     try {
         $st = $pdo->prepare($query);

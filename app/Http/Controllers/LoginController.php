@@ -54,7 +54,9 @@ class LoginController extends Controller
             if(Auth::user()->user_priv)
                 return Redirect::to('admin/home');
             else
-                return Redirect::to('user/home');
+                $section = Auth::user()->section;
+                //return Redirect::to('user/home');
+                return redirect()->route('user',['section' => $section]);
         }
         return view('login');
     }
