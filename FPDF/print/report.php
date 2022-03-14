@@ -304,7 +304,7 @@ foreach($expenses as $expense) {
         $pdf->SetFont('Arial','B',7);
 
         $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
-        //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
+//        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
         if(count($items) > 0 ) {
             $pdf->displayExpense($expense->description); //display expense if no value from first

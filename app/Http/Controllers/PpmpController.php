@@ -86,6 +86,7 @@ class PpmpController extends Controller
         $user = $request->user_id;
         $section_id = Auth::user()->section;
         $division_id = $request->division_id;
+        $yearly_reference = session::get('yearly_reference');
 
         Session::put("prog",$request->programs);
 
@@ -96,6 +97,7 @@ class PpmpController extends Controller
         $set_program = ProgramSetting::where('expense_id','=',$expense)
             ->where('section_id','=', $section_id)
             ->where('program_id',"=", $programs)
+            ->where('yearly_ref_id',"=", $yearly_reference)
             ->get();
 
         if(count($set_program) > 0 && $expense != 1)
@@ -108,13 +110,16 @@ class PpmpController extends Controller
             $set_program->created_by = $user;
             $set_program->section_id = $section_id;
             $set_program->division_id = $division_id;
+            $set_program->yearly_ref_id = $yearly_reference;
             $set_program->save();
         }
         return back();
     }
 
+
     public function ppmpProgram($expense_id = null,Request $request) {
 
+        $yearly_reference = Session::get('yearly_reference');
         $section_id = Auth::user()->section;
 
         if(session::get('admin')) {
@@ -124,6 +129,7 @@ class PpmpController extends Controller
         $program_settings = ProgramSetting::select("programs.id","programs.description")
                                         ->where('program_settings.expense_id',"=",$expense_id)
                                         ->where('program_Settings.section_id',"=", $section_id)
+                                        ->where('program_settings.yearly_ref_id',"=",$yearly_reference)
                                         ->Join("programs","programs.id","=","program_settings.program_id")
                                         ->get();
 

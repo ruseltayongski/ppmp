@@ -31,14 +31,14 @@ function querySection(){
     return $row;
 }
 
-function queryProgram($section_id){
+function queryProgram($section_id,$yearly_reference){
     $pdo = conn();
-    $query = "SELECT prog.id,prog.description,setting.expense_id FROM program_settings setting join programs prog on prog.id = setting.program_id where setting.section_id = ?  ORDER BY ID ASC";
+    $query = "SELECT prog.id,prog.description,setting.expense_id FROM program_settings setting join programs prog on prog.id = setting.program_id where setting.section_id = ? and setting.yearly_ref_id = ? ORDER BY ID ASC";
 
     try
     {
         $st = $pdo->prepare($query);
-        $st->execute(array($section_id));
+        $st->execute(array($section_id,$yearly_reference));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -48,14 +48,14 @@ function queryProgram($section_id){
 }
 
 
-function queryExpense($program_id){
+function queryExpense($program_id, $yearly_reference){
     $pdo = conn();
-    $query = "SELECT exp.* FROM EXPENSE exp join program_settings setting on setting.expense_id = exp.id where setting.program_id = ? ORDER BY ID ASC";
+    $query = "SELECT exp.* FROM EXPENSE exp join program_settings setting on setting.expense_id = exp.id where setting.program_id = ? and setting.yearly_ref_id = ? ORDER BY ID ASC";
 
     try
     {
         $st = $pdo->prepare($query);
-        $st->execute(array($program_id));
+        $st->execute(array($program_id, $yearly_reference));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -64,7 +64,7 @@ function queryExpense($program_id){
     return $row;
 }
 
-function queryItem($expense_id, $program_id, $section){
+function queryItem($expense_id, $program_id, $section, $yearly_reference){
     $pdo = conn();
     //$query = "SELECT * from item_daily where status is NULL and expense_id = ? and program_id = ? and section_id = ? group by item_id DESC order by description ASC";
     $query = "SELECT
@@ -77,20 +77,22 @@ function queryItem($expense_id, $program_id, $section){
                                     itd.id < itd1.id and
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
-                                    itd.section_id = itd1.section_id
+                                    itd.section_id = itd1.section_id AND
+                                    itd.yearly_ref_id = itd1.yearly_ref_id
                                     ) 
               where 
                 itd.status is NULL and 
                 itd.expense_id = ? and 
                 itd.program_id = ? and 
                 itd.section_id = ? and 
+                itd.yearly_ref_id = ? and
                 itd1.id is null 
               group by item_id DESC 
               order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
-        $st->execute(array($expense_id,$program_id,$section));
+        $st->execute(array($expense_id,$program_id,$section,$yearly_reference));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     } catch(PDOException $ex){
         echo $ex->getMessage();
@@ -100,7 +102,7 @@ function queryItem($expense_id, $program_id, $section){
     return $row;
 }
 
-function queryMainTranche($expense_id, $program_id, $section, $tranche_code){
+function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $yearly_reference){
     $pdo = conn();
     $query = "SELECT 
                 itd.* 
@@ -113,21 +115,23 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code){
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
                                     itd.section_id = itd1.section_id AND 
-                                    itd.tranche = itd1.tranche
+                                    itd.tranche = itd1.tranche AND 
+                                    itd.yearly_ref_id = itd1.yearly_ref_id
                                     ) 
               where 
                 itd.status is NULL and
                 itd.expense_id = ? and 
                 itd.program_id = ? and 
                 itd.section_id = ? and 
-                itd.tranche = ? and 
+                itd.tranche = ? and
+                itd.yearly_ref_id = ? and  
                 itd1.id is null 
               group by item_id DESC
               order by description ASC";
 
     try {
         $st = $pdo->prepare($query);
-        $st->execute(array($expense_id,$program_id,$section, $tranche_code));
+        $st->execute(array($expense_id,$program_id,$section, $tranche_code, $yearly_reference));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     } catch(PDOException $ex){
         echo $ex->getMessage();
@@ -160,11 +164,11 @@ $generate_level = $_GET['generate_level'];
 $division_id = $_GET['division_id'];
 $section_id = $_GET['section_id'];
 $program_id = $_GET['program_id'];
-
+$yearly_reference = $_GET['yearly_reference'];
 
 $sections = querySection();
-$expenses = queryExpense($program_id);
-$programs = queryProgram($section_id);
+$expenses = queryExpense($program_id,$yearly_reference);
+$programs = queryProgram($section_id,$yearly_reference);
 
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
@@ -262,9 +266,9 @@ $ppmp_status = $_GET['ppmp_status'];
 
 foreach($sections as $section) {
     $pdf->displayExpense($section->description);
-    $programs = queryProgram($section->id);
+    $programs = queryProgram($section->id, $yearly_reference);
     foreach($programs as $program) {
-        $expenses = queryExpense($program->id);
+        $expenses = queryExpense($program->id, $yearly_reference);
         foreach($expenses as $expense) {
             $count_first = 0;
             $count_second = 0;
@@ -279,7 +283,7 @@ foreach($sections as $section) {
 
                         $tranche = $expense->id."-".$alphabet[$count_first]."-".$count_second;
 
-                        $items = queryMainTranche($expense->id,$program->id,$section->id,$tranche);
+                        $items = queryMainTranche($expense->id,$program->id,$section->id,$tranche,$yearly_reference);
 
                         if(count($items) > 0 && $expense->id == $program->expense_id) {
                             $pdf->displayExpense("\t\t\t\t".$program->description);
@@ -312,7 +316,7 @@ foreach($sections as $section) {
                         $tranche = $expense->id . "-" . $alphabet[$count_first];
 
                         $expense_total = 0;
-                        $items = queryMainTranche($expense->id,$program->id,$section->id,$tranche);
+                        $items = queryMainTranche($expense->id,$program->id,$section->id,$tranche,$yearly_reference);
 
                         if(count($items) > 0 ) {
                             $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $program->description);
@@ -335,7 +339,7 @@ foreach($sections as $section) {
             $expense_total = 0;
             $pdf->SetFont('Arial','B',7);
 
-            $items = queryItem($expense->id,$program->id,$section->id);
+            $items = queryItem($expense->id,$program->id,$section->id,$yearly_reference);
 
             if($expense->id == $program->expense_id) {
                 $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $program->description);

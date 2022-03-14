@@ -81,12 +81,13 @@ function queryItem($expense_id, $program_id, $section, $yearly_ref){
                 item_daily itd 
               left join 
                 item_daily itd1 on (
+                                    itd.unique_id = itd1.unique_id and
                                     itd.item_id = itd1.item_id and
                                     itd.id < itd1.id AND 
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
                                     itd.section_id = itd1.section_id AND 
-                                    itd.yearly_ref_id = itd1.yearly_ref_id
+                                    itd.yearly_ref_id = itd1.yearly_ref_id 
                                     ) 
               where 
                 itd.status is NULL and
@@ -95,8 +96,7 @@ function queryItem($expense_id, $program_id, $section, $yearly_ref){
                 itd.section_id = ? and 
                 itd.yearly_ref_id = ? AND 
                 itd1.id is null 
-              group by item_id DESC 
-              order by description ASC";
+              order by itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -119,12 +119,13 @@ function queryOriginal($expense_id, $section, $yearly_ref, $ppmp_stat){
                 item_daily itd 
               left join 
                 item_daily itd1 on (
+                                    itd.unique_id = itd1.unique_id AND 
                                     itd.item_id = itd1.item_id and 
                                     itd.id < itd1.id AND 
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.section_id = itd1.section_id AND 
                                     itd.yearly_ref_id = itd1.yearly_ref_id AND 
-                                    itd.ppmp_status = itd1.ppmp_status
+                                    itd.ppmp_status = itd1.ppmp_status 
                                     ) 
               where 
                 itd.status is NULL and 
@@ -132,9 +133,8 @@ function queryOriginal($expense_id, $section, $yearly_ref, $ppmp_stat){
                 itd.section_id = ? and 
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and
-                itd1.id is null 
-              group by item_id DESC 
-              order by description ASC";
+                itd1.id is null
+              order by itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -162,7 +162,7 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $ye
                                     itd.program_id = itd1.program_id AND 
                                     itd.section_id = itd1.section_id AND 
                                     itd.tranche = itd1.tranche AND 
-                                    itd.yearly_ref_id = itd1.yearly_ref_id
+                                    itd.yearly_ref_id = itd1.yearly_ref_id 
                                     ) 
               where 
                 itd.status is NULL and
@@ -171,9 +171,9 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $ye
                 itd.section_id = ? and 
                 itd.tranche = ? and 
                 itd.yearly_ref_id = ? AND 
-                itd1.id is null 
-              group by item_id DESC 
-              order by description ASC";
+                itd1.id is null  
+              group by itd.item_id  
+              order by itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);
@@ -211,8 +211,8 @@ function queryTranche($expense_id,$section, $tranche_code, $yearly_ref, $ppmp_st
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and 
                 itd1.id is null 
-              group by item_id DESC 
-              order by description ASC";
+              group by itd.item_id  
+              order by itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);

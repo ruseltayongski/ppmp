@@ -171,7 +171,9 @@
                                                 @if($ppmp_status =="program")
                                                     @php
                                                         $program_count = \App\ProgramSetting::where('expense_id',"=",$expense->id)
-                                                            ->where('section_id',"=", $section)->count();
+                                                            ->where('section_id',"=", $section)
+                                                            ->where('yearly_ref_id',"=", $yearly_reference)
+                                                            ->count();
                                                     @endphp
                                                     <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
                                                         @else
