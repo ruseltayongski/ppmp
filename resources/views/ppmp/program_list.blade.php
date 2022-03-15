@@ -510,7 +510,7 @@
                         -->
                         <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
                         @foreach($section as $sec)
-                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report_program.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&program_id='.$program_setting->id.'&expense_id='.$expense->id }}" target="_blank">
+                            <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report_per_program.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&program_id='.$program_setting->id.'&expense_id='.$expense->id }}" target="_blank">
                                 <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
                             </a>
                         @endforeach
