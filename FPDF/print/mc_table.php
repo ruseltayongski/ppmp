@@ -40,7 +40,7 @@ class PDF_MC_Table extends FPDF
             elseif($yearly_reference == 2)
                 $this->Cell(290,8,'Revised CY 2022',0,0,'C');
             else
-                $this->Cell(290,8,'CY 2023',0,0,'C');
+                $this->Cell(290,8,'CY 2022',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -287,13 +287,15 @@ class PDF_MC_Table extends FPDF
 //        else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-             if($item_body->mode_procurement == "Public Bidding" or $item_body->mode_procurement == "" and $item->expense_id == 1 and $yearly_reference == 3) {
+             if($item_body->expense_id == 1 and $item_body->tranche != "1-B" and $item_body->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
                 $item_body->mode_procurement = "NP 53.5";
              }else
-                 if(empty($item_body->mode_procurement) and $item->expense_id != 1 and $item->expense_id != 51 and $item->expense_id != 52 and $yearly_reference == 3) {
+                 if($item_body->expense_id == 1 and $item_body->tranche == "1-B" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
                  $item_body->mode_procurement = "NP 53.9";
              }else
-                 $item_body->mode_procurement = "Public Bidding";
+                 if($item_body->expense_id == 1 and $item_body->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
+                     $item_body->mode_procurement = "Public Bidding";
+                 }
 
             if ((int)$item_body->qty > 0)
                 $this->Item([

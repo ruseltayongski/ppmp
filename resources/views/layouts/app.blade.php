@@ -96,7 +96,7 @@
     <body>
     <nav class="navbar navbar-default navbar-static-top">
         <div class="header" style="background-color:#2F4054;padding:10px;">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <strong class="title-info">Welcome,</strong> <strong class="title-desc">{{ strtoupper(Auth::user()->lname.', '.Auth::user()->fname) }}</strong>
             </div>
             @if(!Auth::user()->user_priv) 
@@ -131,7 +131,21 @@
                     </strong>
                 </center>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <div class="pull-right">
+                    <strong class="title-info">PPMP Year:</strong> <strong class="title-desc">
+                        <?php
+                        $yey = session()->get('yearly_reference');
+                        $yearly = \App\YearlyReference::find($yey);
+                            if(isset($yearly)){
+                                echo $yearly->year;
+                            }
+                        ?>
+
+                         </strong>
+                </div>
+            </div>
+            <div class="col-md-2">
                 <div class="pull-right">
                     <strong class="title-info">Date:</strong> <strong class="title-desc">{{ date('M d, Y') }} </strong>
                 </div>

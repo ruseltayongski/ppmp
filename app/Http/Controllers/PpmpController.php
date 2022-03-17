@@ -605,6 +605,20 @@ class PpmpController extends Controller
         return $paginatedItems;
     }
 
+    public function viewItemDaily (){
+        $yearly_reference = session::get('yearly_reference');
+        $div = Auth::user()->division;
+
+        $items = ItemDaily::where('yearly_ref_id',"=", $yearly_reference)
+            ->where('division_id',"=", $div)
+            ->where('status', "=",null)
+            ->orderBy('id',"desc")->paginate(20);
+
+        return view('ppmp.viewItemDaily',[
+            "items" => $items
+        ]);
+    }
+
 
     public function ppmpDelete(Request $request){
         /*$item = Item::find($request->id);
