@@ -103,6 +103,7 @@
                 <li><a href="{{ url('admin/login') }}"><i class="fa fa-dashboard"></i> Login As</a></li>
                 <!-- EDITED FOR PROGRAMS  -->
                 <li><a href="{{ url('program/home') }}"><i class="fa fa-dashboard"></i> Programs</a></li>
+                <li><a href="{{ url('ppmp/viewItems') }}"><i class="fa fa-dashboard"></i> Items</a></li>
                 <!--
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>

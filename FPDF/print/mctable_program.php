@@ -245,6 +245,7 @@ class PDF_MC_Table extends FPDF
 
     function displayItem($item,$generate_level,$division_id,$section_id, $program_id,$expense_id)
     {
+        $yearly_reference = $_GET['yearly_reference'];
 
         $item->qty = $item->jan + $item->feb + $item->mar + $item->apr + $item->may + $item->jun + $item->jul + $item->aug + $item->sep + $item->oct + $item->nov + $item->dece;
         $item->estimated_budget = ((int)$item->qty * str_replace(',', '', (float)$item->unit_cost));
@@ -265,6 +266,16 @@ class PDF_MC_Table extends FPDF
             $item->description = $item->description;
         else
             $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
+
+        if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+            $item->mode_procurement = "NP 53.5";
+        }else
+            if($item->expense_id == 1 and $item->tranche == "1-B" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                $item->mode_procurement = "NP 53.9";
+            }else
+                if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                    $item->mode_procurement = "Public Bidding";
+                }
 
         if ((int)$item->qty > 0)
             $this->Item([

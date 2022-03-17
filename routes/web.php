@@ -95,3 +95,6 @@ Route::any('program/search', 'AdminController@searchProgram');
 Route::get('admin/login','AdminController@loginAs');
 Route::post('admin/login','AdminController@assignLogin');
 Route::get('admin/account/return','AdminController@returnToAdmin');
+
+//Items
+Route::get('ppmp/viewItems','PpmpController@viewItemDaily');
