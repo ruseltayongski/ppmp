@@ -3,9 +3,9 @@ date_default_timezone_set('Asia/Manila');
 
 function conn()
 {
-    $server = 'localhost';
+    $server = '192.168.110.31';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'rtayong_31','rtayong_31');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -297,7 +297,7 @@ $ppmp_status = $_GET['ppmp_status'];
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section_id])) {
                                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section_id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
@@ -328,7 +328,7 @@ $ppmp_status = $_GET['ppmp_status'];
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section_id])) {
                                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section_id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));

@@ -40,7 +40,7 @@ class PDF_MC_Table extends FPDF
             elseif($yearly_reference == 2)
                 $this->Cell(290,8,'Revised CY 2022',0,0,'C');
             else
-                $this->Cell(290,8,'CY 2022',0,0,'C');
+                $this->Cell(290,8,'CY 2023',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -291,7 +291,7 @@ class PDF_MC_Table extends FPDF
                 $item_body->mode_procurement = "NP 53.5";
              }else
                  if($item_body->expense_id == 1 and $item_body->tranche == "1-B" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
-                 $item_body->mode_procurement = "NP 53.9";
+                 $item_body->mode_procurement = "NP 53.5";
              }else
                  if($item_body->expense_id == 1 and $item_body->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
                      $item_body->mode_procurement = "Public Bidding";

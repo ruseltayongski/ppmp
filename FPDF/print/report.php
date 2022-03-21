@@ -97,10 +97,15 @@ if($division_id == 6){
 
 $division_name = queryDivision($division_id)->description;
 if($division_id == 6){
-    $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
+    $division_chief_name = "ELIZABETH P. TABASA CPA,MBA,CEO VI";
+}
+elseif($division_id == 5) {
+     $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
+     $end_user_name = "ANESSA P. PATNDOL, MD, RMT, MMHoA";
+     
 }
 else{
-    $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
+    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
 }
 
 
@@ -399,6 +404,39 @@ else {
         $pdf->SetFont('Arial','',7);
         $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
     }
+    else 
+        if($yearly_reference == 3 and $division_id == 5 ) {
+        $pdf->SetWidths(array(20,70,76,73,70));
+        $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
+        $pdf->Ln(2);
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','B',7);
+        $pdf->TableFooter(array("",$end_user_name,"LEONORA A. ANIEL",$division_chief_name));
+
+        $pdf->SetWidths(array(3,84,65,66,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V",$_GET['head_designation']));
+
+        $pdf->SetWidths(array(3,84,65,66,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","OIC, RLED","Budget Section","ARD"));
+        }
+        elseif($yearly_reference == 3 and $division_id == 8) {
+        $pdf->SetWidths(array(20,70,76,73,70));
+        $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
+        $pdf->Ln(2);
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','B',7);
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"LEONORA A. ANIEL",$division_chief_name));
+
+        $pdf->SetWidths(array(3,84,65,66,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V","Chief, LHSD"));
+
+         $pdf->SetWidths(array(3,84,65,66,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","HPCU","Budget Section","Chief, LHSD"));
+        }
     else {
         $pdf->SetWidths(array(20,70,76,73,70));
         $pdf->TableFooter(array("","Division Chief:","Evaluated By:","Recommending Approval:","Approved:"));
