@@ -103,8 +103,6 @@ if($division_id == 6){
 elseif($division_id == 5) {
      $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
      $end_user_name = "ANESSA P. PATNDOL, MD, RMT, MMHoA";
-     
-=======
     $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
 }elseif ($division_id == 5){
     $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
