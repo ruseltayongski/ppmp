@@ -190,27 +190,27 @@ class PDF_MC_Table extends FPDF
 
     function displayExpense($description){
 
-                $this->Expense([
-                    "",
-                    $description,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                ]);
+        $this->Expense([
+            "",
+            $description,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ]);
     }
 
 
@@ -280,51 +280,51 @@ class PDF_MC_Table extends FPDF
 
         $this->sub_total[$item->expense_id . $item->tranche] = $item_body->estimated_budget + $sub_total;
         $this->grand_total += $item_body->estimated_budget;
-  //
+        //
 
 //        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
 //            $item->description = $item->description;
 //        else
-            $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
+        $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-             if($item_body->expense_id == 1 and $item_body->tranche != "1-B" and $item_body->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
+        if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+            $item_body->mode_procurement = "NP 53.5";
+        }else
+            if($item->expense_id == 1 and $item->tranche == "1-B" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
                 $item_body->mode_procurement = "NP 53.5";
-             }else
-                 if($item_body->expense_id == 1 and $item_body->tranche == "1-B" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
-                 $item_body->mode_procurement = "NP 53.9";
-             }else
-                 if($item_body->expense_id == 1 and $item_body->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
-                     $item_body->mode_procurement = "Public Bidding";
-                 }
+            }else
+                if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                    $item_body->mode_procurement = "Public Bidding";
+                }
 
-            if ((int)$item_body->qty > 0)
-                $this->Item([
-                    $item->code,
-                    $item->description,
-                    $item_body->unit_measurement,
-                    $item_body->qty,
-                    number_format((float)$item_body->unit_cost, 2, '.', ','),
-                    number_format((float)$item_body->estimated_budget, 2, '.', ','),
-                    $item_body->mode_procurement,
-                    $item_body->jan,
-                    $item_body->feb,
-                    $item_body->mar,
-                    $item_body->apr,
-                    $item_body->may,
-                    $item_body->jun,
-                    $item_body->jul,
-                    $item_body->aug,
-                    $item_body->sep,
-                    $item_body->oct,
-                    $item_body->nov,
-                    $item_body->dece,
-                ]);
+        if ((int)$item_body->qty > 0)
+            $this->Item([
+                $item->code,
+                $item->description,
+                $item_body->unit_measurement,
+                $item_body->qty,
+                number_format((float)$item_body->unit_cost, 2, '.', ','),
+                number_format((float)$item_body->estimated_budget, 2, '.', ','),
+                $item_body->mode_procurement,
+                $item_body->jan,
+                $item_body->feb,
+                $item_body->mar,
+                $item_body->apr,
+                $item_body->may,
+                $item_body->jun,
+                $item_body->jul,
+                $item_body->aug,
+                $item_body->sep,
+                $item_body->oct,
+                $item_body->nov,
+                $item_body->dece,
+            ]);
 
     }
 
     function expenseTotal($sub_total){
 
-            $this->Expense([
+        $this->Expense([
             "",
             "",
             "",

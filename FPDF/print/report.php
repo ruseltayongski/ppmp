@@ -98,6 +98,16 @@ if($division_id == 6){
 $division_name = queryDivision($division_id)->description;
 if($division_id == 6){
     $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
+}elseif ($division_id == 5){
+    $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
+    $end_user_name = "ANESSA P. PATINDOL, MD, RMT, MMHoA";
+    $position1 = "OIC-RLED";
+    $position_head = "OIC-ARD";
+}elseif ($division_id == 8){
+    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
+    $end_user_name = "LIGAYA I. MONEVA";
+    $position1 = "Head, HPCU";
+    $position_head = "Chief, LHSD";
 }
 else{
     $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
@@ -399,6 +409,39 @@ else {
         $pdf->SetFont('Arial','',7);
         $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
     }
+    else
+        if($yearly_reference == 3 and $division_id == 5 ) {
+            $pdf->SetWidths(array(20,70,76,73,70));
+            $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
+            $pdf->Ln(2);
+            $pdf->SetWidths(array(3,84,65,70,70));
+            $pdf->SetFont('Arial','B',7);
+            $pdf->TableFooter(array("",$end_user_name,"LEONORA A. ANIEL",$division_chief_name));
+
+            $pdf->SetWidths(array(3,84,65,66,70));
+            $pdf->SetFont('Arial','',7);
+            $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V",$_GET['head_designation']));
+
+            $pdf->SetWidths(array(3,84,65,66,70));
+            $pdf->SetFont('Arial','',7);
+            $pdf->TableFooter(array("",$position1,"Budget Section",$position_head));
+        }
+        elseif($yearly_reference == 3 and $division_id == 8) {
+            $pdf->SetWidths(array(20,70,76,73,70));
+            $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
+            $pdf->Ln(2);
+            $pdf->SetWidths(array(3,84,65,70,70));
+            $pdf->SetFont('Arial','B',7);
+            $pdf->TableFooter(array("",$end_user_name,"LEONORA A. ANIEL",$division_chief_name));
+
+            $pdf->SetWidths(array(3,84,65,66,70));
+            $pdf->SetFont('Arial','',7);
+            $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V","Medical Officer V"));
+
+            $pdf->SetWidths(array(3,84,65,66,70));
+            $pdf->SetFont('Arial','',7);
+            $pdf->TableFooter(array("",$position1,"Budget Section",$position_head));
+        }
     else {
         $pdf->SetWidths(array(20,70,76,73,70));
         $pdf->TableFooter(array("","Division Chief:","Evaluated By:","Recommending Approval:","Approved:"));
