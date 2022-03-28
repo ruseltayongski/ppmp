@@ -292,42 +292,10 @@ class PDF_MC_Table extends FPDF
         }else
             if($item->expense_id == 1 and $item->tranche == "1-B" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
                 $item_body->mode_procurement = "NP 53.5";
-
              }else
-                 if($item_body->expense_id == 1 and $item_body->tranche == "1-B" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
-                 $item_body->mode_procurement = "NP 53.5";
-             }else
-                 if($item_body->expense_id == 1 and $item_body->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item_body->mode_procurement) or $item_body->mode_procurement == "Public Bidding")) {
-                     $item_body->mode_procurement = "Public Bidding";
-                 }
-
-            if ((int)$item_body->qty > 0)
-                $this->Item([
-                    $item->code,
-                    $item->description,
-                    $item_body->unit_measurement,
-                    $item_body->qty,
-                    number_format((float)$item_body->unit_cost, 2, '.', ','),
-                    number_format((float)$item_body->estimated_budget, 2, '.', ','),
-                    $item_body->mode_procurement,
-                    $item_body->jan,
-                    $item_body->feb,
-                    $item_body->mar,
-                    $item_body->apr,
-                    $item_body->may,
-                    $item_body->jun,
-                    $item_body->jul,
-                    $item_body->aug,
-                    $item_body->sep,
-                    $item_body->oct,
-                    $item_body->nov,
-                    $item_body->dece,
-                ]);
-
-            }else
-                if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
-                    $item_body->mode_procurement = "Public Bidding";
-                }
+             if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                $item_body->mode_procurement = "Public Bidding";
+             }
 
         if ((int)$item_body->qty > 0)
             $this->Item([
@@ -351,8 +319,6 @@ class PDF_MC_Table extends FPDF
                 $item_body->nov,
                 $item_body->dece,
             ]);
-
-
     }
 
     function expenseTotal($sub_total){

@@ -38,14 +38,14 @@ function querySection($division_id){
     return $row;
 }
 
-function queryProgram($section_id){
+function queryProgram($section_id,$yearly){
     $pdo = conn();
-    $query = "SELECT prog.id,prog.description,setting.expense_id,setting.section_id FROM program_settings setting join programs prog on prog.id = setting.program_id where setting.section_id = ?  ORDER BY ID ASC";
+    $query = "SELECT prog.id,prog.description,setting.expense_id,setting.section_id,setting.yearly_ref_id FROM program_settings setting join programs prog on prog.id = setting.program_id where setting.section_id = ? and setting.yearly_ref_id = ?  ORDER BY ID ASC";
 
     try
     {
         $st = $pdo->prepare($query);
-        $st->execute(array($section_id));
+        $st->execute(array($section_id,$yearly));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -249,11 +249,12 @@ $generate_level = $_GET['generate_level'];
 $division_id = $_GET['division_id'];
 $section_id = $_GET['section_id'];
 //$program_id = $_GET['program_id'];
+$yearly_reference = $_GET['yearly_reference'];
 
 
 $sections = querySection($division_id);
 $expenses = queryExpense();
-$programs = queryProgram($section_id);
+$programs = queryProgram($section_id,$yearly_reference);
 
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
@@ -351,7 +352,7 @@ $ppmp_status = $_GET['ppmp_status'];
 
 foreach($sections as $section) {
     $pdf->displayExpense($section->description);
-    $programs = queryProgram($section->id);
+    $programs = queryProgram($section->id,$yearly_reference);
     if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
         foreach ($programs as $program) {
             $expenses = queryExpense();
