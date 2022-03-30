@@ -89,29 +89,51 @@ $generate_level = $_GET['generate_level'];
 $division_id = $_GET['division_id'];
 $section_id = $_GET['section_id'];
 
+$head_name = $_GET['head_name'];
+$head_desig = $_GET['head_designation'];
+
+//section queries
+$sec_desc = $_GET['section_name'];
+$sec_head = $_GET['sec_head_name'];
+$sec_head_desig = $_GET['section_desig'];
+$section_name = $_GET['section_name'];
+
+$yearly_reference = $_GET['yearly_reference'];
+
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
+}elseif($division_id == 14) {
+    $charge_to = "Health Emergency Preparedness and Response";
+}elseif($division_id == 8 ) {
+    $charge_to = "Health Promotion";
+}elseif($division_id == 11 ) {
+    $charge_to = "HRHICM";
+}elseif($division_id == 15 ) {
+    $charge_to = "Health Sector Research Development";
+}elseif($division_id == 10 ) {
+    $charge_to = "LHSDA";
+}elseif($division_id == 13 ) {
+    $charge_to = "Operation of Blood Centers and National Voluntary Blood Services Program";
+}elseif($division_id == 5 ) {
+    $charge_to = "Regulation of Regional Health Facilities and Services";
 } else {
     $charge_to = "Public Health Management";
 }
 
 $division_name = queryDivision($division_id)->description;
-if($division_id == 6){
-    $division_chief_name = "ELIZABETH P. TABASA CPA,MBA,CEO VI";
+if ($division_id == 5) {
+    $division_chief_name = "ANESSA P. PATINDOL, MD, RMT, MMHoA";
+}elseif($division_id == 14 || $division_id == 15 || $division_id == 10) {
+    $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
 }
-elseif($division_id == 5) {
-     $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
-     $end_user_name = "ANESSA P. PATINDOL, MD, RMT, MMHoA";
+elseif ($division_id == 8 or $division_id == 11 or $division_id == 13 or $division_id == 4){
+    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
+}elseif ($division_id == 6 and $yearly_reference == 3 ){
+    $division_chief_name = "RAMIL ABREA";
+}else {
+    $division_chief_name = "ELIZABETH P. TABASA, CPA,MBA,CEO VI";
+}
 
-}elseif ($division_id == 8){
-    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
-    $end_user_name = "LIGAYA I. MONEVA";
-    $position1 = "Head, HPCU";
-    $position_head = "Chief, LHSD";
-}
-else{
-    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
-}
 
 
 $pdf=new PDF_MC_Table('L','mm','a4');
@@ -374,86 +396,79 @@ $pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project b
 
 if($generate_level == 'section' || $generate_level == 'select_section'){
     $pdf->Ln(3);
-    $pdf->SetWidths(array(160,100));
-    $pdf->TableFooter(array("Prepared By:","Submitted By:"));
+    $pdf->SetWidths(array(3,84,65,70,70));
+    $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Submitted By:"));
     $pdf->Ln(3);
     $pdf->SetFont('Arial','B',7);
-    $pdf->SetWidths(array(15,160,100));
-    if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE"));
-    // joy
-    else if ($division_id == 6)
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
-        // joy
+    $pdf->SetWidths(array(3,84,65,70,70));
+    if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
+        $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+    }
     else
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
+        if ($division_id == 6) {
+            $pdf->TableFooter(array("", $sec_head, "LEONORA A. ANIEL", $division_chief_name));
+        }
+    else if ($division_id == 5) {
+            $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+    }
+    else{
+        $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+    }
 
-    $pdf->SetWidths(array(12,165,100));
+    $pdf->SetWidths(array(3,84,65,70,70));
     $pdf->SetFont('Arial','',7);
-    if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Director III"));
-    else
-        $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+    if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Licensing Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - RD/ARD"));
+    }else if($yearly_reference == 3 and $division_id == 6) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","SAO"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section",""));
+    }else if($division_id == 6) {
+        $pdf->TableFooter(array("", $sec_head_desig, "Administrative Officer V", "Administrative Officer V"));
+        $pdf->SetWidths(array(3, 84, 65, 70, 70));
+        $pdf->TableFooter(array("", $section_name, "Budget Section", "Chief,Management Support Division"));
+    }else if ($division_id == 5) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer IV"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - RLED"));
+    }
+    else {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","Chief,Local Health Support Division"));
+    }
 }
 else {
     $pdf->Ln(3);
     if($division_id == 9 || $division_id == 10){
-        $pdf->SetWidths(array(40,68,77,70));
-        $pdf->TableFooter(array("","Division Head:","Evaluated By:","Approved:"));
-        $pdf->Ln(2);
-        $pdf->SetWidths(array(20,84,65,70));
-        $pdf->SetFont('Arial','B',7);
-        $pdf->TableFooter(array("","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Leonora A. Aniel","Jaime S. Bernadaz MD,MGM,CESO III"));
-
-        $pdf->SetWidths(array(40,52,92,70));
-        $pdf->SetFont('Arial','',7);
-        $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
-    }
-    else
-        if($yearly_reference == 3 and $division_id == 5 ) {
-            $pdf->SetWidths(array(20,70,76,73,70));
-            $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
-            $pdf->Ln(2);
-            $pdf->SetWidths(array(3,84,65,70,70));
-            $pdf->SetFont('Arial','B',7);
-            $pdf->TableFooter(array("",$end_user_name,"LEONORA A. ANIEL",$division_chief_name));
-
-            $pdf->SetWidths(array(3,84,65,66,70));
-            $pdf->SetFont('Arial','',7);
-            $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V",$_GET['head_designation']));
-
-            $pdf->SetWidths(array(3,84,65,66,70));
-            $pdf->SetFont('Arial','',7);
-            $pdf->TableFooter(array("","OIC-RLED","Budget Section","OIC-ARD"));
-        }
-        else
-            if($yearly_reference == 3 and $division_id == 8) {
-            $pdf->SetWidths(array(20,70,76,73,70));
-            $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Approved by:"));
-            $pdf->Ln(2);
-            $pdf->SetWidths(array(3,84,65,70,70));
-            $pdf->SetFont('Arial','B',7);
-            $pdf->TableFooter(array("",$end_user_name,"LEONORA A. ANIEL",$division_chief_name));
-
-            $pdf->SetWidths(array(3,84,65,66,70));
-            $pdf->SetFont('Arial','',7);
-            $pdf->TableFooter(array("",$_GET['end_user_designation'],"Administrative Officer V","Medical Officer V"));
-
-            $pdf->SetWidths(array(3,84,65,66,70));
-            $pdf->SetFont('Arial','',7);
-            $pdf->TableFooter(array("",$position1,"Budget Section",$position_head));
-        }
-    else {
-        $pdf->SetWidths(array(20,70,76,73,70));
-        $pdf->TableFooter(array("","Division Chief:","Evaluated By:","Recommending Approval:","Approved:"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Prepared by:","Evaluated By:","Approved:"));
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);
-        $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Jaime S. Bernadaz MD,MGM,CESO III"));
+        $pdf->TableFooter(array("","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Leonora A. Aniel","Jaime S. Bernadaz MD,MGM,CESO III"));
 
-        $pdf->SetWidths(array(3,73,98,66,70));
+        $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','',7);
-        $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
+        $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Local Health Support Division","Budget Section","Chief,Local Health Support Division"));
+    }
+    else {
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Prepared by:","Evaluated By:","Approved:"));
+        $pdf->Ln(2);
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','B',7);
+        $pdf->TableFooter(array("","STEPHEN CINCOFLORES","Leonora A. Aniel",$division_chief_name));
+
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","Administrative Assistant II","Administrative Officer V","Medical Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Local Health Support Division","Budget Section","Chief,Local Health Support Division"));
     }
 }
 
