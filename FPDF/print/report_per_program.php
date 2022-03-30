@@ -163,7 +163,6 @@ require('mctable_program.php');
 $generate_level = $_GET['generate_level'];
 $division_id = $_GET['division_id'];
 $section_id = $_GET['section_id'];
-$sec_name = $_GET['section_name'];
 $program_id = $_GET['program_id'];
 $yearly_reference = $_GET['yearly_reference'];
 
@@ -171,8 +170,31 @@ $yearly_reference = $_GET['yearly_reference'];
 $expenses = queryExpense($program_id,$yearly_reference);
 $programs = queryProgram($section_id,$yearly_reference);
 
+$head_name = $_GET['head_name'];
+$head_desig = $_GET['head_designation'];
+
+//section queries
+$sec_desc = $_GET['section_name'];
+$sec_head = $_GET['sec_head_name'];
+$sec_head_desig = $_GET['section_desig'];
+$section_name = $_GET['section_name'];
+
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
+}elseif($division_id == 14) {
+    $charge_to = "Health Emergency Preparedness and Response";
+}elseif($division_id == 8 ) {
+    $charge_to = "Health Promotion";
+}elseif($division_id == 11 ) {
+    $charge_to = "HRHICM";
+}elseif($division_id == 15 ) {
+    $charge_to = "Health Sector Research Development";
+}elseif($division_id == 10 ) {
+    $charge_to = "LHSDA";
+}elseif($division_id == 13 ) {
+    $charge_to = "Operation of Blood Centers and National Voluntary Blood Services Program";
+}elseif($division_id == 5 ) {
+    $charge_to = "Regulation of Regional Health Facilities and Services";
 } else {
     $charge_to = "Public Health Management";
 }
@@ -266,7 +288,7 @@ $yearly_reference = $_GET['yearly_reference'];
 $ppmp_status = $_GET['ppmp_status'];
 
 
-    $pdf->displayExpense($sec_name);
+    $pdf->displayExpense($section_name);
     $programs = queryProgram($section_id, $yearly_reference);
     foreach($programs as $program) {
         $expenses = queryExpense($program->id, $yearly_reference);
@@ -380,26 +402,49 @@ $pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project b
 
 if($generate_level == 'section' || $generate_level == 'select_section'){
     $pdf->Ln(3);
-    $pdf->SetWidths(array(160,100));
-    $pdf->TableFooter(array("Prepared By:","Submitted By:"));
+    $pdf->SetWidths(array(3,84,65,70,70));
+    $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Submitted By:"));
     $pdf->Ln(3);
     $pdf->SetFont('Arial','B',7);
-    $pdf->SetWidths(array(15,160,100));
-    if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE"));
-    // joy
-    else if ($division_id == 6)
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
-    // joy
+    $pdf->SetWidths(array(3,84,65,70,70));
+    if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
+        $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+    }
     else
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
+        if ($division_id == 6) {
+            $pdf->TableFooter(array("", $sec_head, "LEONORA A. ANIEL", $division_chief_name));
+        }
+        else if ($division_id == 5) {
+            $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+        }
+        else{
+            $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+        }
 
-    $pdf->SetWidths(array(12,165,100));
+    $pdf->SetWidths(array(3,84,65,70,70));
     $pdf->SetFont('Arial','',7);
-    if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Director III"));
-    else
-        $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
+    if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Licensing Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - RD/ARD"));
+    }else if($yearly_reference == 3 and $division_id == 6) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","SAO"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section",""));
+    }else if($division_id == 6) {
+        $pdf->TableFooter(array("", $sec_head_desig, "Administrative Officer V", "Administrative Officer V"));
+        $pdf->SetWidths(array(3, 84, 65, 70, 70));
+        $pdf->TableFooter(array("", $section_name, "Budget Section", "Chief,Management Support Division"));
+    }else if ($division_id == 5) {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer IV"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - RLED"));
+    }
+    else {
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","Chief,Local Health Support Division"));
+    }
 }
 else {
     $pdf->Ln(3);

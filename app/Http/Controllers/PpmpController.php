@@ -172,12 +172,18 @@ class PpmpController extends Controller
         $all_item = Item::get();
 
         $mode_procurement = ModeProcurement::get();
-        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_name = strtoupper(Auth::user()->fname.' '.Auth::user()->lname);
         $end_user_designation = Designation::find(Auth::user()->designation)->description;
-        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+        $head = Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
             ->LeftJoin('dts.users','users.id','=','division.head')
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id',$section_id)
             ->first();
 
         return view('ppmp.program_list',[
@@ -191,7 +197,8 @@ class PpmpController extends Controller
             "expense_id" => $expense_id,
             "request" => $request,
             "program_settings" => $program_settings,
-            "section_id" => $section_id
+            "section_id" => $section_id,
+            "sec_head" => $sec_head
         ]);
     }
 
@@ -290,12 +297,18 @@ class PpmpController extends Controller
         $all_item = Item::get();
 
         $mode_procurement = ModeProcurement::get();
-        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_name = strtoupper(Auth::user()->fname.' '.Auth::user()->lname);
         $end_user_designation = Designation::find(Auth::user()->designation)->description;
-        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+        $head = Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
             ->LeftJoin('dts.users','users.id','=','division.head')
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id',$section_id)
             ->first();
 
         return view('ppmp.ppmp_list',[
@@ -308,7 +321,8 @@ class PpmpController extends Controller
             "item_search" => $keyword,
             "expense_id" => $expense_id,
             "request" => $request,
-            "section_id" => $section_id
+            "section_id" => $section_id,
+            "sec_head" => $sec_head
         ]);
     }
 
