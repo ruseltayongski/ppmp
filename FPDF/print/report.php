@@ -95,6 +95,8 @@ $head_desig = $_GET['head_designation'];
 //section queries
 $sec_desc = $_GET['section_name'];
 $sec_head = $_GET['sec_head_name'];
+$sec_head = utf8_decode($sec_head);
+
 $sec_head_desig = $_GET['section_desig'];
 $section_name = $_GET['section_name'];
 
