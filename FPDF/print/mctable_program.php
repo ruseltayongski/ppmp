@@ -246,9 +246,28 @@ class PDF_MC_Table extends FPDF
     function displayItem($item,$generate_level,$division_id,$section_id, $program_id,$expense_id)
     {
         $yearly_reference = $_GET['yearly_reference'];
+        $ppmp_status = $_GET['ppmp_status'];
 
-        $item->qty = $item->jan + $item->feb + $item->mar + $item->apr + $item->may + $item->jun + $item->jul + $item->aug + $item->sep + $item->oct + $item->nov + $item->dece;
-        $item->estimated_budget = ((int)$item->qty * str_replace(',', '', (float)$item->unit_cost));
+        if(isset($item->item_id)) {
+            if ($generate_level == 'region')
+                $item_body = queryItem("call get_body_region('$item->item_id','$yearly_reference','$ppmp_status')")[0];
+            elseif ($generate_level == 'division')
+                $item_body = queryItem("call get_body_division('$item->item_id','$division_id','$yearly_reference','$ppmp_status')")[0];
+            elseif ($generate_level == 'section' || $generate_level == 'select_section')
+                $item_body = queryItem("call get_body_section('$item->item_id','$section_id','$yearly_reference','$ppmp_status')")[0];
+        }else {
+            if ($generate_level == 'region')
+                $item_body = queryItem("call get_body_region('$item->id','$yearly_reference','$ppmp_status')")[0];
+            elseif ($generate_level == 'division')
+                $item_body = queryItem("call get_body_division('$item->id','$division_id','$yearly_reference','$ppmp_status')")[0];
+            elseif ($generate_level == 'section' || $generate_level == 'select_section')
+                $item_body = queryItem("call get_body_section('$item->id','$section_id','$yearly_reference','$ppmp_status')")[0];
+        }
+//        $item->qty = $item->jan + $item->feb + $item->mar + $item->apr + $item->may + $item->jun + $item->jul + $item->aug + $item->sep + $item->oct + $item->nov + $item->dece;
+//        $item->estimated_budget = ((int)$item->qty * str_replace(',', '', (float)$item->unit_cost));
+
+        $item_body->estimated_budget = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
+        $item_body->qty == 0 ? 0 : ($item_body->estimated_budget / str_replace(',', '', (float)$item_body->unit_cost));
 
         $sum = 0;
         if($item->expense_id == "1")

@@ -133,6 +133,10 @@
         $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
         $item->estimated_budget = (int)$item->qty * str_replace(',', '',(float)$item->unit_cost);
 
+        //INPUT AMOUNT IN MILESTONES (MONTHS)
+//        $item->estimated_budget =  $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
+//        $item->qty = $item->estimated_budget / str_replace(',', '',(float)$item->unit_cost);
+
         return $item;
     }
 
