@@ -307,10 +307,10 @@ class PDF_MC_Table extends FPDF
         }else
             if($item->expense_id == 1 and $item->tranche == "1-B" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
                 $item_body->mode_procurement = "NP 53.5";
-            }else
-                if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
-                    $item_body->mode_procurement = "Public Bidding";
-                }
+             }else
+             if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                $item_body->mode_procurement = "Public Bidding";
+             }
 
         if ((int)$item_body->qty > 0)
             $this->Item([
@@ -334,7 +334,6 @@ class PDF_MC_Table extends FPDF
                 $item_body->nov,
                 $item_body->dece
             ]);
-
     }
 
     function expenseTotal($sub_total){

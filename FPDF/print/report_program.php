@@ -3,9 +3,9 @@ date_default_timezone_set('Asia/Manila');
 
 function conn()
 {
-    $server = 'localhost';
+    $server = '192.168.110.31';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'rtayong_31','rtayong_31');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -115,6 +115,7 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $ye
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
                                     itd.section_id = itd1.section_id AND 
+                                    itd.tranche = itd1.tranche AND
                                     itd.tranche = itd1.tranche AND 
                                     itd.yearly_ref_id = itd1.yearly_ref_id
                                     ) 

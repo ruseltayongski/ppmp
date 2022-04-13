@@ -3,9 +3,9 @@ date_default_timezone_set('Asia/Manila');
 
 function conn()
 {
-    $server = 'localhost';
+    $server = '192.168.110.31';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'rtayong_31','rtayong_31');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {

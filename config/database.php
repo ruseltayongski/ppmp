@@ -1,5 +1,9 @@
 <?php
 
+$host = "192.168.110.31";
+$username = "rtayong_31";
+$password = "rtayong_31";
+
 return [
 
     /*
@@ -41,11 +45,11 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => $host,
             'port' => env('DB_PORT', '3306'),
             'database' => 'ppmpv2',
-            'username' => 'root',
-            'password' => '',
+            'username' => $username,
+            'password' => $password,
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -56,11 +60,11 @@ return [
 
         'pis' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => $host,
             'port' => env('DB_PORT', '3306'),
             'database' => 'pis',
-            'username' => 'root',
-            'password' => '',
+            'username' => $username,
+            'password' => $password,
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
@@ -71,11 +75,11 @@ return [
 
         'dts' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', '127.0.0.1'),
+            'host' => $host,
             'port' => env('DB_PORT', '3306'),
             'database' => 'dts',
-            'username' => 'root',
-            'password' => '',
+            'username' => $username,
+            'password' => $password,
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
