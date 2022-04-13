@@ -405,6 +405,7 @@ class PpmpController extends Controller
                 ->where("section_id",$section_id)
                 ->where("tranche",$tranche)
                 ->where("description",$description)
+                ->where("unit_measurement",$unit_measurement)
                 ->where("unit_cost",$unit_cost)
                 ->where("mode_procurement",$mode_procurement)
                 ->where("jan",$jan)

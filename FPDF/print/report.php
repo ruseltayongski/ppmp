@@ -63,14 +63,34 @@ function queryDivision($division_id){
     return $row;
 }
 
-function queryOriginal($expense_id, $yearly_ref, $ppmp_status, $division_id){
+function queryOriginal($expense_id, $yearly_ref, $ppmp_status,$division_id){
     $pdo = conn();
     //$query = "SELECT * from item_daily where status is NULL and expense_id = ? and program_id = ? and section_id = ? group by item_id DESC order by description ASC";
-    $query = "SELECT itd.* from item_daily itd left join item_daily itd1 on (itd.item_id = itd1.item_id and itd.id < itd1.id) where itd1.status is NULL and itd.expense_id = ? and itd.yearly_ref_id = ? and itd.ppmp_status = ? and itd.division_id = ? and itd1.id is null group by item_id DESC order by description ASC";
+    $query = "SELECT 
+                  itd.* 
+              from 
+                  item_daily itd 
+              left join 
+                item_daily itd1 on 
+                (
+                  itd.unique_id = itd1.unique_id and 
+                  itd.id < itd1.id and 
+                  itd.division_id = itd1.division_id and 
+                  itd.section_id = itd1.section_id
+                ) 
+              where 
+                itd1.status is NULL and
+                itd.expense_id = ? and 
+                itd.yearly_ref_id = ? and 
+                itd.ppmp_status = ? and 
+                itd.division_id = ? and
+                itd1.id is null 
+              order by 
+                itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);
-        $st->execute(array($expense_id,$yearly_ref,$ppmp_status, $division_id));
+        $st->execute(array($expense_id,$yearly_ref,$ppmp_status,$division_id));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     } catch(PDOException $ex){
         echo $ex->getMessage();
@@ -337,8 +357,12 @@ foreach($expenses as $expense) {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
-        $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
-//        $items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
+        //$items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
+        if($generate_level == "division") {
+            $items = queryItem("call normal_tranche_division('$expense->id',$division_id,'$yearly_reference','$ppmp_status')");
+        }else
+        $items = queryItem("call normal_tranche('$expense->id',$section_id,'$yearly_reference','$ppmp_status')");
+        //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
         if(count($items) > 0 ) {
             $pdf->displayExpense($expense->description); //display expense if no value from first
@@ -358,6 +382,8 @@ foreach($expenses as $expense) {
 //                }
 //            }
 //            else
+//            $pdf->displayExpense($item->id);
+
             $pdf->SetFont('Arial','',7);
             $pdf->displayItem($item,$generate_level,$division_id,$section_id);
             if($item->estimated_budget){

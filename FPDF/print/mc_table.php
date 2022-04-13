@@ -249,6 +249,14 @@ class PDF_MC_Table extends FPDF
         $yearly_reference = $_GET['yearly_reference'];
         $ppmp_status = $_GET['ppmp_status'];
 
+//        if(isset($item->item_id)) {
+//            if ($generate_level == 'region')
+//                $item_body = queryItem("call get_body_region('$item->id','$yearly_reference','$ppmp_status')")[0];
+//            elseif ($generate_level == 'division')
+//                $item_body = queryItem("call get_body_division('$item->id','$division_id','$yearly_reference','$ppmp_status')")[0];
+//            elseif ($generate_level == 'section' || $generate_level == 'select_section')
+//                $item_body = queryItem("call get_body_section('$item->id','$section_id','$yearly_reference','$ppmp_status')")[0];
+//        }
         if(isset($item->item_id)) {
             if ($generate_level == 'region')
                 $item_body = queryItem("call get_body_region('$item->item_id','$yearly_reference','$ppmp_status')")[0];
@@ -256,8 +264,7 @@ class PDF_MC_Table extends FPDF
                 $item_body = queryItem("call get_body_division('$item->item_id','$division_id','$yearly_reference','$ppmp_status')")[0];
             elseif ($generate_level == 'section' || $generate_level == 'select_section')
                 $item_body = queryItem("call get_body_section('$item->item_id','$section_id','$yearly_reference','$ppmp_status')")[0];
-        }
-        else {
+        }else {
             if ($generate_level == 'region')
                 $item_body = queryItem("call get_body_region('$item->id','$yearly_reference','$ppmp_status')")[0];
             elseif ($generate_level == 'division')
@@ -266,8 +273,16 @@ class PDF_MC_Table extends FPDF
                 $item_body = queryItem("call get_body_section('$item->id','$section_id','$yearly_reference','$ppmp_status')")[0];
         }
 
+
+
         $item_body->qty = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
         $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '', (float)$item_body->unit_cost));
+
+        //INPUT AMOUNT FOR MILESTONES (MONTHS)
+//        $item_body->estimated_budget = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
+//        $item_body->qty == 0 ? 0 : ($item_body->estimated_budget / str_replace(',', '', (float)$item_body->unit_cost));
+        //END HERE
+
 
         $sum = 0;
         if($item->expense_id == "1")
@@ -317,7 +332,7 @@ class PDF_MC_Table extends FPDF
                 $item_body->sep,
                 $item_body->oct,
                 $item_body->nov,
-                $item_body->dece,
+                $item_body->dece
             ]);
     }
 
