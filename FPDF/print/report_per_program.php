@@ -86,8 +86,7 @@ function queryItem($expense_id, $program_id, $section, $yearly_reference){
                 itd.section_id = ? and 
                 itd.yearly_ref_id = ? and
                 itd1.id is null 
-              group by item_id DESC 
-              order by description ASC";
+              order by itd.description ASC";
 
     try {
         $st = $pdo->prepare($query);
