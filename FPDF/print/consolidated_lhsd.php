@@ -82,7 +82,6 @@ function queryItem($expense_id, $program_id, $section, $yearly_ref){
               left join 
                 item_daily itd1 on (
                                     itd.unique_id = itd1.unique_id and
-                                    itd.item_id = itd1.item_id and
                                     itd.id < itd1.id AND 
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
@@ -120,7 +119,6 @@ function queryOriginal($expense_id, $section, $yearly_ref, $ppmp_stat){
               left join 
                 item_daily itd1 on (
                                     itd.unique_id = itd1.unique_id AND 
-                                    itd.item_id = itd1.item_id and 
                                     itd.id < itd1.id AND 
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.section_id = itd1.section_id AND 

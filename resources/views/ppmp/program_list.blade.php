@@ -451,7 +451,7 @@
                                                 echo "</tbody>";
                                                 echo expenseTotal($sub_total);
                                                 if($tranche != "1-B")
-                                                    echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first,$program_setting->id);
+                                                    echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first).$program_setting->id,$expense->id,$tranche,$display_first,$program_setting->id);
                                             } // display if first is null
                                             $count_first++;
                                         } // end sub tranche expense

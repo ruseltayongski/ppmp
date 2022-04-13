@@ -5,7 +5,7 @@ function conn()
 {
     $server = 'localhost';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -357,11 +357,11 @@ foreach($expenses as $expense) {
         $expense_total = 0;
         $pdf->SetFont('Arial','B',7);
 
-        //$items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
-        if($generate_level == "division") {
-            $items = queryItem("call normal_tranche_division('$expense->id',$division_id,'$yearly_reference','$ppmp_status')");
-        }else
-        $items = queryItem("call normal_tranche('$expense->id',$section_id,'$yearly_reference','$ppmp_status')");
+        $items = queryOriginal($expense->id,$yearly_reference,$ppmp_status,$division_id);
+//        if($generate_level == "division") {
+//            $items = queryItem("call normal_tranche_division('$expense->id',$division_id,'$yearly_reference','$ppmp_status')");
+//        }else
+//        $items = queryItem("call normal_tranche('$expense->id',$section_id,'$yearly_reference','$ppmp_status')");
         //$items = queryItem("call normal_tranche_region('$expense->id','$ppmp_status','$yearly_reference')");
 
         if(count($items) > 0 ) {

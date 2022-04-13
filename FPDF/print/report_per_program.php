@@ -73,7 +73,6 @@ function queryItem($expense_id, $program_id, $section, $yearly_reference){
                 item_daily itd 
               left join 
                 item_daily itd1 on (
-                                    itd.item_id = itd1.item_id and 
                                     itd.id < itd1.id and
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
@@ -319,7 +318,7 @@ $ppmp_status = $_GET['ppmp_status'];
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section_id])) {
                                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section_id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
@@ -350,7 +349,7 @@ $ppmp_status = $_GET['ppmp_status'];
                             }
                             $difference = 0;
                             $pdf->SetFont('Arial', 'B', 7);
-                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section->id])) {
+                            if (isset($pdf->sub_total[$expense->id.$program->id.$tranche.$section_id])) {
                                 $sub_total = number_format((float)$pdf->sub_total[$expense->id.$program->id.$tranche.$section_id], 2, '.', ',');
                             }
                             $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
