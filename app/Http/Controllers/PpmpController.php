@@ -180,7 +180,7 @@ class PpmpController extends Controller
             ->where('division.id','=',Auth::user()->division)
             ->first();
 
-        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.mname,' ',users.lname)) as head_name"),'designation.description as designation')
             ->LeftJoin('dts.users','users.id','=','section.head')
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('section.id',$section_id)

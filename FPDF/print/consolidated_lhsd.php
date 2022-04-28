@@ -577,7 +577,7 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
     $pdf->SetFont('Arial','B',7);
     $pdf->SetWidths(array(15,160,100));
     if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE"));
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"Sophia M. Mancao, MD, DPSP, RN-MAN"));
     // joy
     else if ($division_id == 6)
         $pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
@@ -612,7 +612,7 @@ else {
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);
-        $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Guy R. Perez MD,RPT,FPSMS,MBAHA,CESE","Jaime S. Bernadaz MD,MGM,CESO III"));
+        $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Sophia M. Mancao, MD, DPSP, RN-MAN","Jaime S. Bernadaz MD,MGM,CESO III"));
 
         $pdf->SetWidths(array(3,73,98,66,70));
         $pdf->SetFont('Arial','',7);

@@ -79,7 +79,7 @@ function queryOriginal($expense_id, $yearly_ref, $ppmp_status,$division_id){
                   itd.section_id = itd1.section_id
                 ) 
               where 
-                itd1.status is NULL and
+                itd.status is NULL and
                 itd.expense_id = ? and 
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and 

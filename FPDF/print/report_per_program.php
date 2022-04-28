@@ -73,6 +73,7 @@ function queryItem($expense_id, $program_id, $section, $yearly_reference){
                 item_daily itd 
               left join 
                 item_daily itd1 on (
+                                    itd.unique_id = itd1.unique_id and
                                     itd.id < itd1.id and
                                     itd.expense_id = itd1.expense_id AND 
                                     itd.program_id = itd1.program_id AND 
