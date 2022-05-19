@@ -35,7 +35,7 @@ $user = Session::get('auth');
     <div class="col-md-9">
         <div class="box box-success">
             <div class="box-header with-border">
-                <h3>{{ $title }}</h3>
+                <h3 style = font-weight:bold>{{ $title }} <i class="fa fa-unlock" aria-hidden="true"></i></h3>
             </div>
             <div class="box-body">
                 <form method="POST" class="form-horizontal form-submit" id="hospitalForm" action="{{ asset('admin/login') }}">
@@ -44,7 +44,7 @@ $user = Session::get('auth');
                         <tr class="has-group">
                             <td>Section :</td>
                             <td>
-                                <select class="form-control select2" name="section_id" required>
+                                <select class="js-example-basic-multiple" name="section_id" required>
                                     <option value="">Select Section...</option>
                                     @foreach($sections as $f)
                                         <option value="{{ $f->id }}">{{ $f->description }}</option>

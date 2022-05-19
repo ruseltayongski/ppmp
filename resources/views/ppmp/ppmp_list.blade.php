@@ -300,6 +300,13 @@
             </td>
         </tr>";
     }
+//    function addForm($expense,$expense_description){
+//        return "<tr>
+//            <td colspan='19'>
+//                <button type='button' data-expense='$expense' data-expense_description='$expense_description' onclick='addForm($(this))'></button>
+//            </td>
+//        </tr>";
+//    }
     function paginateItem($expense_title,$item){
         return "<tr>
             <td colspan='17'>
@@ -473,6 +480,7 @@
                                         }
                                         echo "</tbody>";
                                         echo expenseTotal($sub_total);
+                                        //echo addForm(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id);
                                         echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
                                         if($expense_total != 0){
                                             echo expenseTotal($expense_total);
@@ -564,7 +572,7 @@
             checkboxClass: 'icheckbox_flat-green',
             radioClass   : 'iradio_flat-green'
         });
-        //custom autocomplete (category selection)
+        custom autocomplete (category selection)
         $.widget( "custom.catcomplete", $.ui.autocomplete, {
             _create: function() {
                 this._super();

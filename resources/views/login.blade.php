@@ -255,8 +255,11 @@
                 <div class="col-xs-12">
                     <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
                 </div><!-- /.col -->
+            </div><br>
+            <div>
+                 <strong class="col-sm-6"><a href="{{ asset('public/ppmp_guide.xlsx') }}" download>PPMP GUIDE</a></strong>
+                 <strong class="col-sm-6"><a href="{{ asset('public/updated_uacs_final.xlsx') }}" download>UACS GUIDE</a></strong><br>
             </div>
-            <strong class="center"><a href="{{ asset('public/ppmp_guide.xlsx') }}" download>PPMP GUIDE</a></strong><br>
             <!--
             <strong class="center"><a href="{{ asset('public/PPMP Fund Realignment Form.docx') }}" download>PPMP FUND REALIGNMENT</a></strong>
             -->

@@ -1,8 +1,14 @@
 <?php
 
-$host = "192.168.110.31";
-$username = "rtayong_31";
-$password = "rtayong_31";
+$host = "127.0.0.1";
+$username = "root";
+$password = "adm1n";
+
+$sql_host = "192.168.110.45";
+$sql_user = "sa";
+$sql_pass = "D07_1T";
+$sql_port = "80";
+
 
 return [
 
@@ -88,6 +94,19 @@ return [
             'engine' => null,
         ],
 
+        'sqlsrv' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_SECOND', '192.168.110.45'),
+            'port' => env('DB_PORT_SECOND', '80'),
+            'database' => 'fmisdummy',
+            'username' => env('DB_USERNAME_SECOND', 'sa'),
+            'password' => env('DB_PASSWORD_SECOND', 'D0h7_1T'),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'odbc' => true,
+            'odbc_datasource_name' => "LAMBORGHINI\VEEAMSQL2016",
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'host' => env('DB_HOST', '127.0.0.1'),
@@ -100,18 +119,6 @@ return [
             'schema' => 'public',
             'sslmode' => 'prefer',
         ],
-
-        'sqlsrv' => [
-            'driver' => 'sqlsrv',
-            'host' => env('DB_HOST', 'localhost'),
-            'port' => env('DB_PORT', '1433'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
-        ],
-
     ],
 
     /*

@@ -607,16 +607,18 @@ else {
         $pdf->TableFooter(array("","Director III","Administrative Officer V, Budget Section","Director IV"));
     }
     else {
-        $pdf->SetWidths(array(20,70,76,73,70));
-        $pdf->TableFooter(array("","Submitted by:","Evaluated By:","Recommending Approval:","Approved:"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Prepared by:","Evaluated By:","Approved:"));
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);
-        $pdf->TableFooter(array("",$division_chief_name,"Leonora A. Aniel","Sophia M. Mancao, MD, DPSP, RN-MAN","Jaime S. Bernadaz MD,MGM,CESO III"));
+        $pdf->TableFooter(array("","STEPHEN CINCOFLORES","Leonora A. Aniel",$division_chief_name));
 
-        $pdf->SetWidths(array(3,73,98,66,70));
+        $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','',7);
-        $pdf->TableFooter(array("","Chief, ".$division_name,"Administrative Officer V, Budget Section","Director III","Director IV"));
+        $pdf->TableFooter(array("","Administrative Assistant II","Administrative Officer V","Medical Officer V"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Local Health Support Division","Budget Section","Chief,Local Health Support Division"));
     }
 }
 

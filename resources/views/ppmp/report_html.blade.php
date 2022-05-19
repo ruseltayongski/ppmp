@@ -326,7 +326,8 @@
                     $sections = querySection();
                     ?>
                     <div class="box-body table-responsive no-padding">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-fixed-header">
+                            <thead class='header'>
                             <tr class="bg-black">
                                 <th>Item Description/General Specification</th>
                                 <th>Unit<br>Issue</th>
@@ -348,6 +349,7 @@
                                 <th>Dec</th>
                                 <th></th>
                             </tr>
+                            </thead>
                             <?php
                             foreach($sections as $section) {
                                 echo displayHeader("<div style='color:#00CC99; font-size: 20px;' >".$section->description."</div>");
@@ -555,5 +557,9 @@
 @endsection
 
 @section('js')
-
+    <script>
+        $(document).ready(function(){
+            $('.table-fixed-header').fixedHeader();
+        });
+    </script>
 @endsection

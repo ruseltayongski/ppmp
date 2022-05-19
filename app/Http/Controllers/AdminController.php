@@ -90,11 +90,13 @@ class AdminController extends Controller
 
     public function editProgram(Request $request){
         $program = Program::find($request->program_id);
+        $div_id = Auth::user()->division;
         $div_desc = Division::find($program->division_id)->description;
         $sections = Section::Where('division', $program->division_id)->get();
         return view('programs.update',[
             "program" => $program,
             "div_desc" => $div_desc,
+            "div_id" => $div_id,
             "sections" => $sections
         ]);
     }
@@ -149,7 +151,7 @@ class AdminController extends Controller
     public function loginAs()
     {
         return view('admin.loginAs',[
-            'title' => 'Login As'
+            'title' => 'LOGIN AS'
         ]);
     }
 

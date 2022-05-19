@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BudgetAllotment;
 use App\DtsUser;
 use App\Item;
 use App\ItemDaily;
@@ -23,11 +24,13 @@ use App\Division;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\CreatedLogs;
+use PDO;
 
 
 class PpmpController extends Controller
 {
     public function index($section) {
+
         $expenses = Expense::get();
         $section = Auth::user()->section;
 
@@ -47,14 +50,12 @@ class PpmpController extends Controller
             ->first();
 
         $program_settings = ProgramSetting::all();
-//        if(Auth::user()->username == "201600256") {
-//            $programs = Program::all();
-//        }
-//        else
+
         $programs = Program::where('section_id','=',$section)
             ->where("id","!=", $prog)
             ->get();
 
+//        sqlsrv_close($conn);
         return view('ppmp.dashboard',[
             "expenses" => $expenses,
             "programs" => $programs,
@@ -64,6 +65,7 @@ class PpmpController extends Controller
             "program_settings" => $program_settings,
             "section" => $section
         ]);
+
     }
 
     public function divisionCheck() {

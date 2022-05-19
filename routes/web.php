@@ -98,3 +98,6 @@ Route::get('admin/account/return','AdminController@returnToAdmin');
 
 //Items
 Route::get('ppmp/viewItems','PpmpController@viewItemDaily');
+
+//Budget Allotment
+Route::get('budget/home','BudgetController@index');

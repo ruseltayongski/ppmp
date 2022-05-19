@@ -5,8 +5,8 @@
     <div class="box">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-            <h1>
-                ITEMS
+            <h1 style="font-weight: bold">
+                 ITEMS <i class="fa fa-pencil fa-fw"></i>
             </h1>
             <ol class="breadcrumb form-inline my-2 my-lg-0">
             </ol><br>
