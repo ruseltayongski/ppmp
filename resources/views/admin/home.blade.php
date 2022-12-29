@@ -73,7 +73,6 @@ use Illuminate\Support\Facades\Session;
 @endsection
 
 @section('content')
-
     <title>Dashboard</title>
     <div class="col-md-9">
         <div class="box box-primary">
@@ -83,34 +82,58 @@ use Illuminate\Support\Facades\Session;
                 <h3 class="box-title">Interactive Area Chart</h3>
             </div>
             <div class="box-body">
-                <div id="pie-placeholder" style="height: 300px;"></div>
+                <div class="plot" id="pie-placeholder" style="height: 300px;"></div>
             </div>
         </div>
         <div class="box box-primary">
-            <!-- Main content -->
-            <section class="content">
-                <!-- Small boxes (Stat box) -->
-                <div class="row">
-                    <!-- Content Header (Page header) -->
-                    <section class="content-header">
-                        <h1>
-                            <i class="fa fa-bar-chart-o"></i> Bar Chart
-                            <small>DOH-99999</small>
-                        </h1>
-                        <ol class="breadcrumb">
-                            <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                            <li class="active">Dashboard</li>
-                        </ol>
-                    </section>
-                    <!-- Bar chart -->
-                    <div class="box-body">
-                    <div id="bar-chart" style="height: 300px;"></div>
-                    </div>
+            <p class="text-center">
+                <strong></strong>
+            </p>
+            <div class="progress-group" style="padding: 0.5em">
+                Add Products to Cart
+                <span class="float-right"><b>160</b>/200</span>
+                <div class="progress progress-sm">
+                    <div class="progress-bar bg-primary" style="width: 80%"></div>
                 </div>
-            </section>
+            </div>
+
+            <div class="progress-group" style="padding: 0.5em">
+                Complete Purchase
+                <span class="float-right"><b>310</b>/400</span>
+                <div class="progress progress-sm">
+                    <div class="progress-bar bg-danger" style="width: 75%"></div>
+                </div>
+            </div>
+
+            <div class="progress-group" style="padding: 0.5em">
+                <span class="progress-text">Visit Premium Page</span>
+                <span class="float-right"><b>480</b>/800</span>
+                <div class="progress progress-sm">
+                    <div class="progress-bar bg-success" style="width: 60%"></div>
+                </div>
+            </div>
+
+            <div class="progress-group" style="padding: 0.5em">
+                Send Inquiries
+                <span class="float-right"><b>250</b>/500</span>
+                <div class="progress progress-sm">
+                    <div class="progress-bar bg-warning" style="width: 50%"></div>
+                </div>
+            </div>
         </div>
+
         <!-- /.box -->
     </div>
     @include('admin.admin_sidebar')
+@endsection
+@section('js')
+    <script>
+        function Excel(){
+            var url = "<?php echo asset('excel');?>";
+
+            $.post(url,function(result){
+            });
+        }
+    </script>
 @endsection
 

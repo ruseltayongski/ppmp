@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\BudgetAllotment;
 use App\DtsUser;
+use App\Exports\PpmpExport;
 use App\Item;
 use App\ItemDaily;
 use App\PisUser;
@@ -24,15 +25,15 @@ use App\Division;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\CreatedLogs;
+use Maatwebsite\Excel\Excel;
 use PDO;
-
 
 class PpmpController extends Controller
 {
     public function index($section) {
-
-        $expenses = Expense::get();
         $section = Auth::user()->section;
+        //$expenses = Expense::select("budget.utilized as amount","expense.description")->join("budget","budget.expense_id","=","expense.id")->where("id","=", $expense)->get();
+        $expenses = Expense::all();
 
         $prog = Session::get('prog');
 
@@ -55,17 +56,77 @@ class PpmpController extends Controller
             ->where("id","!=", $prog)
             ->get();
 
+        $excel_section = Section::select('section.id','section.description')
+            ->join('ppmpv2.program_settings','ppmpv2.program_settings.section_id',"=",'section.id')
+            ->groupBy('section.id','section.description')
+            ->orderby('section.id',"asc")
+            ->get();
+
+        $sections = Section::all();
+        $items = \App\Item::where("division","=",Auth::user()->division)->get();
+//        dd($excel_item);
+
+        $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
 //        sqlsrv_close($conn);
-        return view('ppmp.dashboard',[
+
+        Session::put("excel_expense",$expenses);
+        Session::put("excel_section",$sections);
+        Session::put("items",$items);
+
+        return view('ppmp.dashboard1',[
             "expenses" => $expenses,
             "programs" => $programs,
             "end_user_name" => $end_user_name,
             "end_user_designation" => $end_user_designation,
             "head" => $head,
             "program_settings" => $program_settings,
-            "section" => $section
+            "section" => $section,
+            "information" => $information
         ]);
 
+    }
+
+    public function viewExpense(Request $request) {
+        $section = Auth::user()->section;
+        $charge = $request->charge;
+        Session::put("charge",$charge);
+
+        $expenses = Expense::all();
+
+        $prog = Session::get('prog');
+
+        if(Session::get("admin")) {
+            $section= session::get('section_id');
+            //Session::put('section_id',$section);
+        }
+        Session::put('section_id',$section);
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $program_settings = ProgramSetting::all();
+
+        $programs = Program::where('section_id','=',$section)
+            //->where("id","!=", $prog)
+            ->get();
+
+        $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
+
+        return view('ppmp.dash_test',[
+            "expenses" => $expenses,
+            "programs" => $programs,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head,
+            "program_settings" => $program_settings,
+            'section' => $section,
+            'charge' => $charge,
+            'information' => $information
+        ]);
     }
 
     public function divisionCheck() {
@@ -89,6 +150,7 @@ class PpmpController extends Controller
         $section_id = Auth::user()->section;
         $division_id = $request->division_id;
         $yearly_reference = session::get('yearly_reference');
+        $charge = $request->charge;
 
         Session::put("prog",$request->programs);
 
@@ -115,11 +177,15 @@ class PpmpController extends Controller
             $set_program->yearly_ref_id = $yearly_reference;
             $set_program->save();
         }
-        return back();
+
+        return redirect()->route('charge',[
+            'section' => $section_id,
+            'charge' => $charge
+        ]);
     }
 
 
-    public function ppmpProgram($expense_id = null,Request $request) {
+    public function ppmpProgram($expense_id = null, $charge, Request $request) {
 
         $yearly_reference = Session::get('yearly_reference');
         $section_id = Auth::user()->section;
@@ -127,6 +193,13 @@ class PpmpController extends Controller
         if(session::get('admin')) {
             $section_id = session::get('section_id');
         }
+
+        if(isset($charge)){
+            //echo $charge;
+            Session::put('charge', $charge);
+            $charge = Session::get('charge');
+        }else
+            echo "Empty";
 
         $program_settings = ProgramSetting::select("programs.id","programs.description")
                                         ->where('program_settings.expense_id',"=",$expense_id)
@@ -188,6 +261,12 @@ class PpmpController extends Controller
             ->where('section.id',$section_id)
             ->first();
 
+        $test = \App\ItemDaily::where('expense_id','=', 52)
+            ->where('form_ref',"=", 0)
+            ->whereNotNull('program_id')
+            ->whereNull('status')
+            ->get();
+
         return view('ppmp.program_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
@@ -200,7 +279,9 @@ class PpmpController extends Controller
             "request" => $request,
             "program_settings" => $program_settings,
             "section_id" => $section_id,
-            "sec_head" => $sec_head
+            "sec_head" => $sec_head,
+            "test" => $test,
+            "charge" => $charge
         ]);
     }
 
@@ -245,6 +326,8 @@ class PpmpController extends Controller
         } else {
         }
 
+        //Session::put("excel_section",$sections);
+
         return view('ppmp.report_html',[
             "request" => $request,
             "sections" => $sections,
@@ -253,9 +336,16 @@ class PpmpController extends Controller
         ]);
     }
 
-    public function ppmpList($expense_id = null, Request $request){
+    public function ppmpList($expense_id = null, $charge, Request $request){
 
         $section_id = Auth::user()->section;
+
+        if(isset($charge)){
+            //echo $charge;
+            Session::put('charge', $charge);
+            $charge = Session::get('charge');
+        }else
+            echo "Empty";
 
         if(session::get('admin')) {
             $section_id = session::get('section_id');
@@ -313,6 +403,13 @@ class PpmpController extends Controller
             ->where('section.id',$section_id)
             ->first();
 
+        $test = \App\ItemDaily::where('expense_id','=', 52)
+            ->where('form_ref',"=", 0)
+            ->where('section_id',"=", Auth::user()->section)
+            ->whereNull('status')
+            ->orderBy('id','desc')
+            ->get();
+
         return view('ppmp.ppmp_list',[
             "expenses" => $expenses,
             "all_item" => $all_item,
@@ -324,7 +421,9 @@ class PpmpController extends Controller
             "expense_id" => $expense_id,
             "request" => $request,
             "section_id" => $section_id,
-            "sec_head" => $sec_head
+            "sec_head" => $sec_head,
+            "test" => $test,
+            "charge" => $charge
         ]);
     }
 
@@ -333,6 +432,8 @@ class PpmpController extends Controller
         $encoded_by = Auth::user()->username;
         $division_id = Auth::user()->division;
         $section_id = Auth::user()->section;
+        $exp_amnt = Session::get('exp_amt');
+        $charge = Session::get('charge');
 
         if(session::get('admin')) {
             $section_id = session::get('section_id');
@@ -358,16 +459,17 @@ class PpmpController extends Controller
             $oct = $request->get('oct'.$value);
             $nov = $request->get('nov'.$value);
             $dece = $request->get('dece'.$value);
-
             $unit_cost = $request->get('unit_cost'.$value);
             $mode_procurement = $request->get('mode_procurement'.$value);
             //
             $yearly_ref = $yearly_reference;
             $ppmp_stat = $ppmp_status;
+            //sub forms
+            if($expense_id == 52) {
+                $form_ref = $request->get('form_ref'.$value);
+            }
 
-//            if(!$jan && !$feb && !$mar && !$apr && !$may && !$jun && !$jul && !$aug && !$sep && !$oct && !$nov && !$dece)
-//                return;
-
+            //if(!$jan && !$feb && !$mar && !$apr && !$may && !$jun && !$jul && !$aug && !$sep && !$oct && !$nov && !$dece)
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)
@@ -396,40 +498,75 @@ class PpmpController extends Controller
 
             //if mao siya ang item
 
-            $item_daily = ItemDaily::
+            $item_id = $item->id;
+
+            if($expense_id == 52 && $item->item_id != $form_ref) {
+                $item_daily = ItemDaily::
                 where(function($q) use($value,$unique_id){
                     $q->where("item_id",$value)
                         ->orWhere("unique_id",$unique_id);
                 })
-                ->where("expense_id",$expense_id)
-                ->where("userid",$encoded_by)
-                ->where("division_id",$division_id)
-                ->where("section_id",$section_id)
-                ->where("tranche",$tranche)
-                ->where("description",$description)
-                ->where("unit_measurement",$unit_measurement)
-                ->where("unit_cost",$unit_cost)
-                ->where("mode_procurement",$mode_procurement)
-                ->where("jan",$jan)
-                ->where("feb",$feb)
-                ->where("mar",$mar)
-                ->where("apr",$apr)
-                ->where("may",$may)
-                ->where("jun",$jun)
-                ->where("jul",$jul)
-                ->where("aug",$aug)
-                ->where("sep",$sep)
-                ->where("oct",$oct)
-                ->where("nov",$nov)
-                ->where("dece",$dece)
-                ->where('yearly_ref_id',$yearly_ref)
-                ->where('ppmp_status',$ppmp_stat)
-                ->orderBy("id","desc")
-                ->first();
-
-            $item_id = $item->id;
+                    ->where("expense_id",$expense_id)
+                    ->where("userid",$encoded_by)
+                    ->where("division_id",$division_id)
+                    ->where("section_id",$section_id)
+                    ->where("tranche",$tranche)
+                    ->where("description",$description)
+                    ->where("unit_measurement",$unit_measurement)
+                    ->where("unit_cost",$unit_cost)
+                    ->where("mode_procurement",$mode_procurement)
+                    ->where("jan",$jan)
+                    ->where("feb",$feb)
+                    ->where("mar",$mar)
+                    ->where("apr",$apr)
+                    ->where("may",$may)
+                    ->where("jun",$jun)
+                    ->where("jul",$jul)
+                    ->where("aug",$aug)
+                    ->where("sep",$sep)
+                    ->where("oct",$oct)
+                    ->where("nov",$nov)
+                    ->where("dece",$dece)
+                    ->where('yearly_ref_id',$yearly_ref)
+                    ->where('ppmp_status',$ppmp_stat)
+                    ->where('form_ref',$form_ref)
+                    ->orderBy("id","desc")
+                    ->first();
+            }else {
+                $item_daily = ItemDaily::
+                where(function($q) use($value,$unique_id){
+                    $q->where("item_id",$value)
+                        ->orWhere("unique_id",$unique_id);
+                })
+                    ->where("expense_id",$expense_id)
+                    ->where("userid",$encoded_by)
+                    ->where("division_id",$division_id)
+                    ->where("section_id",$section_id)
+                    ->where("tranche",$tranche)
+                    ->where("description",$description)
+                    ->where("unit_measurement",$unit_measurement)
+                    ->where("unit_cost",$unit_cost)
+                    ->where("mode_procurement",$mode_procurement)
+                    ->where("jan",$jan)
+                    ->where("feb",$feb)
+                    ->where("mar",$mar)
+                    ->where("apr",$apr)
+                    ->where("may",$may)
+                    ->where("jun",$jun)
+                    ->where("jul",$jul)
+                    ->where("aug",$aug)
+                    ->where("sep",$sep)
+                    ->where("oct",$oct)
+                    ->where("nov",$nov)
+                    ->where("dece",$dece)
+                    ->where('yearly_ref_id',$yearly_ref)
+                    ->where('ppmp_status',$ppmp_stat)
+                    ->orderBy("id","desc")
+                    ->first();
+            }
 
             if(!$item_daily)
+                //if(!(empty ($jan && $feb && $mar && $apr && $may && $jun && $jul && $aug && $sep && $oct && $nov && $dece && $item_daily)))
             {
                 $item_daily = new ItemDaily();
                 $item_daily->item_id = $item_id;
@@ -457,6 +594,11 @@ class PpmpController extends Controller
                 $item_daily->dece = $dece;
                 $item_daily->yearly_ref_id = $yearly_ref;
                 $item_daily->ppmp_status = $ppmp_stat;
+                $item_daily->charge = $charge;
+                if($expense_id == 52){
+                    $item_daily->form_ref = $form_ref;
+                }
+                //sample joyax
                 $item_daily->save();
             }
 
@@ -473,6 +615,7 @@ class PpmpController extends Controller
         $encoded_by = Auth::user()->username;
         $division_id = Auth::user()->division;
         $section_id = Auth::user()->section;
+        $charge = Session::get('charge');
 
         if(session::get('admin')) {
             $section_id = session::get('section_id');
@@ -506,6 +649,12 @@ class PpmpController extends Controller
             $yearly_ref = $yearly_reference;
             $ppmp_stat = $ppmp_status;
 
+            //sub-forms program
+
+            if($expense_id == 52) {
+                $form_ref = $request->get('form_ref'.$value);
+            }
+
             $item = Item::where("description","=",$description)
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)
@@ -527,36 +676,70 @@ class PpmpController extends Controller
 
             //if mao siya ang item
 
-            $item_daily = ItemDaily::
-            where(function($q) use($value,$unique_id){
-                $q->where("item_id",$value)
-                    ->orWhere("unique_id",$unique_id);
-            })
-                ->where("expense_id",$expense_id)
-                ->where("userid",$encoded_by)
-                ->where("division_id",$division_id)
-                ->where("section_id",$section_id)
-                ->where("tranche",$tranche)
-                ->where("description",$description)
-                ->where("unit_cost",$unit_cost)
-                ->where("mode_procurement",$mode_procurement)
-                ->where("jan",$jan)
-                ->where("feb",$feb)
-                ->where("mar",$mar)
-                ->where("apr",$apr)
-                ->where("may",$may)
-                ->where("jun",$jun)
-                ->where("jul",$jul)
-                ->where("aug",$aug)
-                ->where("sep",$sep)
-                ->where("oct",$oct)
-                ->where("nov",$nov)
-                ->where("dece",$dece)
-                ->where("yearly_ref_id",$yearly_ref)
-                ->where("ppmp_status",$ppmp_stat)
-                //->where("program_id",$program_id)
-                ->orderBy("id","desc")
-                ->first();
+            if($expense_id == 52 && $item->item_id != $form_ref) {
+                $item_daily = ItemDaily::
+                where(function($q) use($value,$unique_id){
+                    $q->where("item_id",$value)
+                        ->orWhere("unique_id",$unique_id);
+                })
+                    ->where("expense_id",$expense_id)
+                    ->where("userid",$encoded_by)
+                    ->where("division_id",$division_id)
+                    ->where("section_id",$section_id)
+                    ->where("tranche",$tranche)
+                    ->where("description",$description)
+                    ->where("unit_measurement",$unit_measurement)
+                    ->where("unit_cost",$unit_cost)
+                    ->where("mode_procurement",$mode_procurement)
+                    ->where("jan",$jan)
+                    ->where("feb",$feb)
+                    ->where("mar",$mar)
+                    ->where("apr",$apr)
+                    ->where("may",$may)
+                    ->where("jun",$jun)
+                    ->where("jul",$jul)
+                    ->where("aug",$aug)
+                    ->where("sep",$sep)
+                    ->where("oct",$oct)
+                    ->where("nov",$nov)
+                    ->where("dece",$dece)
+                    ->where('yearly_ref_id',$yearly_ref)
+                    ->where('ppmp_status',$ppmp_stat)
+                    ->where('form_ref',$form_ref)
+                    ->orderBy("id","desc")
+                    ->first();
+            }else {
+                $item_daily = ItemDaily::
+                where(function($q) use($value,$unique_id){
+                    $q->where("item_id",$value)
+                        ->orWhere("unique_id",$unique_id);
+                })
+                    ->where("expense_id",$expense_id)
+                    ->where("userid",$encoded_by)
+                    ->where("division_id",$division_id)
+                    ->where("section_id",$section_id)
+                    ->where("tranche",$tranche)
+                    ->where("description",$description)
+                    ->where("unit_cost",$unit_cost)
+                    ->where("mode_procurement",$mode_procurement)
+                    ->where("jan",$jan)
+                    ->where("feb",$feb)
+                    ->where("mar",$mar)
+                    ->where("apr",$apr)
+                    ->where("may",$may)
+                    ->where("jun",$jun)
+                    ->where("jul",$jul)
+                    ->where("aug",$aug)
+                    ->where("sep",$sep)
+                    ->where("oct",$oct)
+                    ->where("nov",$nov)
+                    ->where("dece",$dece)
+                    ->where("yearly_ref_id",$yearly_ref)
+                    ->where("ppmp_status",$ppmp_stat)
+                    //->where("program_id",$program_id)
+                    ->orderBy("id","desc")
+                    ->first();
+            }
 
             $item_id = $item->id;
 
@@ -589,6 +772,10 @@ class PpmpController extends Controller
                 $item_daily->yearly_ref_id = $yearly_ref;
                 $item_daily->ppmp_status = $ppmp_stat;
                 $item_daily->program_id = $program_id;
+                $item_daily->charge = $charge;
+                if($expense_id == 52){
+                    $item_daily->form_ref = $form_ref;
+                }
                 $item_daily->save();
             }
 
@@ -738,5 +925,10 @@ class PpmpController extends Controller
         }
 
         return "Successfully Updated!";
+    }
+
+    public function export()
+    {
+        return \Maatwebsite\Excel\Facades\Excel::download(new PpmpExport(), 'test.xlsx');
     }
 }

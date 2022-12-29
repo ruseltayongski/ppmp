@@ -158,7 +158,7 @@
                                         <span class="progress-number"><b>{{ $section_amount_total }}</b>/{{ $row->amount }}</span>
 
                                         <div class="progress sm">
-                                            <div class="progress-bar progress-bar-red" style="width: {{ (($section_amount_total / $row->amount) * 100).'%' }}"></div>
+                                                <div class="progress-bar progress-bar-red" style="width: {{ (($section_amount_total / $row->amount) * 100).'%' }}"></div>
                                         </div>
                                     </td>
                                     <td>

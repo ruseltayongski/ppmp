@@ -17,6 +17,40 @@ Route::get('logout', function(){
     return Redirect::to('/');
 });
 
+Route::get('test', function(){
+    $excel_expense = Session::get("excel_expense");
+    $excel_section = Session::get("excel_section");
+    $items = Session::get("items");
+    $generate_level = "division";
+    $generate_level = Session::put('generate_level',$generate_level);
+
+    $sec_head = \App\Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        ->LeftJoin('dts.users','users.id','=','section.head')
+        ->LeftJoin('dts.designation','designation.id','=','users.designation')
+        ->where('section.id',Auth::user()->section)
+        ->first();
+
+    $head = \App\Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        ->LeftJoin('dts.users','users.id','=','division.head')
+        ->LeftJoin('dts.designation','designation.id','=','users.designation')
+        ->where('division.id','=',Auth::user()->division)
+        ->first();
+
+    $file_name = "joy.xls";
+    header("Content-Type: application/xls");
+    header("Content-Disposition: attachment; filename=$file_name");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    return view('excel.report',[
+        "excel_expense" => $excel_expense,
+        "excel_section" => $excel_section,
+        "generate_level" =>$generate_level,
+        "sec_head" => $sec_head,
+        "head" => $head
+    ]);
+});
+
 //login
 Route::match(['GET','POST'],'/','LoginController@index');
 
@@ -26,13 +60,16 @@ Route::get('admin/privileged','MaintenanceController@adminPrivilage');
 
 //user
 Route::get('user/home/{section}','PpmpController@index')->name('user');
+Route::post('user/home/{section}{charge}','PpmpController@viewExpense')->name('charge');
 Route::post('user/division/update','MaintenanceController@updateDivisionPost');
 Route::post('user/section/update','MaintenanceController@updateSectionPost');
 Route::get('user/privileged','MaintenanceController@userPrivileged');
 
+Route::get('file-export','PpmpController@export')->name('file-export');
+
 //ppmp
-Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList')->name('ppmp_list');
-Route::match(["GET","POST"],'program/list/{expense_id}','PpmpController@ppmpProgram');
+Route::match(["GET","POST"],'ppmp/list/{expense_id}{charge}','PpmpController@ppmpList')->name('ppmp_list');
+Route::match(["GET","POST"],'program/list/{expense_id}{charge}','PpmpController@ppmpProgram');
 Route::match(["GET","POST"],'program/blade','PpmpController@programBlade');
 Route::post('ppmp/set_program','PpmpController@setProgram')->name('set_program');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
@@ -53,6 +90,7 @@ Route::get('excel/import','ExcelController@excelImport');
 Route::post('expense/import','ExcelController@importExpense');
 Route::post('item/import/msd','ExcelController@importItem_MSD');
 Route::post('item/import/lhsd','ExcelController@importItem_LHSD');
+Route::get('excel/export','ExcelController@excelExport');
 
 //reset user section in ICTU
 Route::get('section/reset','AdminController@resetSection');
@@ -101,3 +139,14 @@ Route::get('ppmp/viewItems','PpmpController@viewItemDaily');
 
 //Budget Allotment
 Route::get('budget/home','BudgetController@index');
+Route::post('budget/add','BudgetController@addBudget');
+Route::post('budget/updateExpense','BudgetController@editProgram');
+Route::post('budget/update','BudgetController@updateBal');
+
+//Route::post('section/allocate_section','BudgetController@edit');
+Route::get('section/allocate_section','BudgetController@sectionIndex');
+Route::post('budget/addProgram','BudgetController@addProgram');
+Route::post('budget/updateExpense','BudgetController@editProgram');
+Route::post('budget/updateS','BudgetController@expense');
+
+Route::get('admin/excel','AdminController@excel');

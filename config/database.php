@@ -96,15 +96,15 @@ return [
 
         'sqlsrv' => [
             'driver' => 'sqlsrv',
-            'host' => env('DB_HOST_SECOND', '192.168.110.45'),
+            'odbc' => true,
+            'odbc_datasource_name' => "FMIS",
+            'host' => "LAMBORGHINI\VEEAMSQL2016",
             'port' => env('DB_PORT_SECOND', '80'),
             'database' => 'fmisdummy',
             'username' => env('DB_USERNAME_SECOND', 'sa'),
             'password' => env('DB_PASSWORD_SECOND', 'D0h7_1T'),
             'charset' => 'utf8',
-            'prefix' => '',
-            'odbc' => true,
-            'odbc_datasource_name' => "LAMBORGHINI\VEEAMSQL2016",
+            'prefix' => ''
         ],
 
         'pgsql' => [

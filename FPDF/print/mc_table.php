@@ -273,7 +273,7 @@ class PDF_MC_Table extends FPDF
                 $item_body = queryItem("call get_body_section('$item->id','$section_id','$yearly_reference','$ppmp_status')")[0];
         }
 
-
+//
 
         $item_body->qty = $item_body->jan + $item_body->feb + $item_body->mar + $item_body->apr + $item_body->may + $item_body->jun + $item_body->jul + $item_body->aug + $item_body->sep + $item_body->oct + $item_body->nov + $item_body->dece;
         $item_body->estimated_budget = ((int)$item_body->qty * str_replace(',', '', (float)$item_body->unit_cost));
@@ -300,6 +300,10 @@ class PDF_MC_Table extends FPDF
 //        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
 //            $item->description = $item->description;
 //        else
+        if($item->expense_id == 52 && $item->form_ref != 0) {
+            $item->description = "\t\t\t\t\t\t\t\t" . $item->description;
+        }
+
         $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
         if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {

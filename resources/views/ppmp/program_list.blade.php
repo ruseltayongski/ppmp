@@ -71,6 +71,17 @@
     <title>PPMP|LIST</title>
     <?php
 
+    function remainingBal($exp_amount){
+    return "<tr>
+                <td colspan='4'>
+                    <strong class='pull-right' >
+                        Remaining:
+                    </strong>
+                </td>
+                <td><span style='font-size: medium' data-toggle='tooltip' title='haha' class='badge bg-red' data-original-title='$exp_amount'>$exp_amount</span></td>
+            </tr>";
+    }
+
     function displayHeader($title){
         return "<tr>
                 <td>
@@ -138,7 +149,7 @@
         return $item;
     }
 
-    function displayItem($item,$expense_title,$program_id, $section_id) {
+    function displayItem($item,$expense_title,$program_id, $section_id, $expense_amount,$test) {
 
         $user = Auth::user();
         setItem($item,$user->section,$program_id);
@@ -274,11 +285,26 @@
                         <input type='number' id='no-border' name='dece$item->id' style='width: 40px' value='$item->dece' placeholder='Dec'>
                         <span class='tooltiptext'>December</span>
                         </div>
-                    </td>
-                    <td>
-                        $status
-                    </td>
-                </tr>";
+                    </td>";
+                    if($item->expense_id == 52) {
+                        $data .= "<td>
+                                  <select id='no-border' name='form_ref$item->id' style='width:250px'><option value='0' selected>Select Activity</option>";
+                        foreach($test as $single_data){
+                            //dd($item->form_ref,$single_data->id);
+                            if($item->form_ref == $single_data->item_id && $item->expense_id == 52) {
+                                //$desc = \App\ItemDaily::find($single_data->form_ref)->description;
+                                $data .= "<option value='$single_data->item_id' selected>$single_data->description</option>";
+                            }
+                            else
+                                $data .= "<option value='$single_data->item_id'>$single_data->description</option>";
+                            }
+                        }
+                    $data .= "</select>
+                              </td>
+                              <td>
+                              $status
+                              </td>
+                              </tr>";
 
         return $data;
     }
@@ -294,7 +320,7 @@
     }
     function addItem($expense_title,$expense,$tranche,$expense_description,$program_id){
         return "<tr>
-            <td colspan='19'>
+            <td colspan='20'>
                 <button type='button' data-id='$expense_title' data-program_id='$program_id' data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
             </td>
         </tr>";
@@ -363,12 +389,27 @@
                                 <th>Oct</th>
                                 <th>Nov</th>
                                 <th>Dec</th>
-                                <th></th>
+                                @if($expense_id == 52)
+                                    <th>Select Training Activity(for forms)</th>
+                                @endif
+                                <th>Option</th>
                             </tr>
                             <?php
                             foreach($program_settings as $program_setting) {
                                 foreach($expenses as $expense)
                                 {
+                                    foreach(\App\Budget::select("programs.description as program","expense.description as expense","budget.utilized","budget.section_id","budget.expense_id","budget.level")
+                                                ->join("expense","expense.id","=","budget.expense_id")
+                                                ->join("programs","programs.id","=","budget.program_id")
+                                                ->where("budget.section_id","=",Auth::user()->section)
+                                                ->where('budget.level',"=","program")
+                                                ->get() as $prog)
+
+                                        if(empty($prog->utilized))
+                                            $expense_amount = 0;
+                                        else
+                                            $expense_amount= $prog->utilized;
+
                                     $count_first = 0;
                                     $count_second = 0;
                                     $alphabet = range('A', 'Z');
@@ -404,14 +445,18 @@
                                                 echo "<tbody id='".str_replace([' ','/','.','-',':',','],'HAHA',$display_second).$program_setting->id."'>";
                                                 $item_collection = [];
                                                 $sub_total = 0;
+
+                                                $expense_amount = 0;
                                                 foreach($items as $item) {
-                                                    echo displayItem($item,$title_header_second,$program_setting->id, $section_id);
+                                                    echo displayItem($item,$title_header_second,$program_setting->id, $section_id,$expense_amount,$test);
                                                     $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
+                                                    $expense_amount = $expense_amount-$estimated_budget;
                                                 }
 
                                                 echo "</tbody>";
                                                 echo expenseTotal($sub_total);
+                                                echo remainingBal($expense_amount);
 
                                             } // end of maine tranche expense
                                             if(!isset($flag[$display_first])){ // sub tranche expense
@@ -443,13 +488,16 @@
                                                 $item_collection = [];
                                                 $sub_total = 0;
                                                 $title_header_second = '';
+                                                $expense_amount = 0;
                                                 foreach($items as $item){
-                                                    echo displayItem($item,$title_header_second,$program_setting->id, $section_id);
+                                                    echo displayItem($item,$title_header_second,$program_setting->id, $section_id,$expense_amount,$test);
                                                     $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
+                                                    $expense_amount = $expense_amount-$estimated_budget;
                                                 }
                                                 echo "</tbody>";
                                                 echo expenseTotal($sub_total);
+                                                echo remainingBal($expense_amount);
                                                 if($tranche != "1-B")
                                                     echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first).$program_setting->id,$expense->id,$tranche,$display_first,$program_setting->id);
                                             } // display if first is null
@@ -467,14 +515,21 @@
                                         echo "<tbody id='".str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description).$program_setting->id."'>";
                                         $item_collection = [];
                                         $sub_total = 0;
+                                        $expense_amount = 0;
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$expense->description);
-                                            echo displayItem($item,$expense->description,$program_setting->id, $section_id);
-                                            $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
-                                            $sub_total += $estimated_budget;
+                                            $expense_amount = 0;
+                                            //added
+                                            if($charge == $item->charge) {
+                                                echo displayItem($item,$expense->description,$program_setting->id, $section_id, $expense_amount,$test);
+                                                $estimated_budget = setItem($item,$section_id,$program_setting->id)->estimated_budget;
+                                                $sub_total += $estimated_budget;
+                                                $expense_amount = $expense_amount-$estimated_budget;
+                                            }
                                         }
                                         echo "</tbody>";
                                         echo expenseTotal($sub_total);
+                                        echo remainingBal($expense_amount);
                                         echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description).$program_setting->id,$expense->id,'',$expense->description,$program_setting->id);
                                         if($expense_total != 0){
                                             echo expenseTotal($expense_total);
@@ -601,7 +656,8 @@
 
 
                 var expense_id = "<?php echo $expense_id; ?>";
-                $('.item_submit').attr('action', "<?php echo asset('program/list')."/" ?>"+expense_id);
+                var charge ="<?php echo $charge; ?>";
+                $('.item_submit').attr('action', "<?php echo asset('program/list')."/" ?>"+expense_id+charge);
                 $(".item_save").val(true);
 
                 var item_array = [];
@@ -830,6 +886,14 @@
                 "<span class='tooltiptext'>December</span>"+
                 "</div>" +
                 "</td>"+
+                "@if($expense->id == 52)"+
+                    "<td><select class='form-control' name='form_ref"+item_unique_row+"' step='.01' data-placeholder='Item Reference' style='width:250px;'>" +
+                    "<option value='0' selected>Select Activity</option>"+
+                    "@foreach($test as $div)"+
+                    "<option value='{{$div->item_id}}'>{{ $div->description }}</option>"+
+                    "@endforeach"+
+                    "</select></td>"+
+                    "@endif"+
                 "<td>"+
                 item_status+
                 "</td>"+

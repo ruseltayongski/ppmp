@@ -240,6 +240,7 @@ class PDF_MC_Table extends FPDF
             $this->SetXY($x+$w,$y);
         }
         //Go to the next line
+
         $this->Ln($h);
     }
 
@@ -281,11 +282,14 @@ class PDF_MC_Table extends FPDF
                 $this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id] = $item->estimated_budget + $sub_total;
                 $this->grand_total += $item->estimated_budget;
 
+        if($item->expense_id == 52 && $item->form_ref != 0) {
+            $item->description = "\t\t\t\t\t\t\t\t" . $item->description;
+        }
 
-        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
-            $item->description = $item->description;
-        else
-            $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
+//        if ($item->expense_id == 16 || $item->expense_id == 17 || $item->expense_id == 18 || $item->expense_id == 19 || $item->expense_id == 45 || $item->expense_id == 44 || $item->expense_id == 32 || $item->expense_id == 42 || $item->expense_id == 5)
+//            $item->description = $item->description;
+//        else
+//            $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
         if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
             $item->mode_procurement = "NP 53.5";

@@ -71,6 +71,25 @@
     <title>PPMP|LIST</title>
     <?php
 
+    function remainingBal($exp_amount){
+        return "<tr>
+                <td colspan='4'>
+                    <strong class='pull-right' >
+                        Remaining:
+                    </strong>
+                </td>
+                <td><span style='font-size: medium' data-toggle='tooltip' title='haha' class='badge bg-red' data-original-title='$exp_amount'>$exp_amount</span></td>
+            </tr>";
+    }
+
+    function addSubform($expense_title,$expense,$tranche,$expense_description,$new){
+        return "<tr>
+            <td colspan='4'>
+                <button type='button' data-id='$expense_title'  data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' data-exp_amount='$new' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addSubform($(this))'>Add Subforms</button>
+            </td>
+        </tr>";
+    }
+
     function displayHeader($title){
         return "<tr>
                 <td>
@@ -78,6 +97,7 @@
                         ".$title."
                     </strong>
                 </td>
+                <td></td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -140,7 +160,7 @@
         return $item;
     }
 
-    function displayItem($item,$expense_title) {
+    function displayItem($item,$expense_title,$exp_amount, $dropdown_data) {
 
         $user = Auth::user();
         setItem($item,$user->section);
@@ -156,9 +176,12 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
+        $exp_amount = $exp_amount - $item->estimated_budget;
+        Session::put("exp_amt",$exp_amount);
         $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
-        $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
+        $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title.$exp_amount."</span>";
 
+        //foreach ($test as $value)
         $data = "<tr class='$item->unique_id $item->id'>
                     <input type='hidden' id='no-border' name='item_id[]' value='$item->id'>
                     <input type='hidden' id='no-border' name='unique_id$item->id' value='$item->unique_id'>
@@ -275,13 +298,29 @@
                         <input type='number' id='no-border' name='dece$item->id' style='width: 40px' value='$item->dece' placeholder='Dec'>
                         <span class='tooltiptext'>December</span>
                         </div>
-                    </td>
-                    <td>
-                        $status
-                    </td>
-                </tr>";
+                    </td>";
 
-        return $data;
+                    if($item->expense_id == 52) {
+                        $data .= "<td>
+                             <select id='no-border' name='form_ref$item->id' style='width:250px'><option value='0'>Select Activity</option>";
+                        foreach($dropdown_data as $single_data){
+                            //dd($item->form_ref,$single_data->id);
+                            if($item->form_ref == $single_data->item_id && $item->expense_id == 52) {
+                                //$desc = \App\ItemDaily::find($single_data->form_ref)->description;
+                                $data .= "<option value='$single_data->item_id' selected>$single_data->description</option>";
+                            }
+                             else
+                                 $data .= "<option value='$single_data->item_id'>$single_data->description</option>";
+                        }
+                    }
+                    $data .= "</select>
+                              </td>
+                              <td>
+                              $status
+                              </td>
+                              </tr>";
+
+                    return $data;
     }
     function expenseTotal($total){
         return "<tr>
@@ -290,17 +329,16 @@
                         Sub Total:
                     </strong>
                 </td>
-                <td><span data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
+                <td><span style='font-size: medium' data-toggle='tooltip' title='haha' class='badge bg-green' data-original-title='$total'>$total</span></td>
             </tr>";
     }
-    function addItem($expense_title,$expense,$tranche,$expense_description){
+    function addItem($expense_title,$expense,$tranche,$expense_description,$new){
         return "<tr>
-            <td colspan='19'>
-                <button type='button' data-id='$expense_title'  data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
+            <td colspan='20'>
+                <button type='button' data-id='$expense_title'  data-expense='$expense' data-tranche='$tranche' data-expense_description='$expense_description' data-exp_amount='$new' class='btn btn-block btn-primary btn-xs $expense_title' onclick='addItem($(this))'>Add Item</button>
             </td>
         </tr>";
     }
-
     function paginateItem($expense_title,$item){
         return "<tr>
             <td colspan='17'>
@@ -338,6 +376,7 @@
                         $yearly_reference = Session::get('yearly_reference');
                         $ppmp_status = Session::get('ppmp_status');
 
+
                     $desc = \App\Section::select('description')
                         ->where('id',"=", $section_id)
                         ->first();
@@ -369,7 +408,10 @@
                                 <th>Oct</th>
                                 <th>Nov</th>
                                 <th>Dec</th>
-                                <th></th>
+                                @if($expense_id == 52)
+                                <th>Select Training Activity(for forms)</th>
+                                @endif
+                                <th>Option</th>
                             </tr>
                             <?php
                                 foreach($expenses as $expense)
@@ -378,6 +420,17 @@
                                     $count_second = 0;
                                     $alphabet = range('A', 'Z');
                                     $expense_code = json_decode($expense->code,true);
+
+                                    foreach(\App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")
+                                                ->join("expense","expense.id","=","budget.expense_id")
+                                                ->where("budget.expense_id","=",$expense->id)
+                                                ->get() as $exp)
+
+                                     if(empty($exp->utilized))
+                                        $expense_amount = 0;
+                                     else
+                                        $expense_amount= $exp->utilized;
+
                                     if(isset($expense_code)){
                                         foreach($expense_code as $display_first => $first){
                                             foreach($first as $display_second){ //main tranche expense
@@ -408,9 +461,10 @@
                                                 $item_collection = [];
                                                 $sub_total = 0;
                                                 foreach($items as $item){
-                                                    echo displayItem($item,$title_header_second);
+                                                    echo displayItem($item,$title_header_second,$expense_amount,$test);
                                                     $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
+                                                    $expense_amount = $expense_amount-$estimated_budget;
                                                 }
 
                                                 echo "</tbody>";
@@ -444,14 +498,15 @@
                                                 $sub_total = 0;
                                                 $title_header_second = '';
                                                 foreach($items as $item){
-                                                    echo displayItem($item,$title_header_second);
+                                                    echo displayItem($item,$title_header_second,$expense_amount,$test);
                                                     $estimated_budget = setItem($item,$section_id)->estimated_budget;
                                                     $sub_total += $estimated_budget;
+                                                    $expense_amount = $expense_amount-$estimated_budget;
                                                 }
                                                 echo "</tbody>";
                                                 echo expenseTotal($sub_total);
-                                                if($tranche != "1-B")
-                                                    echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first);
+                                                if($tranche != "1-B" && $expense_amount != 0)
+                                                    echo addItem(str_replace([' ','/','.','-',':',','],'HAHA',$display_first),$expense->id,$tranche,$display_first,$expense_amount);
                                             } // display if first is null
                                             $count_first++;
                                         } // end sub tranche expense
@@ -468,13 +523,20 @@
                                         $sub_total = 0;
                                         foreach($items as $item){
                                             //$item_collection[] = displayItem($item,$expense->description);
-                                            echo displayItem($item,$expense->description);
-                                            $estimated_budget = setItem($item,$section_id)->estimated_budget;
-                                            $sub_total += $estimated_budget;
+                                            //added this to enable for year 2024
+                                            if($charge == $item->charge) {
+                                                echo displayItem($item,$expense->description,$expense_amount,$test);
+                                                $estimated_budget = setItem($item,$section_id)->estimated_budget;
+                                                $sub_total += $estimated_budget;
+                                                $expense_amount = $expense_amount - $estimated_budget;
+                                            }
                                         }
                                         echo "</tbody>";
                                         echo expenseTotal($sub_total);
-                                        echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description);
+                                        echo remainingBal($expense_amount);
+//                                        if($expense_amount != 0) {
+                                            echo addItem(str_replace([' ','/','.','-',':',',','(',')'],'HAHA',$expense->description),$expense->id,'',$expense->description,$expense_amount);
+//                                        }
                                         if($expense_total != 0){
                                             echo expenseTotal($expense_total);
                                         }
@@ -500,15 +562,43 @@
                         <h4 class="modal-title">Filter PDF</h4>
                     </div>
                     <div class="modal-body text-center">
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=consolidated&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc  }}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Consolidated
-                        </a>
-                        <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference}}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Per Region
-                        </a>
-                        <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc }}" target="_blank">
-                            <i class="fa fa-file-pdf-o"></i> Per Division
-                        </a>
+                        <div>
+                            <div class="col-md-9" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=consolidated&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc  }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Consolidated
+                                </a>
+                            </div>
+                            <div class="col-md-3" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/consolidated_lhsd.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=consolidated&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc  }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-md-9" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference}}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Per Region
+                                </a>
+                            </div>
+                            <div class="col-md-3" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-foursquare" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=region&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference}}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col-md-9" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Per Division
+                                </a>
+                            </div>
+                            <div class="col-md-3" style="padding: 0.5em">
+                                <a class="btn btn-block btn-social btn-facebook" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=division&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name.'&section_name='.$section_desc }}" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> Excel
+                                </a>
+                            </div>
+                        </div>
+
                         <!--
                         <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=section&division_id='.Auth::user()->division.'&section_id='.$section_id.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation }}" target="_blank">
                             <i class="fa fa-file-pdf-o"></i> Per Section
@@ -519,9 +609,18 @@
                         {{--@if(!($admin))--}}
                             <?php $section = \App\Section::where("division",Auth::user()->division)->orderBy("description","asc")->get() ?>
                             @foreach($section as $sec)
-                                <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name}}" target="_blank">
-                                    <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
-                                </a>
+                                <div>
+                                    <div class="col-md-9" style="padding: 0.2em">
+                                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name}}" target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i> {{ $sec->description }}
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3" style="padding: 0.2em">
+                                        <a class="btn btn-block btn-social btn-google" href="{{ url('FPDF/print/report.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&generate_level=select_section&division_id='.Auth::user()->division.'&section_id='.$sec->id.'&section_name='.$sec->description.'&ppmp_status='.$ppmp_status.'&yearly_reference='.$yearly_reference.'&section_desig='.$sec_head->designation.'&sec_head_name='.$sec_head->head_name}}" target="_blank">
+                                            <i class="fa fa-file-pdf-o"></i> Excel
+                                        </a>
+                                    </div>
+                                </div>
                             @endforeach
                         {{--@endif--}}
                     </div>
@@ -604,7 +703,8 @@
                 $("#ppmp_saved").attr("disabled", true);
 
                 var expense_id = "<?php echo $expense_id; ?>";
-                $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);
+                var charge ="<?php echo $charge; ?>";
+                $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id+charge);
                 $(".item_save").val(true);
 
                 var item_array = [];
@@ -702,7 +802,7 @@
 
         function AddRow(element){
             var expense = element.data('expense');
-            var expense_description = element.data('expense_description');
+            var expense_description = element.data('expense_desc');
             var tranche = element.data('tranche');
             var userid = "<?php echo Auth::user()->username; ?>";
             var item_unique_row = uuidv4()+userid;
@@ -834,6 +934,14 @@
                 "<span class='tooltiptext'>December</span>"+
                 "</div>" +
                 "</td>"+
+                "@if($expense->id == 52)"+
+                    "<td><select class='form-control' name='form_ref"+item_unique_row+"' step='.01' data-placeholder='Item Reference' style='width:250px;'>" +
+                    "<option value='0' selected>Select Activity</option>"+
+                        "@foreach($test as $div)"+
+                        "<option value='{{$div->item_id}}'>{{ $div->description }}</option>"+
+                        "@endforeach"+
+                    "</select></td>"+
+                    "@endif"+
                 "<td>"+
                 item_status+
                 "</td>"+
@@ -843,43 +951,85 @@
         }
 
         function addItem(element){
-            $(".number_of_row").focus();
-            var id = element.data('id');
-            var expense_description = element.data('expense_description');
-            console.log(id);
-            Lobibox.confirm({
-                title: 'Confirmation',
-                msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
-                callback: function ($this, type, ev) {
-                    if(type == 'yes'){
-                        var number_of_row = $(".number_of_row").val();
-                        if(number_of_row){
-                            var row_setter;
-                            if(number_of_row > 20){
-                                row_setter = 20;
+            var exp = element.data('exp_amount');
+            //if(exp > 0){
+                $(".number_of_row").focus();
+                var id = element.data('id');
+                var expense_description = element.data('expense_description');
+                console.log(id);
+                Lobibox.confirm({
+                    title: 'Confirmation',
+                    msg: "Are you sure you want to add in "+expense_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
+                    callback: function ($this, type, ev) {
+                        if(type == 'yes'){
+                            var number_of_row = $(".number_of_row").val();
+                            if(number_of_row){
+                                var row_setter;
+                                if(number_of_row > 20){
+                                    row_setter = 20;
+                                } else {
+                                    row_setter = number_of_row;
+                                }
+                                for(var i=0;i<row_setter;i++){
+                                    var new_row = AddRow(element);
+                                    $("#"+id).append(new_row);
+                                }
                             } else {
-                                row_setter = number_of_row;
-                            }
-                            for(var i=0;i<row_setter;i++){
                                 var new_row = AddRow(element);
                                 $("#"+id).append(new_row);
                             }
-                        } else {
-                            var new_row = AddRow(element);
-                            $("#"+id).append(new_row);
+
+                            console.log("#"+id);
+
+                            $(".item-description").catcomplete({
+                                delay: 0,
+                                source: item_filter
+                            });
                         }
-
-                        console.log("#"+id);
-
-                        $(".item-description").catcomplete({
-                            delay: 0,
-                            source: item_filter
-                        });
                     }
-                }
-            });
+                });
+            //}
         }
+        function addSubform(element){
+            var exp = element.data('expense');
+            if(exp == 52){
+                $(".number_of_row").focus();
+                var id = element.data('id');
+                var item_description = element.data('item_description');
+                console.log(id);
+                Lobibox.confirm({
+                    title: 'Confirmation',
+                    msg: "Are you sure you want to add in "+item_description+" ? "+"<input type='number' class='form-control number_of_row' placeholder='Type the number of rows' >",
+                    callback: function ($this, type, ev) {
+                        if(type == 'yes'){
+                            var number_of_row = $(".number_of_row").val();
+                            if(number_of_row){
+                                var row_setter;
+                                if(number_of_row > 20){
+                                    row_setter = 20;
+                                } else {
+                                    row_setter = number_of_row;
+                                }
+                                for(var i=0;i<row_setter;i++){
+                                    var new_row = AddRow(element);
+                                    $("#"+id).append(new_row);
+                                }
+                            } else {
+                                var new_row = AddRow(element);
+                                $("#"+id).append(new_row);
+                            }
 
+                            console.log("#"+id);
+
+                            $(".item-description").catcomplete({
+                                delay: 0,
+                                source: item_filter
+                            });
+                        }
+                    }
+                });
+            }
+        }
         function deleteItem(element){
             console.log(element.data('unique_id'));
             console.log(element.data('item_id'));
@@ -901,6 +1051,7 @@
                         };
                         $.post(url,json,function(result){
                             console.log(result);
+                            location.reload();
                         });
                         Lobibox.notify('error', {
                             title: '',
@@ -912,6 +1063,10 @@
                 }
             });
         }
+
+        $.each([<?php echo $test ?>], function( key, value ) {
+            console.log( key,value);
+        });
 
         /*$(".div_paginator").each(function(index1){
             var paginator_href = $(this).children()[0].className;

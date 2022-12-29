@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BudgetAllotment;
 use Illuminate\Http\Request;
 use Excel;
 use App\Item;
@@ -164,6 +165,27 @@ class ExcelController extends Controller
 
         }
         return Redirect::back()->with('itemAdd', 'Successfully added item!');
+    }
+
+    public function excelExport(){
+        $users = BudgetAllotment::select("Beginning_balance")->get();
+        $Info = array();
+        array_push($Info, ['Beginning_balance']);
+        foreach ($users as $user) {
+            array_push($Info, $user->toArray());
+        }
+        \Excel::create('Filename', function($excel) use ($Info) {
+
+            $excel->setTitle('Filename');
+            $excel->setCreator('milad')->setCompany('Test');
+            $excel->setDescription('users file');
+            $excel->sheet('sheet1', function ($sheet) use ($Info) {
+                $sheet->setRightToLeft(true);
+                $sheet->fromArray($Info, null, 'A1', false, false);
+            });
+        })->download('xls');
+
+        //Excel::download/Excel::store()
     }
 
 }

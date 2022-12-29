@@ -71,6 +71,12 @@
     <title>PROGRAM | CHECK </title>
     <?php
 
+    $user = Auth::user();
+
+    $sections = \App\Section::where('division',"=", $user->division)
+                            ->get();
+    $expenses = \App\Expense::all();
+
     function conn()
     {
         $server = 'localhost';
@@ -311,7 +317,7 @@
                 <div class="box box-primary">
                     <div class="box-header">
                         <div class="input-group input-group-sm" style="width: 150px;">
-                            <input type="text" style="width: 300px;" id="item_search" name="item_search" value="{{ $item_search }}" class="form-control pull-right" placeholder="Search">
+                            <input type="text" style="width: 300px;" id="item_search" name="item_search" value="" class="form-control pull-right" placeholder="Search">
                             <div class="input-group-btn">
                                 <button type="submit" class="btn btn-default"><i class="fa fa-search"></i></button>
                             </div>

@@ -159,7 +159,7 @@
         </div>
         @include('layouts.navbar-nav')
     </nav>
-    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home','division/check','division/check1','program/list','program/blade'), true) ? 'container-fluid' : 'container' }}">
+    <div class="{{ in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','','division/check','division/check1','program/list','program/blade','file-export'), true) ? 'container-fluid' : 'container' }}">
         <div class="loading"></div>
         @include('modal')
         @yield('content')
@@ -169,7 +169,7 @@
 
     <!-- /.content-wrapper -->
 
-    @if( !in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','user/home','program/list','program/blade'), true))
+    @if( !in_array(Request::segments()[0].'/'.Request::segments()[1], array('ppmp/list','ppmp/search','','program/list','program/blade','file-export'), true))
         <footer id="footer">
             <div class="container">
                 <b>Version</b> 2.0

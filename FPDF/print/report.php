@@ -3,9 +3,9 @@ date_default_timezone_set('Asia/Manila');
 
 function conn()
 {
-    $server = '192.168.110.31';
+    $server = 'localhost';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'rtayong_31','rtayong_31');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -274,8 +274,7 @@ foreach($expenses as $expense) {
 
                 $items = queryItem("CALL main_tranche('$expense->id','$tranche')");
 
-
-                if(count($items) > 0) {
+                if(count($items) > 0 ) {
                     $pdf->displayExpense($title_header_expense.$title_header_first.$title_header_second);
                 }
 
@@ -311,7 +310,7 @@ foreach($expenses as $expense) {
 
                 $items = queryItem("call main_tranche('$expense->id','$tranche')");
 
-                if(count($items) > 0) {
+                if(count($items) > 0 ) {
                     $pdf->displayExpense($title_header_expense1);
                 }
 

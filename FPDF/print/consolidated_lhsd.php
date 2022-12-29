@@ -9,9 +9,9 @@ date_default_timezone_set('Asia/Manila');
 
 function conn()
 {
-    $server = '192.168.110.31';
+    $server = 'localhost';
     try{
-        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'rtayong_31','rtayong_31');
+        $pdo = new PDO("mysql:host=$server; dbname=ppmpv2",'root','adm1n');
         $pdo->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
     }
     catch (PDOException $err) {
@@ -495,7 +495,7 @@ foreach($sections as $section) {
                                 if (count($items) > 0)
                                     $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                             }
-                    }
+                         }
 //                    if (!isset($flag[$display_first])) {
 //                        $pdf->SetFont('Arial', 'B', 7);
 //                        $title_header_expense1 = '';

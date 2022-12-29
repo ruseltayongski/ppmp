@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BudgetAllotment;
 use Illuminate\Http\Request;
 use App\PisUser;
 use Illuminate\Support\Facades\Auth;
@@ -14,6 +15,7 @@ use App\Program;
 use App\Section;
 use App\User;
 use Illuminate\Support\Facades\Session;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -45,10 +47,12 @@ class AdminController extends Controller
                         $join->on("qty.unique_id","=","item.unique_id");
                     })
                     ->first();
+        $all = BudgetAllotment::select("Beginning_balance")->get();
 
         return view('admin.home',[
             "information" => $information,
-            "item_qty" => $item_qty
+            "item_qty" => $item_qty,
+            "total" => $all
         ]);
     }
 
@@ -178,5 +182,24 @@ class AdminController extends Controller
         Session::put('auth',$user);
         print_r($user);
         return redirect()->route('admin');
+    }
+
+    public function excel(){
+            $users = BudgetAllotment::select("Beginning_balance")->get();
+            $Info = array();
+            array_push($Info, ['FundSourceId','FundSourceTitle' ,'FundSourceTitleCode']);
+            foreach ($users as $user) {
+                array_push($Info, $user->toArray());
+            }
+            \Excel::create('BudgetAllotment', function($excel) use ($Info) {
+
+                $excel->setTitle('Users');
+                $excel->setCreator('milad')->setCompany('Test');
+                $excel->setDescription('users file');
+                $excel->sheet('sheet1', function ($sheet) use ($Info) {
+                    $sheet->setRightToLeft(true);
+                    $sheet->fromArray($Info, null, 'A1', false, false);
+                });
+            })->download('xls');
     }
 }

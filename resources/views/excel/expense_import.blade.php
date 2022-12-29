@@ -25,7 +25,11 @@
                             <label for="exampleInputFile">File input</label>
                             <input type="file" id="exampleInputFile" name="import_file"><br>
                             <button class="btn btn-primary">Import File</button>
-
+                        </form>
+                        <br>
+                        <form action="{{ asset('excel/export') }}" class="form-horizontal" method="get" enctype="multipart/form-data">
+                            {{ csrf_field() }}
+                            <button class="btn btn-primary">Export File</button>
                         </form>
                     </div>
                 </section>

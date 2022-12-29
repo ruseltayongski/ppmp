@@ -65,11 +65,11 @@
                 $section = Session::get('section_id');
             ?>
             @if(Session::get('admin') && $section)
-                    <li style="font-family: verdana;"><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-th-large"></i> Dashboard</a></li>
+                    <li style="font-family: verdana;"><a href="{{ asset('user/home').'/'.$section }}"><i class="fa fa-th-large"></i> Dashboard</a></li>
                 @elseif (Auth::user()->user_priv)
                     <li style="font-family: Verdana;"><a href="{{ asset('admin/home') }}"><i class="fa fa-th-large"></i> Dashboard</a></li>
                 @else
-                    <li style="font-family: Verdana;"><a href="{{ asset('user/home/{section}') }}"><i class="fa fa-th-large"></i> Dashboard</a></li>
+                    <li style="font-family: Verdana;"><a href="{{ asset('user/home').'/'.$section }}"><i class="fa fa-th-large"></i> Dashboard</a></li>
             @endif
             <!--
             <li><a href="{{ asset('division/check1') }}"><i class="fa fa-dashboard"></i> LHSD CHECK</a></li>
@@ -104,7 +104,8 @@
                 <!-- EDITED FOR PROGRAMS  -->
                 <li style="font-family: Verdana;"><a href="{{ url('program/home') }}"><i class="fa fa-tasks"></i> Programs </a></li>
                 <!-- EDITED FOR BUDGET ALLOTMENT  -->
-                {{--<li style="font-family: Verdana;"><a href="{{ url('budget/home') }}"><i class="fa fa-shopping-cart"></i> Manage Budget Allotment </a></li>--}}
+                <li style="font-family: Verdana;"><a href="{{ url('budget/home') }}"><i class="fa fa-shopping-cart"></i> Manage Budget Allotment </a></li>
+                <!-- EDITED FOR VIEWING/DELETING ITEMS  -->
                 <li style="font-family: Verdana;"><a href="{{ url('ppmp/viewItems') }}"><i class="fa fa-list-alt"></i> Items </a></li>
                 <!--
                 <li class="dropdown">
@@ -124,6 +125,7 @@
                     <a style="font-family: Verdana;" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-gears"></i> Settings</a>
                     <ul class="dropdown-menu">
                         @if(Auth::user()->user_priv && !$section)
+                        <li><a href=""><i class="fa fa-edit"></i> Assign Section</a></li>
                         <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
                             @elseif(Session::get('admin') && $section)
                                 <?php
