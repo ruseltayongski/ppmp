@@ -56,7 +56,11 @@ class LoginController extends Controller
             else
                 $section = Auth::user()->section;
                 //return Redirect::to('user/home');
-                return redirect()->route('user',['section' => $section]);
+                $yearly_reference = Session::get('yearly_reference');
+                if($yearly_reference != 4) {
+                    return redirect()->route('user',['section' => $section]);
+                }
+                return \redirect()->route('user_2024',['section' => $section]);
         }
         return view('login');
     }

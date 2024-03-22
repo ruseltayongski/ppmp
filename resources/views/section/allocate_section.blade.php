@@ -72,6 +72,149 @@ $allotment = queryAllotmentClass();
 $yearly_reference = Session::get('yearly_reference');
 ?>
 @extends('layouts.app')
+<style>
+    :root {
+        --card-line-height: 1.2em;
+        --card-padding: 1em;
+        --card-radius: 0.5em;
+        --color-green: #558309;
+        --color-gray: #e2ebf6;
+        --color-dark-gray: #c4d1e1;
+        --radio-border-width: 2px;
+        --radio-size: 1.5em;
+    }
+
+    modal-body {
+        background-color: #f2f8ff;
+        color: #263238;
+        font-family: 'Noto Sans', sans-serif;
+        margin: 0;
+        padding: 2em 6vw;
+    }
+
+    .grid {
+        display: grid;
+        grid-gap: var(--card-padding);
+        margin: 0 auto;
+        max-width: 60em;
+        padding: 0;
+
+    @media (min-width: 42em) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: var(--card-radius);
+        position: relative;
+
+    /*&:hover {*/
+    /*box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);*/
+    /*}*/
+    /*}*/
+
+    .radio {
+        font-size: inherit;
+        margin: 0;
+        position: absolute;
+        right: calc(var(--card-padding) + var(--radio-border-width));
+        top: calc(var(--card-padding) + var(--radio-border-width));
+    }
+
+    @supports(-webkit-appearance: none) or (-moz-appearance: none) {
+        .radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: #fff;
+            border: var(--radio-border-width) solid var(--color-gray);
+            border-radius: 50%;
+            cursor: pointer;
+            height: var(--radio-size);
+            outline: none;
+            transition:
+                    background 0.2s ease-out,
+                    border-color 0.2s ease-out;
+            width: var(--radio-size);
+
+    &::after {
+         border: var(--radio-border-width) solid #fff;
+         border-top: 0;
+         border-left: 0;
+         content: '';
+         display: block;
+         height: 0.75rem;
+         left: 25%;
+         position: absolute;
+         top: 50%;
+         transform:
+                 rotate(45deg)
+                 translate(-50%, -50%);
+         width: 0.375rem;
+     }
+
+    &:checked {
+         background: var(--color-green);
+         border-color: var(--color-green);
+     }
+    }
+
+    .card:hover .radio {
+        border-color: var(--color-dark-gray);
+
+    &:checked {
+         border-color: var(--color-green);
+     }
+    }
+    }
+
+    .plan-details {
+        border: var(--radio-border-width) solid var(--color-gray);
+        border-radius: var(--card-radius);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        padding: var(--card-padding);
+        transition: border-color 0.2s ease-out;
+    }
+
+    /*.card:hover .plan-details {*/
+    /*border-color: var(--color-dark-gray);*/
+    /*}*/
+
+    .radio:checked ~ .plan-details {
+        border-color: var(--color-green);
+    }
+
+    .radio:focus ~ .plan-details {
+        box-shadow: 0 0 0 2px var(--color-dark-gray);
+    }
+
+    .radio:disabled ~ .plan-details {
+        color: var(--color-dark-gray);
+        cursor: default;
+    }
+
+    .radio:disabled ~ .plan-details .plan-type {
+        color: var(--color-dark-gray);
+    }
+
+    /*.card:hover .radio:disabled ~ .plan-details {*/
+    /*border-color: var(--color-gray);*/
+    /*box-shadow: none;*/
+    /*}*/
+
+    /*.card:hover .radio:disabled {*/
+    /*border-color: var(--color-gray);*/
+    /*}*/
+
+    .plan-type {
+        color: var(--color-green);
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1em;
+    }
+</style>
 @section('content')
     <title>Manage | Budget Allotment</title>
     <div class="box">
@@ -127,20 +270,35 @@ $yearly_reference = Session::get('yearly_reference');
                                     ?>
                                     <div class="modal-body">
                                         <div class="box-body">
-                                            <div class="form-check" onchange="getRadio()">
-                                                <input class="form-check-input" type="radio" name="type" id="exampleRadios1" value="gaa">
-                                                <label class="form-check-label" for="gaa">
-                                                    GAA
+                                            <div class="grid" onchange="getRadio()">
+                                                <label class="card">
+                                                    <input name="plan" class="radio" type="radio" value="gaa">
+                                                    <span class="plan-details">
+                                                    <span class="plan-type">National Expenditures Program</span>
+                                                    </span>
                                                 </label>
-                                                <input class="form-check-input" type="radio" name="type" id="exampleRadios2" value="saa" checked>
-                                                <label class="form-check-label" for="saa">
-                                                    SAA
+                                                <label class="card">
+                                                    <input name="plan" class="radio" type="radio" value="saa" checked>
+                                                    <span class="plan-details">
+                                                    <span class="plan-type">Sub-allotment Advice</span>
+                                                    </span>
                                                 </label>
                                             </div>
                                             </div>
                                             @if(empty($row))
                                                 <div style="font-size: xx-large" >NO DATA! PLEASE CLICK ADD ALLOCATION</div>
-                                            @elseif(!(empty($row->section_id && $row->fundSource_id)))
+                                            @elseif(count($budget_table) > 1)
+                                            <div class="form-group" id="charging">
+                                                <label>Fund charge: </label>
+                                                <select class="js-example-basic-single" name="charge" id="charge" data-placeholder="Select Charge" style="width: 100%;" required>
+                                                    @foreach($nep as $nep_data)
+                                                        <option value="">Select Charge</option>
+                                                        <option value="{{ $nep_data->nep_id }}" data-custom="{{ $nep_data->beginning_bal }}"> {{ $nep_data->nep_title }}</option>
+                                                    @endforeach
+                                                </select>
+                                                {{--<input type="hidden" value="{{ $row->Beginning_balance }}" id="fund">--}}
+                                            </div>
+                                            @else
                                                 <div class="form-group" id="gaa">
                                                     <label >Section Allotted</label>
                                                     <div class="row">
@@ -163,6 +321,10 @@ $yearly_reference = Session::get('yearly_reference');
                                                         </div>
                                                     </div>
                                                 </div>
+                                            @foreach($sub_allotment as $row)
+                                                @if(empty($row))
+                                                    <div style="font-size: xx-large" >NO DATA! PLEASE CLICK ADD ALLOCATION</div>
+                                                @elseif(!(empty($row->section_id && $row->saa_no)))
                                                 <div class="form-group" id="saa">
                                                     <label >Sub Allotment</label>
                                                     <div class="row">
@@ -172,7 +334,7 @@ $yearly_reference = Session::get('yearly_reference');
                                                                     @if(isset($sec))
                                                                         @if(Auth::user()->section == $sec->id)
                                                                             {{--<option value="{{ $sec->id }}" readonly>{{ $sec->description }}</option>--}}
-                                                                            <input type="text" class="form-control" name="saa_no" value="" placeholder="Input SAA number">
+                                                                            <input type="text" class="form-control" name="section_id" value="{{ $sec->description }}" readonly>
                                                                         @endif
                                                                     @endif
                                                                 @endforeach
@@ -180,11 +342,13 @@ $yearly_reference = Session::get('yearly_reference');
                                                         </div>
                                                         <div class="col-md-6">
                                                             <div class="input-group" style="width: 100%;">
-                                                                <input type="number" class="form-control" name="saa_amt" value="" placeholder="SAA AMOUNT">
+                                                                <input type="number" class="form-control" name="section_amt" value="{{ $row->utilized }}" placeholder="Enter the amount to allocate">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
+                                            @endforeach
                                             @endif
                                             <div class="form-group">
                                                 {{--<label>Allotment</label>--}}
@@ -311,11 +475,12 @@ $yearly_reference = Session::get('yearly_reference');
                                     <td></td>
                                     <td>
                                         <button type="button" id="exp" class="btn btn-default pull-right" data-toggle="modal" data-target="#program_edit" onclick="EditSection({{ $title->section_id }},{{$no}},{{ $title->utilized }},{{ $row->FundSourceId }})">
-                                            <i class="fa fa-pencil"> Edit </i>
+                                            <i class="fa fa-pencil"> Edit  {{ $row->FundSourceId }}</i>
                                         </button>
                                     </td>
                                 </tr>
                                 <tr>
+                                    @if(count($sub_allotment) > 0)
                                     <td>
                                         @foreach($sub_allotment as $value)
                                             {{ $value->saa_no }}
@@ -329,6 +494,9 @@ $yearly_reference = Session::get('yearly_reference');
                                             <i class="fa fa-pencil"> Edit </i>
                                         </button>
                                     </td>
+                                        @else
+                                        <td> SUB-ALLOTMENT NOT FOUND !!!!</td>
+                                        @endif
                                 </tr>
                             @endforeach
                             <tr>
@@ -530,8 +698,8 @@ $yearly_reference = Session::get('yearly_reference');
         }
 
         function getRadio() {
-            var value = document.querySelector("input[name=type]:checked").value;
-            console.log(value);
+            var value = document.querySelector("input[name=plan]:checked").value;
+            //console.log(value);
             //document.getElementById("output").innerHTML = "You selected: " + value;
 
             if(value == "gaa"){

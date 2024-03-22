@@ -31,6 +31,7 @@ use PDO;
 class PpmpController extends Controller
 {
     public function index($section) {
+        $yearly_reference = Session::get('yearly_reference');
         $section = Auth::user()->section;
         //$expenses = Expense::select("budget.utilized as amount","expense.description")->join("budget","budget.expense_id","=","expense.id")->where("id","=", $expense)->get();
         $expenses = Expense::all();
@@ -83,7 +84,62 @@ class PpmpController extends Controller
             "section" => $section,
             "information" => $information
         ]);
+    }
 
+    public function index2($section) {
+        $yearly_reference = Session::get('yearly_reference');
+        $section = Auth::user()->section;
+        //$expenses = Expense::select("budget.utilized as amount","expense.description")->join("budget","budget.expense_id","=","expense.id")->where("id","=", $expense)->get();
+        $expenses = Expense::all();
+
+        $prog = Session::get('prog');
+
+        if(Session::get("admin")) {
+            $section= session::get('section_id');
+            //Session::put('section_id',$section);
+        }
+        Session::put('section_id',$section);
+        $end_user_name = strtoupper(Auth::user()->lname.', '.Auth::user()->fname);
+        $end_user_designation = Designation::find(Auth::user()->designation)->description;
+        $head = Division::select(DB::raw("upper(concat(users.lname,', ',users.fname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $program_settings = ProgramSetting::all();
+
+        $programs = Program::where('section_id','=',$section)
+            ->where("id","!=", $prog)
+            ->get();
+
+        $excel_section = Section::select('section.id','section.description')
+            ->join('ppmpv2.program_settings','ppmpv2.program_settings.section_id',"=",'section.id')
+            ->groupBy('section.id','section.description')
+            ->orderby('section.id',"asc")
+            ->get();
+
+        $sections = Section::all();
+        $items = \App\Item::where("division","=",Auth::user()->division)->get();
+//        dd($excel_item);
+
+        $information = PisUser::select("personal_information.*","section.description as section")->leftJoin("dts.section","section.id","=","personal_information.section_id")->where("userid","=",Auth::user()->username)->first();
+//        sqlsrv_close($conn);
+
+        Session::put("excel_expense",$expenses);
+        Session::put("excel_section",$sections);
+        Session::put("items",$items);
+
+        return view('ppmp.dashboard',[
+            "expenses" => $expenses,
+            "programs" => $programs,
+            "end_user_name" => $end_user_name,
+            "end_user_designation" => $end_user_designation,
+            "head" => $head,
+            "program_settings" => $program_settings,
+            "section" => $section,
+            "information" => $information
+        ]);
     }
 
     public function viewExpense(Request $request) {
@@ -185,7 +241,7 @@ class PpmpController extends Controller
     }
 
 
-    public function ppmpProgram($expense_id = null, $charge, Request $request) {
+    public function ppmpProgram($expense_id = null, Request $request) {
 
         $yearly_reference = Session::get('yearly_reference');
         $section_id = Auth::user()->section;
@@ -194,12 +250,12 @@ class PpmpController extends Controller
             $section_id = session::get('section_id');
         }
 
-        if(isset($charge)){
-            //echo $charge;
-            Session::put('charge', $charge);
+//        if(isset($charge)){
+//            //echo $charge;
+//            Session::put('charge', $charge);
             $charge = Session::get('charge');
-        }else
-            echo "Empty";
+//        }else
+//            echo "Empty";
 
         $program_settings = ProgramSetting::select("programs.id","programs.description")
                                         ->where('program_settings.expense_id',"=",$expense_id)
@@ -336,16 +392,17 @@ class PpmpController extends Controller
         ]);
     }
 
-    public function ppmpList($expense_id = null, $charge, Request $request){
+    public function ppmpList($expense_id = null, Request $request){
 
         $section_id = Auth::user()->section;
 
-        if(isset($charge)){
-            //echo $charge;
-            Session::put('charge', $charge);
-            $charge = Session::get('charge');
-        }else
-            echo "Empty";
+//        if(isset($charge)){
+//            //echo $charge;
+//            Session::put('charge', $charge);
+//            $charge = Session::get('charge');
+//        }else
+//            echo "Empty";
+        $charge = Session::get('charge');
 
         if(session::get('admin')) {
             $section_id = session::get('section_id');

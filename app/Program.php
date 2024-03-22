@@ -11,4 +11,10 @@ class Program extends Model
     public function section() {
         return $this->belongsTo('App\Section','section_id');
     }
+
+    public function nep_alloc()
+    {
+        //.return $this->belongsTo(BudgetAllotment::class);
+        return $this->hasMany(NepAllocation::class, 'id', 'program_id');
+    }
 }

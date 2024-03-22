@@ -420,16 +420,16 @@
                                     $count_second = 0;
                                     $alphabet = range('A', 'Z');
                                     $expense_code = json_decode($expense->code,true);
+//
+//                                    foreach(\App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")
+//                                                ->join("expense","expense.id","=","budget.expense_id")
+//                                                ->where("budget.expense_id","=",$expense->id)
+//                                                ->get() as $exp)
 
-                                    foreach(\App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")
-                                                ->join("expense","expense.id","=","budget.expense_id")
-                                                ->where("budget.expense_id","=",$expense->id)
-                                                ->get() as $exp)
-
-                                     if(empty($exp->utilized))
+//                                     if(empty($exp->utilized))
                                         $expense_amount = 0;
-                                     else
-                                        $expense_amount= $exp->utilized;
+//                                     else
+//                                        $expense_amount= $exp->utilized;
 
                                     if(isset($expense_code)){
                                         foreach($expense_code as $display_first => $first){
@@ -703,8 +703,7 @@
                 $("#ppmp_saved").attr("disabled", true);
 
                 var expense_id = "<?php echo $expense_id; ?>";
-                var charge ="<?php echo $charge; ?>";
-                $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id+charge);
+                $('.item_submit').attr('action', "<?php echo asset('ppmp/list')."/" ?>"+expense_id);
                 $(".item_save").val(true);
 
                 var item_array = [];
@@ -739,7 +738,7 @@
                 for (var i = 0; i < item_array.length - 1; i++) {
                     if (item_array[i + 1] == item_array[i]) {
                         item_expense_check = true;
-                        result_display += "<li style='margin-left: 20px;'>"+item_array[i]+"</li>";
+                        result_display += "<li style='margin-left: 20px;'>"+item_array[i]+" </li>";
                     }
                 }
 
@@ -790,7 +789,6 @@
             var select_val = $("#filter_item").select2("val");
             var url = "<?php echo url('FPDF/print/report_filter.php?end_user_name=').$end_user_name.'&end_user_designation='.$end_user_designation.'&head_name='.$head->head_name.'&head_designation='.$head->designation.'&division='.Auth::user()->division."&select_val="; ?>"+select_val;
             var win = window.open(url, '_blank');
-            win.focus();
         }
 
         function uuidv4() {

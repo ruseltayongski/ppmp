@@ -180,7 +180,7 @@
             var url = "<?php echo asset('program/edit');?>";
             var json = {
                 "program_id" : prog_id,
-                "_token" : "<?php echo csrf_token(); ?>" 
+                "_token" : "<?php echo csrf_token(); ?>"
             };
 
             $(".program_edit_body").html("Please wait...");

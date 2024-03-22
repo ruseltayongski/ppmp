@@ -245,9 +245,9 @@
                         <input name="ppmp_status" class="radio" type="radio" value="program">
                         <span class="hidden-visually">Pro - $50 per month, 5 team members, 500 GB per month, 5 concurrent builds</span>
                         <span class="plan-details" aria-hidden="true">
-                          <span class="plan-type">Program PPMP</span>
-                          <span class="plan-cost">
-                          </span></span>
+                        <span class="plan-type">Program PPMP</span>
+                        <span class="plan-cost">
+                        </span></span>
                     </label>
                 </div>
 

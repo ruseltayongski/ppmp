@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\BudgetAllotment;
+use App\User;
 use Illuminate\Http\Request;
 use Excel;
 use App\Item;
 use App\Qty;
 use App\Expense;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class ExcelController extends Controller
 {
@@ -188,4 +192,134 @@ class ExcelController extends Controller
         //Excel::download/Excel::store()
     }
 
+    public function report(){
+        $excel_expense = Session::get("excel_expense");
+        $excel_section = Session::get("excel_section");
+        $items = Session::get("items");
+        $generate_level = "division";
+        $generate_level = Session::put('generate_level',$generate_level);
+
+        $sec_head = \App\Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id',Auth::user()->section)
+            ->first();
+
+        $head = \App\Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+
+        $section = \App\Section::find(Auth::user()->section);
+        if(isset($section)){
+            $section_desc = $section->description;
+        } else {
+            $section_desc ='NO SECTION';
+        }
+
+        $file_name = "report.xls";
+        header("Content-Type: application/xls");
+        header("Content-Disposition: attachment; filename=$file_name");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        return view('excel.report',[
+            "excel_expense" => $excel_expense,
+            "excel_section" => $excel_section,
+            "generate_level" =>$generate_level,
+            "sec_head" => $sec_head,
+            "head" => $head,
+            "section_desc" => $section_desc
+        ]);
+    }
+
+    public function program(){
+        $excel_expense = Session::get("excel_expense");
+        $excel_section = Session::get("excel_section");
+        $items = Session::get("items");
+        $generate_level = "division";
+        $generate_level = Session::put('generate_level',$generate_level);
+
+        $sec_head = \App\Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id',Auth::user()->section)
+            ->first();
+
+        $head = \App\Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $file_name = "program.xls";
+        header("Content-Type: application/xls");
+        header("Content-Disposition: attachment; filename=$file_name");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $section = \App\Section::find(Auth::user()->section);
+        if(isset($section)){
+            $section_desc = $section->description;
+        } else {
+            $section_desc ='NO SECTION';
+        }
+
+        return view('excel.program_report',[
+            "excel_expense" => $excel_expense,
+            "excel_section" => $excel_section,
+            "generate_level" =>$generate_level,
+            "sec_head" => $sec_head,
+            "head" => $head,
+            "section_desc" => $section_desc
+        ]);
+
+
+    }
+
+    public function consolidated(){
+        $excel_expense = Session::get("excel_expense");
+        $excel_section = Session::get("excel_section");
+        $items = Session::get("items");
+        $generate_level = "division";
+        $generate_level = Session::put('generate_level',$generate_level);
+
+        $sec_head = \App\Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','section.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('section.id',Auth::user()->section)
+            ->first();
+
+        $head = \App\Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+            ->LeftJoin('dts.users','users.id','=','division.head')
+            ->LeftJoin('dts.designation','designation.id','=','users.designation')
+            ->where('division.id','=',Auth::user()->division)
+            ->first();
+
+        $file_name = "consolidated.xls";
+        header("Content-Type: application/xls");
+        header("Content-Disposition: attachment; filename=$file_name");
+        header("Pragma: no-cache");
+        header("Expires: 0");
+
+        $section = \App\Section::find(Auth::user()->section);
+        if(isset($section)){
+            $section_desc = $section->description;
+        } else {
+            $section_desc ='NO SECTION';
+        }
+
+        return view('excel.report_div',[
+            "excel_expense" => $excel_expense,
+            "excel_section" => $excel_section,
+            "generate_level" =>$generate_level,
+            "sec_head" => $sec_head,
+            "head" => $head,
+            "section_desc" => $section_desc
+        ]);
+
+
+    }
 }

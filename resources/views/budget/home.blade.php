@@ -71,14 +71,174 @@ function queryAllotmentClass(){
 $allotment = queryAllotmentClass();
 ?>
 @extends('layouts.app')
+<style>
+    :root {
+        --card-line-height: 1.2em;
+        --card-padding: 1em;
+        --card-radius: 0.5em;
+        --color-green: #558309;
+        --color-gray: #e2ebf6;
+        --color-dark-gray: #c4d1e1;
+        --radio-border-width: 2px;
+        --radio-size: 1.5em;
+    }
 
+    modal-body {
+        background-color: #f2f8ff;
+        color: #263238;
+        font-family: 'Noto Sans', sans-serif;
+        margin: 0;
+        padding: 2em 6vw;
+    }
+
+    .grid {
+        display: grid;
+        grid-gap: var(--card-padding);
+        margin: 0 auto;
+        max-width: 60em;
+        padding: 0;
+
+    @media (min-width: 42em) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    }
+
+    .card {
+        background-color: #fff;
+        border-radius: var(--card-radius);
+        position: relative;
+
+    /*&:hover {*/
+         /*box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.15);*/
+     /*}*/
+    /*}*/
+
+    .radio {
+        font-size: inherit;
+        margin: 0;
+        position: absolute;
+        right: calc(var(--card-padding) + var(--radio-border-width));
+        top: calc(var(--card-padding) + var(--radio-border-width));
+    }
+
+    @supports(-webkit-appearance: none) or (-moz-appearance: none) {
+        .radio {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: #fff;
+            border: var(--radio-border-width) solid var(--color-gray);
+            border-radius: 50%;
+            cursor: pointer;
+            height: var(--radio-size);
+            outline: none;
+            transition:
+                    background 0.2s ease-out,
+                    border-color 0.2s ease-out;
+            width: var(--radio-size);
+
+    &::after {
+         border: var(--radio-border-width) solid #fff;
+         border-top: 0;
+         border-left: 0;
+         content: '';
+         display: block;
+         height: 0.75rem;
+         left: 25%;
+         position: absolute;
+         top: 50%;
+         transform:
+                 rotate(45deg)
+                 translate(-50%, -50%);
+         width: 0.375rem;
+     }
+
+    &:checked {
+         background: var(--color-green);
+         border-color: var(--color-green);
+     }
+    }
+
+    .card:hover .radio {
+        border-color: var(--color-dark-gray);
+
+    &:checked {
+         border-color: var(--color-green);
+     }
+    }
+    }
+
+    .plan-details {
+        border: var(--radio-border-width) solid var(--color-gray);
+        border-radius: var(--card-radius);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        padding: var(--card-padding);
+        transition: border-color 0.2s ease-out;
+    }
+
+    /*.card:hover .plan-details {*/
+        /*border-color: var(--color-dark-gray);*/
+    /*}*/
+
+    .radio:checked ~ .plan-details {
+        border-color: var(--color-green);
+    }
+
+    .radio:focus ~ .plan-details {
+        box-shadow: 0 0 0 2px var(--color-dark-gray);
+    }
+
+    .radio:disabled ~ .plan-details {
+        color: var(--color-dark-gray);
+        cursor: default;
+    }
+
+    .radio:disabled ~ .plan-details .plan-type {
+        color: var(--color-dark-gray);
+    }
+
+    /*.card:hover .radio:disabled ~ .plan-details {*/
+        /*border-color: var(--color-gray);*/
+        /*box-shadow: none;*/
+    /*}*/
+
+    /*.card:hover .radio:disabled {*/
+        /*border-color: var(--color-gray);*/
+    /*}*/
+
+    .plan-type {
+        color: var(--color-green);
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1em;
+    }
+</style>
 @section('content')
     <title>Manage | Budget Allotment</title>
     <div class="box">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <h1 style="font-weight: bold">
-                ALLOTMENT <i class="fa fa-clone" aria-hidden="true"></i>
+                <div class="tabs">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab1">National Expenditures Program</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab2">GAA</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#tab3">SAA</a>
+                        </li>
+                        <!-- Add more tabs as needed -->
+                    </ul>
+                </div>
+                {{--<div class="tab-content">--}}
+                    {{--<div id="tab1" class="tab-item">SAMPLE</div>--}}
+                    {{--<div id="tab2" class="tab-item"></div>--}}
+                    {{--<div id="tab3" class="tab-item"></div>--}}
+                {{--</div>--}}
             </h1><br>
             <div>
                 <ol class="breadcrumb form-inline my-2 my-lg-0">
@@ -117,19 +277,80 @@ $allotment = queryAllotmentClass();
                         <div class="modal fade" id="add_new">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header" style="background-color: #1ab7ea; fill-opacity:1">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" style="font-weight: bold">Add Allocation</h4>
+                                        <h4 class="modal-title" style="color: whitesmoke"> Add Allocation </h4>
                                     </div>
                                     <div class="modal-body">
                                         <div class="box-body">
-                                            <div class="form-group">
-                                                <label>Fund Source</label>
-                                                <select class="js-example-basic-single" name="fund_source" data-placeholder="Select Fund Source" style="width: 100%;" required>
-                                                    <option value="">Select Fund Source</option>
+                                            <label> Choose Fund Source: </label>
+                                            <div class="grid" onchange="chooseSource()">
+                                                <label class="card">
+                                                    <input name="plan" class="radio" type="radio" value="nep" checked>
+                                                    <span class="plan-details">
+                                                    <span class="plan-type">National Expenditures Program</span>
+                                                    </span>
+                                                </label>
+                                                <label class="card">
+                                                    <input name="plan" class="radio" type="radio" value="gaa">
+                                                    <span class="plan-details">
+                                                    <span class="plan-type">General Appropriations Act</span>
+                                                    </span>
+                                                </label>
+                                                <label class="card">
+                                                    <input name="plan" class="radio" type="radio" value="saa">
+                                                    <span class="plan-details">
+                                                    <span class="plan-type">Sub-Allotment Advice</span>
+                                                    </span>
+                                                </label>
+                                            </div>
+                                            <div class="form-group" id="nep">
+                                                <label>NEP: </label>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="input-group" style="width: 100%;">
+                                                           <input type="text" class="form-control" id="nep_title" name="nep_title" value="" placeholder="Input Fund Title" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="input-group" style="width: 100%;">
+                                                            <input type="number" class="form-control" id="nep_amt" name="nep_amt" value="" placeholder="Input Fund Amount"  required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="saa">
+                                                <label>SAA: </label>
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <div class="input-group" style="width: 100%;">
+                                                            <input type="text" class="form-control" id="saa_title" name="saa" value="" placeholder="Input Fund Title" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <div class="input-group" style="width: 100%;">
+                                                            <input type="number" class="form-control" id="saa_amt" name="saa_amt" value="" placeholder="Input Fund Amount" required>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" id="fundSource">
+                                                <label>Fund Source: </label>
+                                                <select class="js-example-basic-single" name="fund_source" id="fund_source" data-placeholder="Select Fund Source" style="width: 100%;" required>
                                                     @foreach($budget as $row)
-                                                        <option value="{{ $row->FundSourceId }}">{{ $row->FundSourceTitle }}</option>
+                                                    <option value="">Select Fund Source</option>
+                                                    <option value="{{ $row->FundSourceId }}" data-custom="{{ $row->Beginning_balance }}"> {{ $row->FundSourceTitle }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="hidden" value="{{ $row->Beginning_balance }}" id="fund">
+                                            </div>
+                                            <div class="form-group" id="allotment_class">
+                                                <label>Select Allotment Class: </label>
+                                                <select class="js-example-basic-single" name="allotment_id" id="allotment_id" data-placeholder="Select Allotment Class" style="width: 100%;" required>
+                                                    <option value="" selected>Select Allotment Class</option>
+                                                    @foreach($allotment_c as $row)
+                                                        <option value="{{ $row->Id }}">{{ $row->Allotment_Class }}</option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -185,7 +406,7 @@ $allotment = queryAllotmentClass();
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                                        <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Save</button>
+                                        <button type="submit" class="btn btn-primary" id="checkAmount"><i class="fa fa-save"></i> Save</button>
                                     </div>
                                 </div>
                                 <!-- /.modal-content -->
@@ -199,10 +420,10 @@ $allotment = queryAllotmentClass();
                         <div class="modal fade" id="program_edit">
                             <div class="modal-dialog">
                                 <div class="modal-content">
-                                    <div class="modal-header">
+                                    <div class="modal-header" style="background-color: cornflowerblue; color: whitesmoke;">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                             <span aria-hidden="true">&times;</span></button>
-                                        <h4 class="modal-title" style="font-weight: bold">Budget Allotment</h4>
+                                        <h3 class="modal-title"> Allocations </h3>
                                     </div>
                                     <div class="modal-body program_edit_body">
                                         inside modal-body
@@ -238,86 +459,34 @@ $allotment = queryAllotmentClass();
                         </div>
                     </form>
 
-                    <div class="box">
+                    <div class=tab-content">
                         <!-- /.box-header -->
                         <div class="box-body no-padding table-responsive float-left">
                             <table class="table table-condensed" data-pagination="true" ><!-- data-toggle="table" -->
                                 <tr>
-                                    <th>Fund Source Title</th>
-                                    <th>Beginning Balance</th>
-                                    <th>Section/Expense Alloted</th>
-                                    <th>Allocated</th>
-                                    <th>Remaining Balance</th>
-                                    <th>Option</th>
+                                    <th><h3>Fund Source Title</h3></th>
+                                    <th><h3>Beginning Balance</h3></th>
+                                    {{--<th><h3>Section/Expense Alloted</h3></th>--}}
+                                    <th><h3>Allocated</h3></th>
+                                    <th><h3>Remaining Balance</h3></th>
+                                    <th><h3>Option</h3></th>
                                 </tr>
-                                @foreach($budget as $row)
-                                    <tr>
-                                        <td style="font-weight: bold">{{ $row->FundSourceTitle }}</td>
-                                        <td>{{ number_format($row->Beginning_balance,2) }}</td>
-                                        <td>
-                                            <?php $section_amount_total = 0; $expense_amount_total = 0; $section=""; $expense=""; ?>
-                                            @foreach( \App\Budget::select("section.description as section","budget.utilized","budget.expense_id")
-                                            ->join("dts.section","section.id","=","budget.section_id")
-                                            ->where("fundSource_id","=",$row->FundSourceId)
-                                            ->where("level","=","admin")
-                                            ->get() as $papsection)
-                                                <?php
-                                                $section_amount_total += $papsection->utilized;
-                                                $section=$papsection->section;
-                                                $expense=$papsection->expense_id;
-                                                ?>
-                                                @if($papsection->section != null && $papsection->expense_id == null)
-                                                <li>{{ $papsection->section }} <span class='badge bg-green'>{{ number_format($papsection->utilized, 2, '.', ',') }}</span></li>
-                                                    @endif
-                                            @endforeach
-                                            <?php  $expense_amount_total = 0; $sec =""; $exp=""; ?>
-                                            @foreach( \App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")
-                                            ->join("expense","expense.id","=","budget.expense_id")
-                                            ->where("budget.fundSource_id","=",$row->FundSourceId)
-                                            ->where("level","=","admin")
-                                            ->get() as $expense)
-                                                <?php
-                                                $expense_amount_total += $expense->utilized;
-                                                $sec = $expense->expense;
-                                                $exp = $expense->section_id;
-                                                ?>
-                                                @if($expense->expense != null)
-                                                <li>{{ $expense->expense }} <span class='badge bg-green'>{{ number_format($expense->utilized, 2, '.', ',') }}</span></li>
-                                                    @endif
-                                            @endforeach
-                                        </td>
-                                        <td>
-                                            @if($section != null)
-                                            <span class="progress-number"><b>Section:{{ number_format($section_amount_total, 2, '.', ',') }}</b></span><br>
-                                                <div class="progress sm">
-                                                    <div class="progress-bar progress-bar-red" style="width: {{ (($section_amount_total / $row->Beginning_balance) * 100).'%' }}"></div>
-                                                </div>
-                                            @endif
-                                                @if($expense != null)
-                                                <span class="progress-number"><b>Expense:{{ number_format($expense_amount_total, 2, '.', ',') }}</b></span>
-                                                        <div class="progress sm">
-                                                <div class="progress-bar progress-bar-red" style="width: {{ (($expense_amount_total / $row->Beginning_balance) * 100).'%' }}"> </div>
-                                                    @endif
-                                                </div>
-                                        </td>
-                                        <td> <?php
-                                            if($expense_amount_total != null) {
-                                                $rem = $row->Beginning_balance - $expense_amount_total;
-                                            }else {
-                                                $rem = $row->Beginning_balance - $section_amount_total;
-                                            }
-                                            ?>{{ number_format($rem, 2, '.', ',') }}</td>
-                                        <td>
-                                            <button type="button" id="exp" class="btn btn-default pull-right" data-toggle="modal" data-target="#program_edit" onclick="EditProgram({{ $row->FundSourceId }},{{ $rem }})">
-                                                <i class="fa fa-pencil"> Edit </i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @endforeach
+                                {{--<tr id="tab1" class="tab-item"></tr>--}}
+                                {{--<tr id="tab2" class="tab-item" ></tr>--}}
+                                {{--<tr id="tab3" class="tab-item"></tr>--}}
+                                <tbody id="tab1">
+                                <!-- Empty tbody where new rows will be inserted -->
+                                </tbody>
+                                <tbody id="tab2">
+                                <!-- Empty tbody where new rows will be inserted -->
+                                </tbody>
+                                <tbody id="tab3">
+                                <!-- Empty tbody where new rows will be inserted -->
+                                </tbody>
                             </table>
                         </div>
-                        <!-- /.box-body -->
                     </div>
+
                 </section>
             </div>
         </section>
@@ -325,20 +494,6 @@ $allotment = queryAllotmentClass();
 @endsection
 @section('js')
     <script>
-        function EditProgram(prog_id,bal){
-            var url = "<?php echo asset('budget/updateExpense');?>";
-            var json = {
-                "program_id" : prog_id,
-                "bal" : bal,
-                "_token" : "<?php echo csrf_token(); ?>"
-            };
-
-            $(".program_edit_body").html("Please wait...");
-            $.post(url, json, function(result){
-                $(".program_edit_body").html(result);
-            });
-        }
-
         $('.select2').select2();
         @if(session()->has('msg'))
         Lobibox.notify('info',{
@@ -377,12 +532,11 @@ $allotment = queryAllotmentClass();
         $('.js-example-basic-single').select2();
 
         function getRadio() {
-            var value = document.querySelector("input[name=option]:checked").value;
-            console.log(value);
+            var radio = document.querySelector("input[name=option]:checked").value;
+            //console.log(radio);
             //document.getElementById("output").innerHTML = "You selected: " + value;
 
-            if(value == "section"){
-                console.log(value);
+            if(radio == "section"){
                 $("#expenses").hide();
                 $("#exp").removeAttr("required");
                 $("#exp_amount").removeAttr("required");
@@ -393,6 +547,201 @@ $allotment = queryAllotmentClass();
                 $("#sec").removeAttr("required");
                 $("#sec_amount").removeAttr("required");
             }
+            return radio;
         }
+
+        function chooseSource() {
+            var value = document.querySelector("input[name=plan]:checked").value;
+            console.log(value);
+
+            if(value == "gaa") {
+                $("#fundSource").show();
+                $("#saa").hide();
+                $("#nep").hide();
+                $("#saa_amt").removeAttr("required");
+                $("#saa_title").removeAttr("required");
+                $("#nep_amt").removeAttr("required");
+                $("#nep_title").removeAttr("required");
+            }
+            else if(value == "saa"){
+                $("#fundSource").hide();
+                $("#fund_source").removeAttr("required");
+                $("#saa").show();
+                $("#nep").hide();
+                $("#nep_amt").removeAttr("required");
+                $("#nep_title").removeAttr("required");
+            }
+            else {
+                $("#fundSource").hide();
+                $("#fund_source").removeAttr("required");
+                $("#nep").show();
+                $("#saa").hide();
+                $("#saa_amt").removeAttr("required");
+                $("#saa_title").removeAttr("required");
+            }
+        }
+
+        {{--function checkAmount(){--}}
+            var type = document.querySelector("input[name=plan]:checked").value;
+            //getRadio(e);
+//            console.log(getRadio());
+
+            $(document).ready(function () {
+                event.preventDefault();
+                $("#allotment_class").on("click", function () {
+                    // Get the input element value
+                    const inputValue = $("#nep_amt").val();
+                    console.log(inputValue);
+                        $("#checkAmount").on('click', function () {
+                            if (type == "nep") {
+                                const exp = $("#exp_amount").val();
+                                const sec = $("#sec_amount").val();
+                                console.log(sec);
+                                if(sec != 0) {
+                                    if (sec > inputValue) {
+                                        Lobibox.alert('error',
+                                            {
+                                                title: "WARNING",
+                                                msg: "Your allocation is greater than the budget given pls check"
+                                            });
+                                    }
+                                    else {
+                                        location.href = '{{ asset('budget/add') }}';
+                                    }
+                                }else if (exp > inputValue) {
+                                    Lobibox.alert('error',
+                                        {
+                                            title: "WARNING",
+                                            msg: "Please set a program first"
+                                        });
+                                }
+                                else {
+                                    location.href = '{{ asset('budget/add') }}';
+                                }
+                            }
+                        })
+                    });
+                });
+
+        $(document).ready(function() {
+            // Handle click event on tab links
+            $('.nav-tabs a').on('click', function(event) {
+                event.preventDefault();
+                var tabId = $(this).attr('href').substring(1); // Get the tab ID from the href attribute
+                console.log(tabId);
+                loadTabContent(tabId); // Load the tab content using Ajax
+            });
+
+            function loadTabContent(tabId) {
+                var baseUrl = 'http://localhost/ppmp';
+                var endpoint = 'tabs';
+                var url = baseUrl+'/'+endpoint;
+                $.ajax({
+                    url: url, // Replace with the URL to your server-side route to fetch the tab content
+                    method: 'get', // Replace with the appropriate HTTP method (GET, POST, etc.)
+                    data: {tabId: tabId},
+                    success: function (tabContent) {
+
+                        if (tabContent && tabContent.length) {
+                            const arrayLength = tabContent.length;
+                            console.log(arrayLength);
+                            // Access the array elements
+                            const dataContainer = $('#' + tabId);
+
+                            dataContainer.empty();
+                            $('#' + tabId).html(tabContent);
+                            showTab(tabId);
+
+                            // Loop through the response data
+                            for (var i = 0; i < tabContent.length; i++) {
+                                var item = tabContent[i];
+                                if(tabId == "tab3") {
+                                    var divContent = "<tr><td>" + item.Suballotment_title + "</td><td>" + item.Suballotment_title + "</td><td>"+ item.Suballotment_title +"</td><td>"+ item.Suballotment_title +"</td><td><button  data-toggle='modal' data-target='#program_edit' onclick='editNep(" + item.SuballotmentId + "," + item.remaining_bal + ")' >Edit</button></td></tr>";
+                                }else
+                                    if(tabId == "tab2"){
+                                    var divContent = "<tr><td>" + item.FundSourceId + "</td><td>" + item.FundSourceTitle + "</td><td>"+ item.Beginning_balance +"</td><td>"+ item.Suballotment_title +"</td><td><button  data-toggle='modal' data-target='#program_edit' onclick='editNep(" + item.id + "," + item.remaining_bal + ")' >Edit</button></td></tr>";
+                                }else {
+                                        var divContent = "<tr><td>" + item.nep_title + "</td>" +
+                                            "<td>" + item.beginning_bal  + "</td>" +
+//                                            "<td>" + item.section_id + "</td>" +
+                                            "<td>"+ item.remaining_bal +"</td>" +
+                                            "<td>"+ item.remaining_bal +"</td>"+
+//                                                        "<td><button onclick=EditProgram.call(,rem)>Edit</button></td></tr>";
+                                            "<td><button  data-toggle='modal' data-target='#program_edit' onclick='editNep(" + item.id + ", " + item.remaining_bal + ")' >Edit</button></td></tr>"
+                                    }
+
+                                // Append the new div to the container
+                                $('#'+tabId).append(divContent);
+                                showTab(tabId);
+                           }
+                        }else
+                            console.log('Empty or invalid response.');
+
+                    },
+                    error: function(error) {
+                        console.error('Error loading tab content:', error);
+                    }
+                });
+            }
+
+            function showTab(tabId) {
+                //$('.tab-item').removeClass('active'); // Hide all tab items
+                $('#'+tabId).addClass('active'); // Show the selected tab item
+                if(tabId == "tab1"){
+                    $('#tab2').hide(); // Show the selected tab item
+                    $('#tab3').hide(); // Show the selected tab item
+                    $('#tab1').show(); // Show the selected tab item
+                }else if(tabId == "tab2") {
+                    $('#tab1').hide(); // Show the selected tab item
+                    $('#tab3').hide(); // Show the selected tab item
+                    $('#tab2').show(); // Show the selected tab item
+                }else {
+                    $('#tab1').hide(); // Show the selected tab item
+                    $('#tab2').hide(); // Show the selected tab item
+                    $('#tab3').show(); // Show the selected tab item
+                }
+
+            }
+
+            var tabs = $('.nav-tabs a');
+            if($('.nav-tabs a.active').length === 0) {
+                tabs.first().click();
+            }
+        });
+
+        function EditProgram(prog_id,bal){
+            var url = "<?php echo asset('budget/updateExpense');?>";
+            var json = {
+                "program_id" : prog_id,
+                "bal" : bal,
+                "_token" : "<?php echo csrf_token(); ?>"
+            };
+
+            // Show loading message or perform any other necessary actions
+            $(".program_edit_body").html("Please wait...");
+
+            // Make the AJAX request
+            $.post(url, json, function(result){
+                // Update the content of program_edit_body with the result
+                $(".program_edit_body").html(result);
+
+                // You can also hide the loading message or perform other actions here
+            });
+        }
+
+        function editNep(nep_id,bal){
+            var url = "<?php echo asset('budget/updateExpense');?>";
+            var json = {
+                "nep_id" : nep_id,
+                "bal" : bal,
+                "_token" : "<?php echo csrf_token(); ?>"
+            };
+
+            $(".program_edit_body").html("Please wait...");
+            $.post(url, json, function(result){
+                $(".program_edit_body").html(result);
+            });
+        }
+
     </script>
 @endsection

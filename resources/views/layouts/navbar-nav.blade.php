@@ -106,35 +106,34 @@
                 <!-- EDITED FOR BUDGET ALLOTMENT  -->
                 <li style="font-family: Verdana;"><a href="{{ url('budget/home') }}"><i class="fa fa-shopping-cart"></i> Manage Budget Allotment </a></li>
                 <!-- EDITED FOR VIEWING/DELETING ITEMS  -->
-                <li style="font-family: Verdana;"><a href="{{ url('ppmp/viewItems') }}"><i class="fa fa-list-alt"></i> Items </a></li>
-                <!--
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-bank"></i> Charge To<span class="caret"></span></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="{{ url('ppmp_manage') }}"><i class="fa fa-plus"></i> Add new</a></li>
-                    </ul>
-                </li>
-                <li><a href="{{ url('expense/list') }}"><i class="fa fa-rub"></i> Expense</a></li>
-                -->
-
-                {{--<li><a href="{{ url('excel/import') }}"><i class="fa fa-file-excel-o"></i> Excel</a></li>--}}
-                {{--<li><a href="{{ url('pap/home') }}"><i class="fa fa-file-excel-o"></i> PAP</a></li>--}}
-                @endif
+                {{--<li style="font-family: Verdana;"><a href="{{ url('ppmp/viewItems') }}"><i class="fa fa-list-alt"></i> Items </a></li>--}}
+                <!-- EDITED FOR VIEWING/DELETING ITEMS  -->
+                        <li class="dropdown">
+                            <a style="font-family: Verdana;" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-check-circle"></i> Report Excel </a>
+                            <ul class="dropdown-menu">
+                                <!-- PER DIVISION (ORIGINAL) -->
+                                <li style="font-family: Verdana;"><a href="{{ asset("test_report") }}"><i class="fa fa-star"></i> Section Excel | Line Item</a></li>
+                                <!-- PER PROGRAM  -->
+                                <li style="font-family: Verdana;"><a href="{{ asset("test_program") }}"><i class="fa fa-star"></i> Per Program Excel </a></li>
+                                <li style="font-family: Verdana;"><a href="{{ asset("test_consolidated") }}"><i class="fa fa-star"></i> Division Excel (Separate Sections) </a></li>
+                            </ul>
+                        </li>
+               @endif
             @endif
                 <li class="dropdown">
                     <a style="font-family: Verdana;" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-gears"></i> Settings</a>
                     <ul class="dropdown-menu">
                         @if(Auth::user()->user_priv && !$section)
                         <li><a href=""><i class="fa fa-edit"></i> Assign Section</a></li>
-                        <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
-                            @elseif(Session::get('admin') && $section)
+                        <li><a href="{{ url("/logout") }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            @elseif(Session::get("admin") && $section)
                                 <?php
-                                $check_login_as = Session::get('auth');
+                                $check_login_as = Session::get("auth");
                                 ?>
-                                <li><a href="{{ url('admin/account/return') }}"><i class="fa fa-user-secret"></i> <?php echo $check_login_as->user_priv == 1 ? 'Back as Admin' : 'Back as Agent'; ?></a></li>
-                                <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                <li><a href="{{ asset("admin/account/return") }}"><i class="fa fa-user-secret"></i> <?php echo $check_login_as->user_priv == 1 ? "Back as Admin" : "Back as Agent"; ?></a></li>
+                                <li><a href="{{ asset("/logout") }}"><i class="fa fa-sign-out"></i> Logout</a></li>
                             @else
-                                <li><a href="{{ url('/logout') }}"><i class="fa fa-sign-out"></i> Logout</a></li>
+                                <li><a href="{{ asset("/logout") }}"><i class="fa fa-sign-out"></i> Logout</a></li>
                         @endif
                     </ul>
                 </li>

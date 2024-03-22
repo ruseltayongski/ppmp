@@ -223,6 +223,8 @@ function queryTranche($expense_id,$section, $tranche_code, $yearly_ref, $ppmp_st
 
     return $row;
 }
+//SELECT section_id FROM ppmpv2.item_daily WHERE yearly_ref_id=3;
+
 
 function queryDivision($division_id){
     $pdo = conn();
@@ -240,6 +242,23 @@ function queryDivision($division_id){
     return $row;
 }
 
+function getSection($yearly_reference){
+    $pdo = conn();
+    $query = "SELECT DISTINCT section_id FROM item_daily where yearly_ref_id = ? ORDER BY ID DESC";
+    //$query = "SELECT DISTINCT sec.* FROM dts.section sec join item_daily itd on itd.section_id = sec.id where itd.yearly_ref_id = ? and division_id = ? ORDER BY ID DESC";
+    //SELECT * FROM dts.section
+    try
+    {
+        $st = $pdo->prepare($query);
+        $st->execute(array($yearly_reference));
+        $row = $st->fetch(PDO::FETCH_OBJ);
+    }catch(PDOException $ex){
+        echo $ex->getMessage();
+        exit();
+    }
+    return $row;
+}
+
 
 require('mctable_program.php');
 
@@ -249,11 +268,10 @@ $section_id = $_GET['section_id'];
 $yearly_reference = $_GET['yearly_reference'];
 //$program_id = $_GET['program_id'];
 
-
 $sections = querySection($division_id);
 $expenses = queryExpense();
 $programs = queryProgram($section_id,$yearly_reference);
-
+$item_section = getSection($yearly_reference);
 
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
@@ -348,216 +366,226 @@ $pdf->TableTitle([
 
 $yearly_reference = $_GET['yearly_reference'];
 $ppmp_status = $_GET['ppmp_status'];
-
 foreach($sections as $section) {
-    $pdf->displayExpense($section->description);
-    $programs = queryProgram($section->id,$yearly_reference);
-    if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
-        foreach ($programs as $program) {
-            $expenses = queryExpense();
-            foreach ($expenses as $expense) {
-                $count_first = 0;
-                $count_second = 0;
-                $alphabet = range('A', 'Z');
-                $expense_code = json_decode($expense->code, true);
-                if (isset($expense_code)) {
-                    foreach ($expense_code as $display_first => $first) {
-                        foreach ($first as $display_second) {
-                            $count_second++;
+    $pdf->SetFont('Arial', 'B', 11);
+        $pdf->displayExpense($section->description);
+            $programs = queryProgram($section->id,$yearly_reference);
+            if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
+                foreach ($programs as $program) {
+                    $expenses = queryExpense();
+                    foreach ($expenses as $expense) {
+                        $count_first = 0;
+                        $count_second = 0;
+                        $alphabet = range('A', 'Z');
+                        $expense_code = json_decode($expense->code, true);
+                        if (isset($expense_code)) {
+                            foreach ($expense_code as $display_first => $first) {
+                                foreach ($first as $display_second) {
+                                    $count_second++;
 
-                            $pdf->SetFont('Arial', 'B', 7);
+                                    $pdf->SetFont('Arial', 'B', 7);
 
-                            $tranche = $expense->id . "-" . $alphabet[$count_first] . "-" . $count_second;
+                                    $tranche = $expense->id . "-" . $alphabet[$count_first] . "-" . $count_second;
 
-                            $items = queryMainTranche($expense->id, $program->id, $section->id, $tranche, $yearly_reference);
+                                    $items = queryMainTranche($expense->id, $program->id, $section->id, $tranche, $yearly_reference);
 
-                            if (count($items) > 0 && $expense->id == $program->expense_id && $tranche == $tranche) {
-                                $pdf->displayExpense("\t\t\t\t" . $program->description);
-                                $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . $expense->description);
-                                $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_first);
-                                $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_second);
-                                foreach ($items as $item) {
-                                    $pdf->SetFont('Arial', '', 7);
-                                    $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id, $tranche);
-                                }
-                                $difference = 0;
-                                $pdf->SetFont('Arial', 'B', 7);
-                                if (isset($pdf->sub_total[$expense->id . $program->id . $tranche . $section->id])) {
-                                    $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $tranche . $section->id], 2, '.', ',');
-                                }if(count($items) > 0 )
+                                    if (count($items) > 0 && $expense->id == $program->expense_id && $tranche == $tranche) {
+                                        $pdf->displayExpense("\t\t\t\t" . $program->description);
+                                        $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . $expense->description);
+                                        $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_first);
+                                        $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_second);
+                                        foreach ($items as $item) {
+                                            $pdf->SetFont('Arial', '', 7);
+                                            $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id, $tranche);
+                                        }
+                                        $difference = 0;
+                                        $total = 0;
+                                        $pdf->SetFont('Arial', 'B', 7);
+                                        if (isset($pdf->sub_total[$expense->id . $program->id . $tranche . $section->id])) {
+                                            $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $tranche . $section->id], 2, '.', ',');
+                                            echo $sub_total;
+                                        }if(count($items) > 0 )
+                                            $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                                    }
+                                } //display if first have value
+
+    //                        if (!isset($flag[$display_first])) {
+    //                            $pdf->SetFont('Arial', 'B', 7);
+    //                            $title_header_expense1 = '';
+    //                            if (!isset($flag[$expense->description])) {
+    //                                $title_header_expense1 = $expense->description;
+    //                                $flag[$expense->description] = true;
+    //                            }
+
+                                $flag[$display_first] = true;
+                                //$title_header_expense1 .= "\t\t\t\t\t\t\t" . $display_first;
+                                $tranche = $expense->id . "-" . $alphabet[$count_first];
+
+
+                                $expense_total = 0;
+                                $items = queryMainTranche($expense->id, $program->id, $section->id, $tranche, $yearly_reference);
+
+                                if (count($items) > 0  && $expense->id == $program->expense_id && $tranche == $tranche) {
+                                    $pdf->displayExpense("\t\t\t\t\t\t\t\t" .$program->description);
+                                    $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t" .$expense->description);
+                                    $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t" . $display_first);
+                                    foreach ($items as $item) {
+                                        $pdf->SetFont('Arial', '', 7);
+                                        $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id, $tranche);
+                                    }
+                                    $difference = 0;
+                                    $pdf->SetFont('Arial', 'B', 7);
+
+                                    if (isset($pdf->sub_total[$expense->id . $program->id . $tranche. $section->id])) {
+                                        $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $tranche . $section->id], 2, '.', ',');
+                                    }
                                     $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                                    //$pdf->sum($sub_total)
+                                }
+                                //}
+                                $count_first++;
                             }
-                        } //display if first have value
-
-//                        if (!isset($flag[$display_first])) {
-//                            $pdf->SetFont('Arial', 'B', 7);
-//                            $title_header_expense1 = '';
-//                            if (!isset($flag[$expense->description])) {
-//                                $title_header_expense1 = $expense->description;
-//                                $flag[$expense->description] = true;
-//                            }
-
-                        $flag[$display_first] = true;
-                        //$title_header_expense1 .= "\t\t\t\t\t\t\t" . $display_first;
-                        $tranche = $expense->id . "-" . $alphabet[$count_first];
-
-
-                        $expense_total = 0;
-                        $items = queryMainTranche($expense->id, $program->id, $section->id, $tranche, $yearly_reference);
-
-                        if (count($items) > 0  && $expense->id == $program->expense_id && $tranche == $tranche) {
-                            $pdf->displayExpense("\t\t\t\t\t\t\t\t" .$program->description);
-                            $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t" .$expense->description);
-                            $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t" . $display_first);
-                            foreach ($items as $item) {
-                                $pdf->SetFont('Arial', '', 7);
-                                $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id, $tranche);
-                            }
-                            $difference = 0;
+                        } else {
+                            $expense_total = 0;
                             $pdf->SetFont('Arial', 'B', 7);
 
-                            if (isset($pdf->sub_total[$expense->id . $program->id . $tranche. $section->id])) {
-                                $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $tranche . $section->id], 2, '.', ',');
-                            }
-                            $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
-                        }
-                        //}
-                        $count_first++;
-                    }
-                } else {
-                    $expense_total = 0;
-                    $pdf->SetFont('Arial', 'B', 7);
+                            $items = queryItem($expense->id, $program->id, $section->id, $yearly_reference);
 
-                    $items = queryItem($expense->id, $program->id, $section->id, $yearly_reference);
-
-                    if ($expense->id == $program->expense_id && count($items) > 0) {
-                        $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $program->description);
-                        $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t\t" . $expense->description);
-                        foreach ($items as $item) {
-                            $pdf->SetFont('Arial', '', 7);
-                            $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id);
-
-                            if ($item->estimated_budget) {
-                                $expense_total += $item->estimated_budget;
-                            }
-                        }
-                        $pdf->SetFont('Arial', 'B', 7);
-                        $sub_total = 0;
-                        $difference = 0;
-
-                        if (isset($pdf->sub_total[$expense->id . $program->id . $section->id])) {
-                            $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $section->id], 2, '.', ',');
-                        }
-                        $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
-                    }
-                }
-            }
-        }
-    }
-    if ($section->id != 28 || $section->id != 29 || $section->id != 32 && $ppmp_status != "program") {
-        foreach ($expenses as $expense) {
-            $expense_total = 0;
-            $count_first = 0;
-            $count_second = 0;
-            $difference = 0;
-            $alphabet = range('A', 'Z');
-
-            $expense_code = json_decode($expense->code, true);
-            if (isset($expense_code)) {
-                foreach ($expense_code as $display_first => $first) {
-                    foreach ($first as $display_second) {
-                        $count_second++;
-
-                        $pdf->SetFont('Arial', 'B', 7);
-                        $tranche = $expense->id . "-" . $alphabet[$count_first] . "-" . $count_second;
-
-                        $items = queryTranche($expense->id, $section->id, $tranche, $yearly_reference, $ppmp_status);
-                        if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
-                        } else
-                            if (count($items) > 0) {
-                                $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
-                                $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_first);
-                                $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_second);
-
+                            if ($expense->id == $program->expense_id && count($items) > 0) {
+                                $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $program->description);
+                                $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t\t" . $expense->description);
                                 foreach ($items as $item) {
                                     $pdf->SetFont('Arial', '', 7);
-                                    if ($item->program_id == null)
-                                        $pdf->displayItem($item, $generate_level, $section_id, $expense->id, $yearly_reference, "");
+                                    $pdf->displayItem($item, $generate_level, $division_id, $section_id, $program->id, $expense->id);
 
                                     if ($item->estimated_budget) {
                                         $expense_total += $item->estimated_budget;
                                     }
                                 }
                                 $pdf->SetFont('Arial', 'B', 7);
-                                if (isset($pdf->sub_total[$expense->id . $tranche . $section->id])) {
-                                    $sub_total = number_format((float)$pdf->sub_total[$expense->id . $tranche . $section->id], 2, '.', ',');
+                                $sub_total = 0;
+                                $difference = 0;
+
+                                if (isset($pdf->sub_total[$expense->id . $program->id . $section->id])) {
+                                    $sub_total = number_format((float)$pdf->sub_total[$expense->id . $program->id . $section->id], 2, '.', ',');
                                 }
-                                if (count($items) > 0)
-                                    $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                                $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
                             }
-                         }
-//                    if (!isset($flag[$display_first])) {
-//                        $pdf->SetFont('Arial', 'B', 7);
-//                        $title_header_expense1 = '';
-//                        if (!isset($flag[$expense->description])) {
-//                            $title_header_expense1 = $expense->description;
-//                            $flag[$expense->description] = true;
-//                        }
-
-                    $flag[$display_first] = true;
-//                        $title_header_expense1 .= "\t\t\t\t\t\t\t" . $display_first;
-                    $tranche = $expense->id . "-" . $alphabet[$count_first];
-
+                        }
+                    }
+                }
+            }
+            if ($section->id != 28 || $section->id != 29 || $section->id != 32 && $ppmp_status != "program") {
+                foreach ($expenses as $expense) {
                     $expense_total = 0;
-                    $items = queryTranche($expense->id, $section->id, $tranche, $yearly_reference, $ppmp_status);
+                    $count_first = 0;
+                    $count_second = 0;
+                    $difference = 0;
+                    $alphabet = range('A', 'Z');
 
-                    if (count($items) > 0) {
-                        $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
-                        $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t" . $display_first);
+                    $expense_code = json_decode($expense->code, true);
+                    if (isset($expense_code)) {
+                        foreach ($expense_code as $display_first => $first) {
+                            foreach ($first as $display_second) {
+                                $count_second++;
+
+                                $pdf->SetFont('Arial', 'B', 7);
+                                $tranche = $expense->id . "-" . $alphabet[$count_first] . "-" . $count_second;
+
+                                $items = queryTranche($expense->id, $section->id, $tranche, $yearly_reference, $ppmp_status);
+                                if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
+                                } else
+                                    if (count($items) > 0) {
+                                        $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
+                                        $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_first);
+                                        $pdf->displayExpense("\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . "\t\t\t\t" . $display_second);
+
+                                        foreach ($items as $item) {
+                                            $pdf->SetFont('Arial', '', 7);
+                                            if ($item->program_id == null)
+                                                $pdf->displayItem($item, $generate_level, $section_id, $expense->id, $yearly_reference, "");
+
+                                            if ($item->estimated_budget) {
+                                                $expense_total += $item->estimated_budget;
+                                            }
+                                        }
+                                        $pdf->SetFont('Arial', 'B', 7);
+                                        if (isset($pdf->sub_total[$expense->id.$tranche.$section->id])) {
+                                            $sub_total = number_format((float)$pdf->sub_total[$expense->id.$section->id], 2, '.', ',');
+                                        }
+//                                        $sum = number_format((float)$sub_total, '2', '.',',');
+                                        if (count($items) > 0)
+                                            $pdf->expenseTotal($sub_total,number_format((float)$difference, 2, '.', ','));
+                                    }
+                            }
+    //                    if (!isset($flag[$display_first])) {
+    //                        $pdf->SetFont('Arial', 'B', 7);
+    //                        $title_header_expense1 = '';
+    //                        if (!isset($flag[$expense->description])) {
+    //                            $title_header_expense1 = $expense->description;
+    //                            $flag[$expense->description] = true;
+    //                        }
+
+                            $flag[$display_first] = true;
+    //                        $title_header_expense1 .= "\t\t\t\t\t\t\t" . $display_first;
+                            $tranche = $expense->id . "-" . $alphabet[$count_first];
+
+                            $expense_total = 0;
+                            $items = queryTranche($expense->id, $section->id, $tranche, $yearly_reference, $ppmp_status);
+
+                            if (count($items) > 0) {
+                                $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
+                                $pdf->displayExpense("\t\t\t\t\t\t\t\t\t\t\t\t" . $display_first);
+                                foreach ($items as $item) {
+                                    $pdf->SetFont('Arial', '', 7);
+                                    if ($item->program_id == null)
+                                        $pdf->displayItem($item, $generate_level, $division_id, $section_id, "", $expense->id, $tranche);
+                                }
+                                $difference = 0;
+                                $pdf->SetFont('Arial', 'B', 7);
+                                if (isset($pdf->sub_total[$expense->id.$tranche.$section->id])) {
+                                    $sub_total = number_format((float)$pdf->sub_total[$expense->id.$section->id], 2, '.', ',');
+                                }
+//                                $sum = number_format((float)$sub_total, '2', '.',',');
+                                $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                            }
+                            //}
+                            $count_first++;
+                        }
+                    } else {
+                        $expense_total = 0;
+                        $pdf->SetFont('Arial', 'B', 7);
+
+                        $items = queryOriginal($expense->id, $section->id, $yearly_reference, $ppmp_status);
+                        if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
+                        } else
+                            if (count($items) > 0)
+                                $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
+
                         foreach ($items as $item) {
                             $pdf->SetFont('Arial', '', 7);
-                            if ($item->program_id == null)
-                                $pdf->displayItem($item, $generate_level, $division_id, $section_id, "", $expense->id, $tranche);
+                            if($item->program_id == null)
+                                $pdf->displayItem($item, $generate_level, $section_id, $expense->id, $yearly_reference, "");
+
+    //                    if ($item->estimated_budget) {
+    //                        $expense_total += $item->estimated_budget;
+                            //}
                         }
-                        $difference = 0;
                         $pdf->SetFont('Arial', 'B', 7);
-                        if (isset($pdf->sub_total[$expense->id . $tranche . $section->id])) {
-                            $sub_total = number_format((float)$pdf->sub_total[$expense->id . $tranche . $section->id], 2, '.', ',');
+                        if (isset($pdf->sub_total[$section->id])) {
+                            $sub_total = number_format((float)$pdf->sub_total[$section->id], 2, '.', ',');
+//                            echo $pdf->sub_total[$expense->id.$section->id];
                         }
-                        $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                        $total = 0;
+//                        $sum = number_format((float)$sub_total, '2', '.',',');
+                        if (count($items) > 0) {
+                            $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
+                        }
                     }
-                    //}
-                    $count_first++;
                 }
-            } else {
-                $expense_total = 0;
-                $pdf->SetFont('Arial', 'B', 7);
-
-                $items = queryOriginal($expense->id, $section->id, $yearly_reference, $ppmp_status);
-                if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
-                } else
-                    if (count($items) > 0)
-                        $pdf->displayExpense("\t\t\t\t\t\t\t\t" . $expense->description);
-
-                foreach ($items as $item) {
-                    $pdf->SetFont('Arial', '', 7);
-                    if($item->program_id == null)
-                        $pdf->displayItem($item, $generate_level, $section_id, $expense->id, $yearly_reference, "");
-
-//                    if ($item->estimated_budget) {
-//                        $expense_total += $item->estimated_budget;
-                    //}
-                }
-                $pdf->SetFont('Arial', 'B', 7);
-                if (isset($pdf->sub_total[$expense->id . $section->id])) {
-                    $sub_total = number_format((float)$pdf->sub_total[$expense->id . $section->id], 2, '.', ',');
-                }
-                if (count($items) > 0)
-                    $pdf->expenseTotal($sub_total, number_format((float)$difference, 2, '.', ','));
             }
-        }
-    }
 }
+
 
 $pdf->Ln(3);
 $pdf->SetFont('Arial','BU',7);

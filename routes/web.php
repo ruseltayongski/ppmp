@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Illuminate\Support\Facades\Session;
 
 Route::get('logout', function(){
     Auth::logout();
@@ -42,7 +43,7 @@ Route::get('test', function(){
     header("Pragma: no-cache");
     header("Expires: 0");
 
-    return view('excel.report',[
+    return view('excel.report_div',[
         "excel_expense" => $excel_expense,
         "excel_section" => $excel_section,
         "generate_level" =>$generate_level,
@@ -50,6 +51,22 @@ Route::get('test', function(){
         "head" => $head
     ]);
 });
+
+Route::get('jeza', function(){
+
+    $file_name = "jeza.doc";
+    header("Content-Type: application/doc");
+    header("Content-Disposition: attachment; filename=$file_name");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    return view('excel.test');
+});
+
+Route::get('test_report','ExcelController@report');
+Route::get('test_program','ExcelController@program');
+Route::get('test_consolidated','ExcelController@consolidated');
+
 
 //login
 Route::match(['GET','POST'],'/','LoginController@index');
@@ -59,6 +76,7 @@ Route::get('admin/home','AdminController@home')->name('admin');
 Route::get('admin/privileged','MaintenanceController@adminPrivilage');
 
 //user
+//Route::get('user/home/{section}','PpmpController@index2')->name('user');
 Route::get('user/home/{section}','PpmpController@index')->name('user');
 Route::post('user/home/{section}{charge}','PpmpController@viewExpense')->name('charge');
 Route::post('user/division/update','MaintenanceController@updateDivisionPost');
@@ -68,8 +86,10 @@ Route::get('user/privileged','MaintenanceController@userPrivileged');
 Route::get('file-export','PpmpController@export')->name('file-export');
 
 //ppmp
-Route::match(["GET","POST"],'ppmp/list/{expense_id}{charge}','PpmpController@ppmpList')->name('ppmp_list');
-Route::match(["GET","POST"],'program/list/{expense_id}{charge}','PpmpController@ppmpProgram');
+//oute::match(["GET","POST"],'ppmp/list/{expense_id}{charge}','PpmpController@ppmpList')->name('ppmp_list');
+//Route::match(["GET","POST"],'program/list/{expense_id}{charge}','PpmpController@ppmpProgram');
+Route::match(["GET","POST"],'ppmp/list/{expense_id}','PpmpController@ppmpList')->name('ppmp_list');
+Route::match(["GET","POST"],'program/list/{expense_id}','PpmpController@ppmpProgram');
 Route::match(["GET","POST"],'program/blade','PpmpController@programBlade');
 Route::post('ppmp/set_program','PpmpController@setProgram')->name('set_program');
 Route::post('ppmp/update','PpmpController@ppmpUpdate');
@@ -144,9 +164,19 @@ Route::post('budget/updateExpense','BudgetController@editProgram');
 Route::post('budget/update','BudgetController@updateBal');
 
 //Route::post('section/allocate_section','BudgetController@edit');
+//Route::get('section/allocate_section','BudgetController@sectionIndex');
+//Route::post('section/allocate_section','BudgetController@sectionIndex');
 Route::get('section/allocate_section','BudgetController@sectionIndex');
+Route::post('section/getId','BudgetController@getId');
+
 Route::post('budget/addProgram','BudgetController@addProgram');
 Route::post('budget/updateExpense','BudgetController@editProgram');
 Route::post('budget/updateS','BudgetController@expense');
 
 Route::get('admin/excel','AdminController@excel');
+
+//Route::get('tabs/{tab}', 'BudgetController@show')->name('tabs.show');
+Route::get('tabs/', 'BudgetController@show')->name('tabs.show');
+
+//nep
+Route::post('budget/updateNep','NepController@edit');

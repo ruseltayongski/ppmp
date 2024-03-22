@@ -317,7 +317,7 @@ function setItem($item,$section_id,$program_setting,$tranche){
     }
 
     $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
-    $item->estimated_budget = (int)$item->qty * str_replace(',', '',(int)$item->unit_cost);
+    $item->estimated_budget = (int)$item->qty * str_replace(',', '',(float)$item->unit_cost);
 
     return $item;
 }
@@ -364,13 +364,17 @@ function expenseTotal($total){
 }
 ?>
 <!-- /.box-header -->
-
+<?php
+$con = new \App\Http\Controllers\BudgetController();
+$fmis = $con->getFMIS_data();
+foreach ($fmis as $charge)
+?>
 <div class="box-body table-responsive no-padding">
     <table class="table table-striped table-fixed-header">
         <thead class='header'>
         <tr><td colspan="18" style="text-align: center">PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)</td></tr>
-        <tr><td colspan="18" style="text-align: left" > {{ $section_id }}</td></tr>
-        <tr><td colspan="18" style="text-align: left"> {{ $section_id}}</td></tr>
+        <tr><td colspan="18" style="text-align: left" > {{ $section_desc }}</td></tr>
+        <tr><td colspan="18" style="text-align: left"> {{ $charge->FundSourceTitle }}</td></tr>
         <tr><td colspan="18" style="text-align: left"> Projects, Programs and Activities (PAPs) </td></tr>
         <tr class="bg-black">
             <th>Item Description/General Specification</th>
@@ -587,6 +591,26 @@ function expenseTotal($total){
             <td colspan="5">Prepared by:</td>
             <td colspan="5">Evaluated by:</td>
             <td colspan="8">Recommending Approval:</td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
+            <td colspan="5"></td>
+            <td colspan="8"></td>
+        </tr>
+        <tr>
+            <td colspan="5"></td>
+            <td colspan="5"></td>
+            <td colspan="8"></td>
+        </tr>
+        <tr>
+            <td colspan="5">{{ $sec_head->head_name }}</td>
+            <td colspan="5">Leonora A. Aniel</td>
+            <td colspan="8">{{ $head->head_name }} </td>
+        </tr>
+        <tr>
+            <td colspan="5">{{ $sec_head->designation }}</td>
+            <td colspan="5">Budget III/Administrative Officer V</td>
+            <td colspan="8">Chief,Local Health Support Division</td>
         </tr>
     </table>
 </footer>

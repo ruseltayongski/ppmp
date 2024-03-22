@@ -188,7 +188,7 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayExpense($description){
-
+        $this->SetFillColor(255 ,255, 108);
         $this->Expense([
             "",
             $description,
@@ -280,7 +280,15 @@ class PDF_MC_Table extends FPDF
                 $sub_total = $this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id];
 
                 $this->sub_total[$item->expense_id.$item->program_id.$item->tranche.$item->section_id] = $item->estimated_budget + $sub_total;
+                $this->sum += $item->estimated_budget + $sub_total;
+                //$this->sum += $this->sub_total;
                 $this->grand_total += $item->estimated_budget;
+//        if(isset($this->sub_total[$item->section_id.$item->expense_id]))
+//            $sub_total = $this->sub_total[$item->section_id.$item->expense_id];
+//
+//            $this->sub_total[$item->section_id.$item->expense_id] = $item->estimated_budget + $sub_total;
+
+
 
         if($item->expense_id == 52 && $item->form_ref != 0) {
             $item->description = "\t\t\t\t\t\t\t\t" . $item->description;
@@ -327,7 +335,6 @@ class PDF_MC_Table extends FPDF
     }
 
     function expenseTotal($sub_total){
-
         $this->Expense([
             "",
             "",
@@ -335,6 +342,54 @@ class PDF_MC_Table extends FPDF
             "",
             "Sub Total:",
             $sub_total,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ]);
+    }
+
+    function Total($total){
+        $this->Expense([
+            "",
+            "",
+            "",
+            "",
+            "Total:",
+            $total,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ]);
+    }
+
+    function sum($sum){
+        $this->Expense([
+            "",
+            "",
+            "",
+            "",
+            "Sum:",
+            $sum,
             "",
             "",
             "",

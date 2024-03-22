@@ -1,7 +1,8 @@
 @if(Auth::user()->user_priv == 1)
-    <input type="hidden" value="{{ $title->FundSourceId }}" name="fund_id">
+    {{--<input type="hidden" value="{{ $title->id }}" name="fund_id">--}}
+    <input type="hidden" value="{{ $nep->id }}" name="fund_id">
         <div style="font-weight: bold; font-size: xx-large">
-            {{ $title->FundSourceTitle }} {{ number_format($bal, 2, '.', ',') }}
+            {{ $nep->nep_title }} {{ number_format($bal, 2, '.', ',') }}
         </div>
     @else
     <input type="hidden" value="{{ $program->section_id }}" name="fund_id">
@@ -15,18 +16,22 @@
 @if(Auth::user()->user_priv == 1)
 <div class="box">
     <!-- /.box-header -->
-    @if(empty($program))
+    @if(!(empty($papsection)))
         <div style="font-size: xx-large" >NO DATA! PLEASE CLICK ADD ALLOCATION</div>
-    @elseif($program->expense_id == null)
+    @elseif($nep->expense_id == null)
     <div class="form-group">
         <label >Section</label>
         <div class="row">
             <div class="section_allotted_body_add">
                 <?php $count=0; ?>
-                @foreach(\App\Budget::where("fundSource_id","=",$title->FundSourceId)
-                ->where("level","=","admin")
-                ->whereNull("expense_id")
-                ->get() as $papsection)
+                {{--@foreach(\App\Budget::where("fundSource_id","=",$title->FundSourceId)--}}
+                {{--->where("level","=","admin")--}}
+                {{--->whereNull("expense_id")--}}
+                {{--->get() as $papsection)--}}
+                    @foreach(\App\NepAllocation::where("nep_id","=",$nep->id)
+                    ->where("level","=","admin")
+                    ->whereNull("expense_id")
+                    ->get() as $papsection)
                     <div>
                         <div class="col-md-6" <?php if($count > 0) echo "style='margin-top:2%'"; ?>>
                             <select class="js-example-basic-single" name="section_id[]" data-placeholder="Select a State" onclick="" style="width: 100%;" required>
@@ -59,10 +64,14 @@
             <div class="row">
                 <div class="expense_allotted_body_add">
                     <?php $count=0; ?>
-                    @foreach(\App\Budget::where("fundSource_id","=",$title->FundSourceId)
-                    ->where("level","=","admin")
-                    ->wherenotnull("expense_id")
-                    ->get() as $expense)
+                    {{--@foreach(\App\Budget::where("fundSource_id","=",$title->FundSourceId)--}}
+                    {{--->where("level","=","admin")--}}
+                    {{--->wherenotnull("expense_id")--}}
+                    {{--->get() as $expense)--}}
+                        @foreach(\App\NepAllocation::where("nep_id","=",$nep->id)
+                        ->where("level","=","admin")
+                        ->wherenotNull("expense_id")
+                        ->get() as $expense)
                         <div>
                             <div class="col-md-6" <?php if($count > 0) echo "style='margin-top:2%'"; ?>>
                                 <select class="js-example-basic-single" name="expense_id[]" id="check" data-placeholder="Select a State" onclick="" style="width: 100%;" required>

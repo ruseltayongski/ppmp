@@ -389,6 +389,7 @@
                                 <th>Oct</th>
                                 <th>Nov</th>
                                 <th>Dec</th>
+                                {{$charge}}
                                 @if($expense_id == 52)
                                     <th>Select Training Activity(for forms)</th>
                                 @endif

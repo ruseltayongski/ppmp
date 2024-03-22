@@ -198,7 +198,7 @@ function setItem($item,$section_id){
     }
 
     $item->qty = $item->jan+$item->feb+$item->mar+$item->apr+$item->may+$item->jun+$item->jul+$item->aug+$item->sep+$item->oct+$item->nov+$item->dece;
-    $item->estimated_budget = (int)$item->qty * str_replace(',', '',(int)$item->unit_cost);
+    $item->estimated_budget = (int)$item->qty * str_replace(',', '',(float)$item->unit_cost);
 
     return $item;
 }
@@ -261,13 +261,16 @@ $division_id = Auth::user()->division;
 $yearly_reference = Session::get('yearly_reference');
 $ppmp_status = Session::get('ppmp_status');
 
+$con = new \App\Http\Controllers\BudgetController();
+$fmis = $con->getFMIS_data();
+foreach ($fmis as $charge)
 ?>
 <div class="box-body table-responsive no-padding">
     <table class="table table-striped table-fixed-header">
         <thead class='header'>
         <tr><td colspan="18" style="text-align: center">PROJECT PROCUREMENT MANAGEMENT PLAN (PPMP)</td></tr>
-        <tr><td colspan="18" style="text-align: left" > {{ $section_id }}</td></tr>
-        <tr><td colspan="18" style="text-align: left"> {{ $section_id}}</td></tr>
+        <tr><td colspan="18" style="text-align: left" > {{ $section_desc }}</td></tr>
+        <tr><td colspan="18" style="text-align: left"> {{$charge->FundSourceTitle}}</td></tr>
         <tr><td colspan="18" style="text-align: left"> Projects, Programs and Activities (PAPs) </td></tr>
         <tr class="bg-black">
             <th>Item Description/General Specification</th>

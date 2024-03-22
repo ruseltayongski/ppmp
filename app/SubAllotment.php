@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class SubAllotment extends Model
 {
-    protected $table = 'saa';
-    protected $guarded = [];
+    protected $connection = 'sqlsrv';
+    protected $table = 'SubAllotment';
 }

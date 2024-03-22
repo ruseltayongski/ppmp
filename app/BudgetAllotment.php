@@ -12,8 +12,9 @@ class BudgetAllotment extends Model
     /**
      * Get the budget for the budget allotment.
      */
-    public function budget()
+    public function budgets()
     {
-        return $this->belongsTo(Budget::class,"fundSource_id");
+        //return $this->hasMany(Budget::class, 'fundSource_id');
+        return $this->hasMany(Budget::class, 'fundSource_id', 'FundSourceId');
     }
 }

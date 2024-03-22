@@ -8,7 +8,7 @@ class PDF_MC_Table extends FPDF
     var $aligns;
     public $grand_total;
     public $sub_total = [];
-    public $sum;
+    public $total;
 
     // Page header
     function Header()
@@ -189,7 +189,6 @@ class PDF_MC_Table extends FPDF
     }
 
     function displayExpense($description){
-
         $this->Expense([
             "",
             $description,
@@ -291,6 +290,10 @@ class PDF_MC_Table extends FPDF
         $sub_total = "0";
         if (isset($this->sub_total[$item->expense_id . $item->tranche]))
             $sub_total = $this->sub_total[$item->expense_id . $item->tranche];
+        //2023
+//        if($item->section_id == $section_id )
+//            $sub_total = $this->sub_total[$item->expense_id . $section_id];
+//            $this->sub_total[$item->expense_id.$item->section_id] = $item_body->estimated_budget + $sub_total;
 
 
         $this->sub_total[$item->expense_id . $item->tranche] = $item_body->estimated_budget + $sub_total;
@@ -349,6 +352,30 @@ class PDF_MC_Table extends FPDF
             "",
             "Sub Total:",
             $sub_total,
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        ]);
+    }
+
+    function Total($total){
+        $this->Expense([
+            "",
+            "",
+            "",
+            "",
+            "Total:",
+            $total,
             "",
             "",
             "",

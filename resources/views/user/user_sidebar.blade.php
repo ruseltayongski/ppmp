@@ -24,13 +24,25 @@
 
     <?php
     $yearly_reference = Session::get('yearly_reference');
-    $budget = \App\Budget::where('section_id',"=", Auth::user()->section)
-        ->whereNotNull('fundSource_id')
+
+    $query1 = DB::table('nep_allocation')
+//        ->select('nep_id', 'section_id', 'utilized')
+        ->where('section_id', '=', Auth::user()->section)
+        ->where('yearly_ref_id',"=", $yearly_reference)
         ->where("level","=","admin")
-        ->where("yearly_ref_id","=", $yearly_reference)
         ->get();
+
+    //must replace with the actual saa
+    $query2 = DB::table('saa')
+//        ->select('saa_no', 'section_id',)
+        ->where('section_id', '=', Auth::user()->section)
+        ->where('yearly_ref_id',"=", $yearly_reference);
+        //->where("status","=","admin");
+
+//    $result = $query2->union($query1)->get();
+
     ?>
-    @foreach($budget as $title)
+    @foreach($query1 as $title)
         {{--<div class="col-md-3">--}}
             <div class="box box-primary">
                 <div class="box-header with-border">
@@ -41,17 +53,20 @@
                 <div class="box-body">
                     <strong><i class="fa fa-paypal margin-r-5"></i>
                         <?php
-                        $desc = \App\BudgetAllotment::select('FundSourceTitle','FundSourceId')
-                            ->where('FundSourceId',"=",$title->fundSource_id)
-                            ->first();
-                        echo $desc->FundSourceTitle;
-
+                                $desc = \App\Nep:: where('id',"=",$title->nep_id)
+                                    ->first();
+                                if($desc){
+                                    echo $desc->nep_title;
+                                }else{
+                                    echo $title->saa_no;
+                                }
                         ?>
                     </strong><br>
-                    <form id="multiple_charge" action='{{ asset('user/home').'/'.Auth::user()->section.$desc->FundSourceId }}' method="post">
+
+                    <form id="multiple_charge" action='{{ asset('user/home').'/'.Auth::user()->section.$title->nep_id }}' method="post">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type="hidden" name="charge" value="{{ $desc->FundSourceId }}">
-                        Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance"> {{ $title->utilized }} </span><br>
+                        <input type="hidden" name="charge" value="{{ $title->nep_id }}">
+                        Beginning Balance: <span data-toggle="tooltip" title="" class="badge bg-green" data-original-title="Beginning Balance">{{ $title->beginning_bal }}</span><br>
                         Remaining Balance: <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance"> Not yet calculated </span>
                         {{--Section : <span data-toggle="tooltip" title="" class="badge bg-red" data-original-title="Remaining Balance">{{$section_id = 28}}</span>--}}
                         <button id="save" type="submit" class="btn btn-block btn-primary btn-xs" style="margin-top:10px;">Check PPMP</button>

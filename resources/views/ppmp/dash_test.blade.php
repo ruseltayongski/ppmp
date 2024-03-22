@@ -159,27 +159,37 @@
         </div>
     @endif
     <?php
-            $charging = \App\BudgetAllotment::select('FundSourceTitle')
-            ->where('FundSourceId',"=", $charge )->first();
+            $saa_title = \App\Saa::select('saa_no')
+                ->where('saa_no',"=", $charge)->first();
+
+            $charging = \App\Nep::select('nep_title')
+            ->where('id',"=", $charge)->first();
+
+            if($charging) {
+                $molli = $charging->nep_title;
+            }else {
+                $molli = $saa_title->saa_no;
+            }
+
     ?>
     <div class="alert alert-info">
         <div class="text-info" style="color: black">
-            <i class="fa fa-info" style="font-family: Verdana;"> {{ $charging->FundSourceTitle }} </i>
+            <i class="fa fa-info" style="font-family: Verdana;"> {{ $molli }} </i>
         </div>
     </div>
     <div class="row">
-        @if($ppmp_status =="original")
-        <div class="col-md-9">
-            @else
+        {{--@if($ppmp_status =="original")--}}
+        {{--<div class="col-md-9">--}}
+            {{--@else--}}
                 <div class="col-md-12">
-                    @endif
+                    {{--@endif--}}
             @if(count($expenses)>0)
                 <?php
                 $expense_length = \App\Expense::select(DB::raw("length(description) as char_max"))->orderBy(DB::raw("length(description)"),"desc")->first()->char_max; //count the max character para dile maguba ang info-box-content
                 $c = 0;
                 $count1 = 0;
                 ?>
-                @if($ppmp_status != "original")
+                {{--@if($ppmp_status != "original")--}}
                     @foreach($expenses as $expense)
                         <?php
                         if(Auth::user()->user_priv){
@@ -193,13 +203,13 @@
                         ->where("budget.section_id","=",Auth::user()->section)
                         ->get() as $prog)
 
-                            <?php
-                            if(empty($prog->utilized))
-                                $expense_amount = 0;
-                            else
-                                $expense_amount= $prog->utilized;
-                            ?>
-                        @endforeach
+                                <?php
+                                if(empty($prog->utilized))
+                                    $expense_amount = 0;
+                                else
+                                    $expense_amount= $prog->utilized;
+                                ?>
+                            @endforeach
                         <div class="col-md-3">
                             <!-- Widget: user widget style 1 -->
                             <div class="box box-widget widget-user-2">
@@ -232,7 +242,9 @@
                                                 ->where('yearly_ref_id',"=", $yearly_reference)
                                                 ->count();
                                         @endphp
-                                        <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }},{{ $charge }})">{!! $string !!}</div>
+                                        <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})">{!! $string !!}</div>
+                                    @else
+                                        <div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>{!! $string !!}<small class="widget-user-desc badge bg-maroon" style="margin-left: 0px;"></small></div>
                                     @endif
                                 </div>
                                 <div class="box-footer no-padding">
@@ -301,73 +313,74 @@
                         }
                         ?>
                     @endforeach
-                @else
-                    @foreach($expenses as $expense)
-                        <?php
-                        if(Auth::user()->user_priv){
-                            $sec = $section;
-                        }
-                        $sec = Auth::user()->section;
-                        ?>
-                        @foreach(\App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")
-                           ->join("expense","expense.id","=","budget.expense_id")
-                           ->where("budget.expense_id","=",$expense->id)
-                           ->where("budget.section_id","=",$sec)
-                           ->where("budget.fundSource_id","=",$charge)
-                           ->whereNotNull("budget.program_id")
-                           ->get() as $exp)
+                    @endif
+                {{--@else--}}
+                    {{--@foreach($expenses as $expense)--}}
+                        {{--<?php--}}
+                        {{--if(Auth::user()->user_priv){--}}
+                            {{--$sec = $section;--}}
+                        {{--}--}}
+                        {{--$sec = Auth::user()->section;--}}
+                        {{--?>--}}
+                        {{--@foreach(\App\Budget::select("expense.description as expense","budget.utilized","budget.section_id")--}}
+                           {{--->join("expense","expense.id","=","budget.expense_id")--}}
+                           {{--->where("budget.expense_id","=",$expense->id)--}}
+                           {{--->where("budget.section_id","=",$sec)--}}
+                           {{--->where("budget.fundSource_id","=",$charge)--}}
+                           {{--->whereNotNull("budget.program_id")--}}
+                           {{--->get() as $exp)--}}
 
-                            <?php
-                            if(empty($exp->utilized))
-                                $expense_amount = 0;
-                            else
-                                $expense_amount= $exp->utilized
-                            ?>
-                            <div class="col-md-3">
-                                <!-- Widget: user widget style 1 -->
-                                <div class="box box-widget widget-user-2">
-                                    <!-- Add the bg color to the header using any of the bg-* classes -->
-                                    <div class="widget-user-header bg-blue-active">
-                                        <?php
-                                        $name = $expense->description;
+                            {{--<?php--}}
+                            {{--if(empty($exp->utilized))--}}
+                                {{--$expense_amount = 0;--}}
+                            {{--else--}}
+                                {{--$expense_amount= $exp->utilized--}}
+                            {{--?>--}}
+                            {{--<div class="col-md-3">--}}
+                                {{--<!-- Widget: user widget style 1 -->--}}
+                                {{--<div class="box box-widget widget-user-2">--}}
+                                    {{--<!-- Add the bg color to the header using any of the bg-* classes -->--}}
+                                    {{--<div class="widget-user-header bg-blue-active">--}}
+                                        {{--<?php--}}
+                                        {{--$name = $expense->description;--}}
 
-                                        $temp = $name;
-                                        $count = 0;
-                                        $string = "";
-                                        for($i=0;$i< $expense_length;$i++){
-                                            if(!isset($temp[$i])){
-                                                $temp .= " ";
-                                            }
-                                            if($count != $expense_length){
-                                                $count++;
-                                                $string .= $temp[$i];
-                                            } else {
-                                                $count = 0;
-                                                $string .= " ";
-                                            }
-                                        }
-                                        ?>
-                                        <div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id.$charge }}'" style='cursor: pointer;'>{!! $string !!}<small class="widget-user-desc badge bg-maroon" style="margin-left: 0px;">{{ $exp->utilized }}</small></div>
-                                    </div>
-                                    <div class="box-footer no-padding">
-                                        <ul class="nav nav-stacked">
-                                            <li><a href="#"> {{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section','$yearly_reference','$ppmp_status')")) }} <span class="pull-right badge bg-blue"></span></a></li>
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        @endforeach
-                    @endforeach
-                @endif
-            @else
-                <div class="alert-section">
-                    <div class="alert alert-warning">
-                <span class="text-warning">
-                    <i class="fa fa-warning"></i> No allocation!
-                </span>
-                    </div>
-                </div>
-            @endif
+                                        {{--$temp = $name;--}}
+                                        {{--$count = 0;--}}
+                                        {{--$string = "";--}}
+                                        {{--for($i=0;$i< $expense_length;$i++){--}}
+                                            {{--if(!isset($temp[$i])){--}}
+                                                {{--$temp .= " ";--}}
+                                            {{--}--}}
+                                            {{--if($count != $expense_length){--}}
+                                                {{--$count++;--}}
+                                                {{--$string .= $temp[$i];--}}
+                                            {{--} else {--}}
+                                                {{--$count = 0;--}}
+                                                {{--$string .= " ";--}}
+                                            {{--}--}}
+                                        {{--}--}}
+                                        {{--?>--}}
+                                        {{--<div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id.$charge }}'" style='cursor: pointer;'>{!! $string !!}<small class="widget-user-desc badge bg-maroon" style="margin-left: 0px;">{{ $exp->utilized }}</small></div>--}}
+                                    {{--</div>--}}
+                                    {{--<div class="box-footer no-padding">--}}
+                                        {{--<ul class="nav nav-stacked">--}}
+                                            {{--<li><a href="#"> {{ count(\DB::connection('mysql')->select("call normal_tranche('$expense->id','$section','$yearly_reference','$ppmp_status')")) }} <span class="pull-right badge bg-blue"></span></a></li>--}}
+                                        {{--</ul>--}}
+                                    {{--</div>--}}
+                                {{--</div>--}}
+                            {{--</div>--}}
+                        {{--@endforeach--}}
+                    {{--@endforeach--}}
+                {{--@endif--}}
+            {{--@else--}}
+                {{--<div class="alert-section">--}}
+                    {{--<div class="alert alert-warning">--}}
+                {{--<span class="text-warning">--}}
+                    {{--<i class="fa fa-warning"></i> No allocation!--}}
+                {{--</span>--}}
+                    {{--</div>--}}
+                {{--</div>--}}
+            {{--@endif--}}
             @if($count1 <= 4)
                 <div class="col-md-12">
                     <div class="box box-primary col">
@@ -416,9 +429,9 @@
                 </div>
         </div>
         @endif
-            @if($ppmp_status != "program")
-                @include('user.user_sidebar')
-                    @endif
+            {{--@if($ppmp_status != "program")--}}
+                {{--@include('user.user_sidebar')--}}
+                    {{--@endif--}}
     </div>
     </div>
 
@@ -433,9 +446,9 @@
             }
         });
 
-        function redirectProgram(program_count,expense_id,charge) {
+        function redirectProgram(program_count,expense_id) {
             if(program_count > 0)
-                location.href='{{ asset('program/list').'/' }}'+expense_id+charge;
+                location.href='{{ asset('program/list').'/' }}'+expense_id;
             else {
                 Lobibox.alert('error',
                     {

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Budget extends Model
 {
+    protected $connection ='mysql';
     protected $table = 'budget';
     protected $guarded = [];
 
@@ -14,6 +15,7 @@ class Budget extends Model
      */
     public function allotment()
     {
-        return $this->hasOne(BudgetAllotment::class,'FundSourceId');
+        //.return $this->belongsTo(BudgetAllotment::class);
+        return $this->belongsTo(BudgetAllotment::class, 'fundSource_id', 'FundSourceId');
     }
 }

@@ -100,10 +100,11 @@ return [
             'odbc_datasource_name' => "FMIS",
             'host' => "LAMBORGHINI\VEEAMSQL2016",
             'port' => env('DB_PORT_SECOND', '80'),
-            'database' => 'fmisdummy',
+            'database' => 'fmisdummyone',
             'username' => env('DB_USERNAME_SECOND', 'sa'),
             'password' => env('DB_PASSWORD_SECOND', 'D0h7_1T'),
             'charset' => 'utf8',
+            'collation' => 'utf8mb4_unicode_ci',
             'prefix' => ''
         ],
 

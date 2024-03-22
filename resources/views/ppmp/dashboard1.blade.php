@@ -150,7 +150,8 @@
         ->where('id',"=", $section)
         ->first();
     ?>
-
+    @if($yearly_reference != 4)
+        @endif
     @if(session::get('admin'))
         <div class="alert alert-info">
             <div class="text-info" style="color: black">
