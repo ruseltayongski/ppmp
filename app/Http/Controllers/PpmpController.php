@@ -307,7 +307,7 @@ class PpmpController extends Controller
             ->where('division.id','=',Auth::user()->division)
             ->first();
 
-        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        $sec_head = Section::select(DB::raw("upper(concat(users.fname,' ',users.mname,' ',users.lname)) as head_name"),'designation.description as designation')
             ->LeftJoin('dts.users','users.id','=','section.head')
             ->LeftJoin('dts.designation','designation.id','=','users.designation')
             ->where('section.id',$section_id)
@@ -372,25 +372,26 @@ class PpmpController extends Controller
                 ->where("expense_id","=",$expense_id)
                 ->where("tranche","=",$tranche)
                 ->first();
+            
+            if(!$item) {
+            $item = new Item();
+            $item->expense_id = $expense_id;
+            $item->userid = $encoded_by;
+            $item->division = $division_id;
+            $item->section = $section_id;
+            $item->tranche = $tranche;
+            $item->description = $description;
+            $item->ppmp_status = $ppmp_status;
+            $item->yearly_ref_id = $yearly_reference;
+            $item->save();
+            }        
+            
 
-            if($encoded_by == "0864" && $expense_id == 1) {
+             if($expense_id == 1 && $encoded_by == "admin_lhsd") {
                 $item->unit_cost = $unit_cost;
                 $item->unit_measurement = $unit_measurement;
                 //$item->description = $description;
                 $item->mode_procurement = $mode_procurement;
-                $item->save();
-            }
-
-            if(!$item) {
-                $item = new Item();
-                $item->expense_id = $expense_id;
-                $item->userid = $encoded_by;
-                $item->division = $division_id;
-                $item->section = $section_id;
-                $item->tranche = $tranche;
-                $item->description = $description;
-                $item->ppmp_status = $ppmp_status;
-                $item->yearly_ref_id = $yearly_reference;
                 $item->save();
             }
 
@@ -430,35 +431,38 @@ class PpmpController extends Controller
             $item_id = $item->id;
 
             if(!$item_daily)
-            {
-                $item_daily = new ItemDaily();
-                $item_daily->item_id = $item_id;
-                $item_daily->unique_id = $unique_id;
-                $item_daily->expense_id = $expense_id;
-                $item_daily->userid = $encoded_by;
-                $item_daily->division_id = $division_id;
-                $item_daily->section_id = $section_id;
-                $item_daily->tranche = $tranche;
-                $item_daily->description = $description;
-                $item_daily->unit_measurement = $unit_measurement;
-                $item_daily->unit_cost = $unit_cost;
-                $item_daily->mode_procurement = $mode_procurement;
-                $item_daily->jan = $jan;
-                $item_daily->feb = $feb;
-                $item_daily->mar = $mar;
-                $item_daily->apr = $apr;
-                $item_daily->may = $may;
-                $item_daily->jun = $jun;
-                $item_daily->jul = $jul;
-                $item_daily->aug = $aug;
-                $item_daily->sep = $sep;
-                $item_daily->oct = $oct;
-                $item_daily->nov = $nov;
-                $item_daily->dece = $dece;
-                $item_daily->yearly_ref_id = $yearly_ref;
-                $item_daily->ppmp_status = $ppmp_stat;
-                $item_daily->save();
-            }
+                {
+                    $item_daily = new ItemDaily();
+                    $item_daily->item_id = $item_id;
+                    $item_daily->unique_id = $unique_id;
+                    $item_daily->expense_id = $expense_id;
+                    $item_daily->userid = $encoded_by;
+                    $item_daily->division_id = $division_id;
+                    $item_daily->section_id = $section_id;
+                    $item_daily->tranche = $tranche;
+                    $item_daily->description = $description;
+                    $item_daily->unit_measurement = $unit_measurement;
+                    $item_daily->unit_cost = $unit_cost;
+                    $item_daily->mode_procurement = $mode_procurement;
+                    $item_daily->jan = $jan;
+                    $item_daily->feb = $feb;
+                    $item_daily->mar = $mar;
+                    $item_daily->apr = $apr;
+                    $item_daily->may = $may;
+                    $item_daily->jun = $jun;
+                    $item_daily->jul = $jul;
+                    $item_daily->aug = $aug;
+                    $item_daily->sep = $sep;
+                    $item_daily->oct = $oct;
+                    $item_daily->nov = $nov;
+                    $item_daily->dece = $dece;
+                    $item_daily->yearly_ref_id = $yearly_ref;
+                    $item_daily->ppmp_status = $ppmp_stat;
+                    //if($yearly_ref == 3)
+                    $item_daily->save();
+                }
+              
+            
 
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);
@@ -511,7 +515,7 @@ class PpmpController extends Controller
                 ->where("tranche","=",$tranche)
                 ->first();
 
-            if(!$item) {
+                if(!$item) {
                 $item = new Item();
                 $item->expense_id = $expense_id;
                 $item->userid = $encoded_by;
@@ -522,8 +526,9 @@ class PpmpController extends Controller
                 $item->ppmp_status = $ppmp_stat;
                 $item->yearly_ref_id = $yearly_ref;
                 $item->program_id = $program_id;
+                //if($yearly_ref == 3)
                 $item->save();
-            }
+                }
 
             //if mao siya ang item
 
@@ -559,38 +564,39 @@ class PpmpController extends Controller
                 ->first();
 
             $item_id = $item->id;
-
-            if(!$item_daily)
-            {
-                $item_daily = new ItemDaily();
-                $item_daily->item_id = $item_id;
-                $item_daily->unique_id = $unique_id;
-                $item_daily->expense_id = $expense_id;
-                $item_daily->userid = $encoded_by;
-                $item_daily->division_id = $division_id;
-                $item_daily->section_id = $section_id;
-                $item_daily->tranche = $tranche;
-                $item_daily->description = $description;
-                $item_daily->unit_measurement = $unit_measurement;
-                $item_daily->unit_cost = $unit_cost;
-                $item_daily->mode_procurement = $mode_procurement;
-                $item_daily->jan = $jan;
-                $item_daily->feb = $feb;
-                $item_daily->mar = $mar;
-                $item_daily->apr = $apr;
-                $item_daily->may = $may;
-                $item_daily->jun = $jun;
-                $item_daily->jul = $jul;
-                $item_daily->aug = $aug;
-                $item_daily->sep = $sep;
-                $item_daily->oct = $oct;
-                $item_daily->nov = $nov;
-                $item_daily->dece = $dece;
-                $item_daily->yearly_ref_id = $yearly_ref;
-                $item_daily->ppmp_status = $ppmp_stat;
-                $item_daily->program_id = $program_id;
-                $item_daily->save();
-            }
+                if(!$item_daily)
+                {
+                    $item_daily = new ItemDaily();
+                    $item_daily->item_id = $item_id;
+                    $item_daily->unique_id = $unique_id;
+                    $item_daily->expense_id = $expense_id;
+                    $item_daily->userid = $encoded_by;
+                    $item_daily->division_id = $division_id;
+                    $item_daily->section_id = $section_id;
+                    $item_daily->tranche = $tranche;
+                    $item_daily->description = $description;
+                    $item_daily->unit_measurement = $unit_measurement;
+                    $item_daily->unit_cost = $unit_cost;
+                    $item_daily->mode_procurement = $mode_procurement;
+                    $item_daily->jan = $jan;
+                    $item_daily->feb = $feb;
+                    $item_daily->mar = $mar;
+                    $item_daily->apr = $apr;
+                    $item_daily->may = $may;
+                    $item_daily->jun = $jun;
+                    $item_daily->jul = $jul;
+                    $item_daily->aug = $aug;
+                    $item_daily->sep = $sep;
+                    $item_daily->oct = $oct;
+                    $item_daily->nov = $nov;
+                    $item_daily->dece = $dece;
+                    $item_daily->yearly_ref_id = $yearly_ref;
+                    $item_daily->ppmp_status = $ppmp_stat;
+                    $item_daily->program_id = $program_id;
+                    //if($yearly_ref == 3)
+                    $item_daily->save();
+                }
+            
 
             $request->session()->put('success', 'Successfully updated item!');
             $item_to_filter = $request->get("description".$value);

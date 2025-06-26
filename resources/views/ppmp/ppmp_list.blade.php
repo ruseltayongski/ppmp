@@ -144,7 +144,7 @@
 
         $user = Auth::user();
         setItem($item,$user->section);
-        if(($item->status == 'fixed') && $user->username != "0864") {
+        if(($item->status == 'fixed') && $user->username != "admin_lhsd") {
             $description = [
                 "readonly" => "readonly"
             ];
@@ -156,7 +156,13 @@
             $status = "<span class='badge bg-red' data-unique_id='$item->unique_id' data-item_id='$item->id' data-item_description='$item->description' style='cursor: pointer;' onclick='deleteItem($(this))'><i class='fa fa-remove'></i> REMOVE</span>";
         }
 
-        $user->username == "0864" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        $user->username == "admin_lhsd" ? $unit_cost_lock = '' : $unit_cost_lock = 'readonly';
+        // if($user->username == "admin_lhsd" || $user->username =="admin_msd") {
+        //     $unit_cost_lock="";
+        // }
+        // else {
+        //     $unit_cost_lock = 'readonly';     
+        // }
         $expense_title_display = "<span class='hide' id='expense_description$item->id'>".$expense_title."</span>";
 
         $data = "<tr class='$item->unique_id $item->id'>

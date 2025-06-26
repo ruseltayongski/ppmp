@@ -1,4 +1,4 @@
-<div class="col-md-3">
+ <div class="col-md-3">
     <!-- Profile Image -->
     <div class="box box-primary">
         <div class="box-body box-profile">

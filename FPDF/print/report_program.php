@@ -174,7 +174,7 @@ $programs = queryProgram($section_id,$yearly_reference);
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
 } else {
-    $charge_to = "Public Health Management";
+    $charge_to = "Disease Prevention and Control";
 }
 
 $division_name = queryDivision($division_id)->description;

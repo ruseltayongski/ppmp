@@ -21,15 +21,20 @@ function conn()
     return $pdo;
 }
 
-function querySection($division_id){
+function querySection($division_id, $ids){
     $pdo = conn();
     //$query = "SELECT sec.id,sec.description FROM dts.SECTION sec JOIN program_settings setting ON setting.section_id = sec.id group by sec.id ORDER BY ID ASC";
-    $query = "SELECT * FROM dts.section WHERE division=?";
+    $ids = [21,29,27,41,95,31,94,111,28,50,24,26,78,93,96,40]; // Example IDs
+    $placeholders = implode(',', array_fill(0, count($ids), '?')); // Generate placeholders (?, ?, ?)
+    $query = "SELECT * FROM dts.section WHERE division=? AND id IN ($placeholders)";
+    // $query = "SELECT * FROM dts.section WHERE division=?";
 
     try
     {
+        // $st = $pdo->prepare($query);
+        // $st->execute(array($division_id));
         $st = $pdo->prepare($query);
-        $st->execute(array($division_id));
+        $st->execute(array_merge([$division_id], $ids));
         $row = $st->fetchAll(PDO::FETCH_OBJ);
     }catch(PDOException $ex){
         echo $ex->getMessage();
@@ -95,7 +100,7 @@ function queryItem($expense_id, $program_id, $section, $yearly_ref){
                 itd.section_id = ? and 
                 itd.yearly_ref_id = ? AND 
                 itd1.id is null 
-              order by itd.description ASC";
+              order by itd.id DESC";
 
     try {
         $st = $pdo->prepare($query);
@@ -132,7 +137,7 @@ function queryOriginal($expense_id, $section, $yearly_ref, $ppmp_stat){
                 itd.yearly_ref_id = ? and 
                 itd.ppmp_status = ? and
                 itd1.id is null
-              order by itd.description ASC";
+              order by itd.id DESC";
 
     try {
         $st = $pdo->prepare($query);
@@ -171,7 +176,7 @@ function queryMainTranche($expense_id, $program_id, $section, $tranche_code, $ye
                 itd.yearly_ref_id = ? AND 
                 itd1.id is null  
               group by itd.item_id  
-              order by itd.description ASC";
+              order by itd.id DESC";
 
     try {
         $st = $pdo->prepare($query);
@@ -210,7 +215,7 @@ function queryTranche($expense_id,$section, $tranche_code, $yearly_ref, $ppmp_st
                 itd.ppmp_status = ? and 
                 itd1.id is null 
               group by itd.item_id  
-              order by itd.description ASC";
+              order by itd.id DESC";
 
     try {
         $st = $pdo->prepare($query);
@@ -250,7 +255,7 @@ $yearly_reference = $_GET['yearly_reference'];
 //$program_id = $_GET['program_id'];
 
 
-$sections = querySection($division_id);
+$sections = querySection($division_id, $ids);
 $expenses = queryExpense();
 $programs = queryProgram($section_id,$yearly_reference);
 
@@ -258,12 +263,12 @@ $programs = queryProgram($section_id,$yearly_reference);
 if($division_id == 6){
     $charge_to = "SUPPORT TO OPERATION - OPERATION OF REGIONAL OFFICES";
 } else {
-    $charge_to = "Public Health Management";
+    $charge_to = "Disease Prevention and Control";
 }
 
 $division_name = queryDivision($division_id)->description;
 if($division_id == 6){
-    $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
+    $division_chief_name = "RAMIL R. ABREA";
 }
 else{
     $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
@@ -350,9 +355,10 @@ $yearly_reference = $_GET['yearly_reference'];
 $ppmp_status = $_GET['ppmp_status'];
 
 foreach($sections as $section) {
+    $pdf->SetFont('Arial', 'B', 11);
     $pdf->displayExpense($section->description);
     $programs = queryProgram($section->id,$yearly_reference);
-    if ($section->id == 28 || $section->id == 29 || $section->id == 32) {
+    if ($section->id == 28 || $section->id == 29 || $section->id == 32 || $section->id == 27 ) {
         foreach ($programs as $program) {
             $expenses = queryExpense();
             foreach ($expenses as $expense) {
@@ -454,7 +460,7 @@ foreach($sections as $section) {
             }
         }
     }
-    if ($section->id != 28 || $section->id != 29 || $section->id != 32 && $ppmp_status != "program") {
+    if ($section->id != 28 || $section->id != 29 || $section->id != 32 || $section->id != 27 && $ppmp_status != "program") {
         foreach ($expenses as $expense) {
             $expense_total = 0;
             $count_first = 0;
@@ -612,13 +618,23 @@ else {
         $pdf->Ln(2);
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','B',7);
-        $pdf->TableFooter(array("","STEPHEN CINCOFLORES","Leonora A. Aniel",$division_chief_name));
+        if($division_id == "4") {
+            $pdf->TableFooter(array("","STEPHEN CINCOFLORES","Leonora A. Aniel",$division_chief_name));
 
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->SetFont('Arial','',7);
-        $pdf->TableFooter(array("","Administrative Assistant II","Administrative Officer V","Medical Officer V"));
+        $pdf->TableFooter(array("","Administrative Assistant III","Administrative Officer V","Medical Officer V"));
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->TableFooter(array("","Local Health Support Division","Budget Section","Chief,Local Health Support Division"));
+        }elseif($division_id == "6") {
+            $pdf->TableFooter(array("","MIGUEL A. SARDOMA","Leonora A. Aniel",$division_chief_name));
+
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->SetFont('Arial','',7);
+        $pdf->TableFooter(array("","Administrative Assistant III","Administrative Officer V","Chief Administrative Officer"));
+        $pdf->SetWidths(array(3,84,65,70,70));
+        $pdf->TableFooter(array("","Management Support Division","Budget Section","Chief,Management Support Division"));
+        }
     }
 }
 

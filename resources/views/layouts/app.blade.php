@@ -152,9 +152,9 @@
             </div>
             <div class="clearfix"></div>
         </div>
-        <div class="header" style="background-color:#00CC99;padding:10px;">
+        <div class="header" style="background-color:#59ab91;padding:10px;">
             <div class="container">
-                <img src="{{ asset('public/img/banner_ppmp.png') }}" class="img-responsive" />
+                <img src="{{ asset('public/img/banner_ppmp_2024.png') }}" class="img-responsive" />
             </div>
         </div>
         @include('layouts.navbar-nav')

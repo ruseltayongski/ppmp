@@ -19,7 +19,7 @@ class PDF_MC_Table extends FPDF
         if($this->PageNo() == 1){
             $this->setXY(10,6);
             $this->Image('../../public/img/doh.png',15,6,30);
-            $this->Image('../../public/img/f1.jpg',245,6,30);
+            $this->Image('../../public/img/bagong_pilipinas2.png',245,6,30);
             $this->SetFont('Arial','',7);
             $this->setXY(3,6);
             $this->Cell(290,8,'Republic of the Philippines',0,0,'C');
@@ -39,8 +39,12 @@ class PDF_MC_Table extends FPDF
                 $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
             elseif($yearly_reference == 2)
                 $this->Cell(290,8,'Revised CY 2022',0,0,'C');
-            else
+            elseif($yearly_reference == 3)
                 $this->Cell(290,8,'CY 2023',0,0,'C');
+            elseif($yearly_reference == 4)
+                $this->Cell(290,8,'Revised 04',0,0,'C');
+            else
+                $this->Cell(290,8,'Revised 04',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))
@@ -302,14 +306,14 @@ class PDF_MC_Table extends FPDF
 //        else
         $item->description = "\t\t\t\t\t\t\t\t\t\t\t\t\t" . $item->description;
 
-        if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+        if($item->expense_id == 1 and $item->tranche != "1-B" and $item->tranche != "1-A-3" and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
             $item_body->mode_procurement = "NP 53.5";
         }else
-            if($item->expense_id == 1 and $item->tranche == "1-B" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
-                $item_body->mode_procurement = "NP 53.5";
+            if($item->expense_id == 1 and $item->tranche == "1-B" and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                $item_body->mode_procurement = "NP 53.9";
              }else
-             if($item->expense_id == 1 and $item->tranche == "1-A-3" and $yearly_reference == 3 and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
-                $item_body->mode_procurement = "Public Bidding";
+             if($item->expense_id == 1 and $item->tranche == "1-A-3" and (empty($item->mode_procurement) or $item->mode_procurement == "Public Bidding")) {
+                $item_body->mode_procurement = "NP 53.9";
              }
 
         if ((int)$item_body->qty > 0)

@@ -18,7 +18,7 @@ class PDF_MC_Table extends FPDF
         if($this->PageNo() == 1){
             $this->setXY(10,6);
             $this->Image('../../public/img/doh.png',15,6,30);
-            $this->Image('../../public/img/f1.jpg',245,6,30);
+            $this->Image('../../public/img/bagong_pilipinas2.png',245,6,30);
             $this->SetFont('Arial','',7);
             $this->setXY(3,6);
             $this->Cell(290,8,'Republic of the Philippines',0,0,'C');
@@ -38,8 +38,13 @@ class PDF_MC_Table extends FPDF
                 $this->Cell(290,8,'Revised June 30, 2021',0,0,'C');
             elseif($yearly_reference == 2)
                 $this->Cell(290,8,'Revised CY 2022',0,0,'C');
-            else
+            elseif($yearly_reference == 3)
                 $this->Cell(290,8,'CY 2023',0,0,'C');
+            elseif($yearly_reference == 4)
+                $this->Cell(290,8,'CY 2024',0,0,'C');
+            else
+                $this->Cell(290,8,'CY 2025',0,0,'C');
+            
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))

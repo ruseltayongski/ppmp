@@ -195,7 +195,7 @@ if($division_id == 6){
 }elseif($division_id == 5 ) {
     $charge_to = "Regulation of Regional Health Facilities and Services";
 } else {
-    $charge_to = "Public Health Management";
+    $charge_to = "Disease Prevention and Control";
 }
 
 $division_name = queryDivision($division_id)->description;
@@ -389,21 +389,21 @@ $ppmp_status = $_GET['ppmp_status'];
 
 
 
-$pdf->Ln(3);
+$pdf->Ln(0.5);
 $pdf->SetFont('Arial','BU',7);
 $pdf->SetX(30);
 $pdf->SetWidths(array(134,100));
 $pdf->TableFooter(array("GRAND TOTAL",number_format((float)$pdf->grand_total, 2, '.', ',')));
-$pdf->Ln(3);
+$pdf->Ln(0.5);
 $pdf->SetFont('Arial','',6);
 $pdf->SetWidths(array(12,160));
 $pdf->TableFooter(array("NOTE:","Technical Specification for each Item/Project being proposed shall be submitted as part of the PPMP"));
 
 if($generate_level == 'section' || $generate_level == 'select_section'){
-    $pdf->Ln(3);
+    $pdf->Ln(0.5);
     $pdf->SetWidths(array(3,84,65,70,70));
     $pdf->TableFooter(array("","Prepared By:","Evaluated by:","Submitted By:"));
-    $pdf->Ln(3);
+    $pdf->Ln(2);
     $pdf->SetFont('Arial','B',7);
     $pdf->SetWidths(array(3,84,65,70,70));
     if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
@@ -438,8 +438,7 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
         $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer IV"));
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - RLED"));
-    }
-    else {
+    }else {
         $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer V"));
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->TableFooter(array("",$section_name,"Budget Section","Chief,Local Health Support Division"));

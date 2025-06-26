@@ -177,7 +177,7 @@
                                                     @endphp
                                                     <div class="" onclick="redirectProgram({{ $program_count }},{{ $expense->id }})" style='cursor: pointer;'>
                                                         @else
-                                                            <div class="" onclick="location.href='{{ asset('ppmp/list').'/'.$expense->id }}'" style='cursor: pointer;'>
+                                                            <div class="" onclick="location.href='/ppmp/ppmp/list/{{ $expense->id }}'" style='cursor: pointer;'>
                                                                 @endif
                                                                 <label class="card">
                                                                 <span class="plan-details">

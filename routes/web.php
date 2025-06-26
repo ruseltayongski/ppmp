@@ -17,6 +17,40 @@ Route::get('logout', function(){
     return Redirect::to('/');
 });
 
+Route::get('test', function(){
+    $excel_expense = Session::get("excel_expense");
+    $excel_section = Session::get("excel_section");
+    $items = Session::get("items");
+    $generate_level = "division";
+    $generate_level = Session::put('generate_level',$generate_level);
+
+    $sec_head = \App\Section::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        ->LeftJoin('dts.users','users.id','=','section.head')
+        ->LeftJoin('dts.designation','designation.id','=','users.designation')
+        ->where('section.id',Auth::user()->section)
+        ->first();
+
+    $head = \App\Division::select(DB::raw("upper(concat(users.fname,' ',users.lname)) as head_name"),'designation.description as designation')
+        ->LeftJoin('dts.users','users.id','=','division.head')
+        ->LeftJoin('dts.designation','designation.id','=','users.designation')
+        ->where('division.id','=',Auth::user()->division)
+        ->first();
+
+    $file_name = "joy.xls";
+    header("Content-Type: application/xls");
+    header("Content-Disposition: attachment; filename=$file_name");
+    header("Pragma: no-cache");
+    header("Expires: 0");
+
+    return view('excel.report',[
+        "excel_expense" => $excel_expense,
+        "excel_section" => $excel_section,
+        "generate_level" =>$generate_level,
+        "sec_head" => $sec_head,
+        "head" => $head
+    ]);
+});
+
 //login
 Route::match(['GET','POST'],'/','LoginController@index');
 

@@ -1,14 +1,17 @@
 <?php
 
-$host = "127.0.0.1";
-$username = "root";
-$password = "adm1n";
+// $host = "127.0.0.1";
+// $username = "root";
+// $password = "adm1n";
 
-$sql_host = "192.168.110.45";
-$sql_user = "sa";
-$sql_pass = "D07_1T";
-$sql_port = "80";
+// $sql_host = "192.168.110.45";
+// $sql_user = "sa";
+// $sql_pass = "D07_1T";
+// $sql_port = "80";
 
+$host = "192.168.110.31";
+$username = "rtayong_31";
+$password = "rtayong_31";
 
 return [
 
