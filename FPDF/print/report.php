@@ -148,10 +148,10 @@ $division_name = queryDivision($division_id)->description;
 if ($division_id == 5) {
     $division_chief_name = "ANNESSA P. PATINDOL, MD, RMT, MMHoA";
 }elseif($division_id == 14 || $division_id == 15 || $division_id == 10) {
-    $division_chief_name = "SOPHIA M. MANCAO, MD, DPSP, RN-MAN";
+    $division_chief_name = "NELNER D. OMUS, MD";
 }
 elseif ($division_id == 8 or $division_id == 11 or $division_id == 13 or $division_id == 4 or $division_id == 16 or $division_id == 19 or $division_id == 20 or $division_id == 22 ){
-    $division_chief_name = "JONATHAN NEIL V. ERASMO, MD,MPH,FPSMS";
+    $division_chief_name = "NELNER D. OMUS, MD";
 }else {
     $division_chief_name = "RAMIL R. ABREA";
 }
@@ -435,13 +435,13 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
             $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
     }
     else{
-        $pdf->TableFooter(array("",$sec_head,"LEONORA A. ANIEL",$division_chief_name));
+        $pdf->TableFooter(array("",$sec_head,"JONAH M. ZAFRA",$division_chief_name));
     }
 
     $pdf->SetWidths(array(3,84,65,70,70));
     $pdf->SetFont('Arial','',7);
     if($division_id == 9 || $division_id == 10 || $division_id == 14 || $division_id == 15 ) {
-        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Director III"));
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","OIC - Director III"));
         $pdf->SetWidths(array(3,84,65,70,70));
         $pdf->TableFooter(array("",$section_name,"Budget Section",""));
     }else if($yearly_reference == 3 and $division_id == 6) {
@@ -458,9 +458,9 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
         $pdf->TableFooter(array("","Section Head","Budget Section","Chief, Regulation, Licensing and Enforcement Division"));
     }
     else {
-        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer V"));
+        $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer IV","Medical Officer V"));
         $pdf->SetWidths(array(3,84,65,70,70));
-        $pdf->TableFooter(array("",$section_name,"Budget Section","Chief,Local Health Support Division"));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - Chief,Local Health Support Division"));
     }
 }
 else {

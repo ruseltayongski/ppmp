@@ -182,7 +182,7 @@ if($division_id == 6){
     $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
 }
 else{
-    $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
+    $division_chief_name = "Nelner D. Omus, MD";
 }
 
 
@@ -392,12 +392,12 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
         $pdf->TableFooter(array("",$_GET['end_user_name'],"Elizabeth P. Tabasa CPA,MBA,CEO VI"));
     // joy
     else
-        $pdf->TableFooter(array("",$_GET['end_user_name'],"Jonathan Neil V. Erasmo, MD,MPH,FPSMS"));
+        $pdf->TableFooter(array("",$_GET['end_user_name'],"Nelner D. Omus, MD"));
 
     $pdf->SetWidths(array(12,165,100));
     $pdf->SetFont('Arial','',7);
     if($division_id == 9 || $division_id == 10)
-        $pdf->TableFooter(array("",$_GET['end_user_designation'],"Director III"));
+        $pdf->TableFooter(array("",$_GET['end_user_designation'],"OIC - Director III"));
     else
         $pdf->TableFooter(array("",$_GET['end_user_designation'],$_GET['head_designation']));
 }

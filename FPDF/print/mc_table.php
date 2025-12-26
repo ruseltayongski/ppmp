@@ -44,7 +44,7 @@ class PDF_MC_Table extends FPDF
             elseif($yearly_reference == 4)
                 $this->Cell(290,8,'Revised 04',0,0,'C');
             else
-                $this->Cell(290,8,'Revised 04',0,0,'C');
+                $this->Cell(290,8,'Revised 06',0,0,'C');
             $this->SetFont('Arial','B',8);
             $this->setXY(3,32);
             if(isset($_GET['section_name']))

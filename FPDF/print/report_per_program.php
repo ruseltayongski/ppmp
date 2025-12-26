@@ -203,7 +203,7 @@ if($division_id == 6){
     $division_chief_name = "Elizabeth P. Tabasa CPA,MBA,CEO VI";
 }
 else{
-    $division_chief_name = "Jonathan Neil V. Erasmo, MD,MPH,FPSMS";
+    $division_chief_name = "NELNER D. OMUS, MD";
 }
 
 
@@ -441,7 +441,7 @@ if($generate_level == 'section' || $generate_level == 'select_section'){
     }else {
         $pdf->TableFooter(array("",$sec_head_desig,"Administrative Officer V","Medical Officer V"));
         $pdf->SetWidths(array(3,84,65,70,70));
-        $pdf->TableFooter(array("",$section_name,"Budget Section","Chief,Local Health Support Division"));
+        $pdf->TableFooter(array("",$section_name,"Budget Section","OIC - Chief,Local Health Support Division"));
     }
 }
 else {
